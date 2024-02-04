@@ -82,6 +82,7 @@ function RefMasIncomeForm() {
     // }
 
     const getSequence = async () => {
+      console.log("Getting Inc Seq");
       const swalInstance = Swal.fire({
         title: "Loading",
         timerProgressBar: true,
