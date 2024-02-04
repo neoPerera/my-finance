@@ -81,6 +81,7 @@ function RefMasExpenseForm() {
     }
 
     const getSequence = async () => {
+      console.log("Getting Exp Seq");
       const swalInstance = Swal.fire({
         title: "Loading",
         timerProgressBar: true,
