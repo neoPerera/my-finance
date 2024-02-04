@@ -4,7 +4,6 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 
 function RefMasExpenseForm() {
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     strId: "",
