@@ -75,10 +75,10 @@ function RefMasExpenseForm() {
   };
 
   useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      return;
-    }
+    // if (isFirstRun.current) {
+    //   isFirstRun.current = false;
+    //   return;
+    // }
 
     const getSequence = async () => {
       console.log("Getting Exp Seq");
