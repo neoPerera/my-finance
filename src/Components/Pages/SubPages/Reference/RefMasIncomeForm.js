@@ -76,10 +76,10 @@ function RefMasIncomeForm() {
   };
 
   useEffect(() => {
-    if (isFirstRun.current) {
-      isFirstRun.current = false;
-      return;
-    }
+    // if (isFirstRun.current) {
+    //   isFirstRun.current = false;
+    //   return;
+    // }
 
     const getSequence = async () => {
       const swalInstance = Swal.fire({
