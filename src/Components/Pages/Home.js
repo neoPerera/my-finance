@@ -10,6 +10,7 @@ import RefMasExpenseList from './SubPages/Reference/RefMasExpenseList';
 import ProtectedRoute from '../Mechanisms/ProtectedRoute';
 import RefMasIncomeList from './SubPages/Reference/RefMasIncomeList';
 import RefMasIncomeForm from './SubPages/Reference/RefMasIncomeForm';
+import TransactionForm from './SubPages/Transaction/TransactionsForm';
 function Home() {
   return (
     <div className="sidebar-mini">
@@ -27,7 +28,8 @@ function Home() {
             <Route exact path='ref-expense/add' element={<RefMasExpenseForm/>}/>
             <Route exact path='ref-income' element={<RefMasIncomeList/>}/>
             <Route exact path='ref-income/add' element={<RefMasIncomeForm/>}/>
-          
+            {/* Transaction routes */}
+            <Route exact path='transaction-add' element={<TransactionForm/>}/>
             <Route path='*' element={<NotFound/>}/>
           
         </Routes>
