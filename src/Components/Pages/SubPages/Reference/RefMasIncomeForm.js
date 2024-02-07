@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import Swal from "sweetalert2";
 
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space, Spin } from "antd";
 
 const SubmitButton = ({ form, onClick }) => {
   const [submittable, setSubmittable] = React.useState(false);
@@ -43,7 +43,7 @@ function RefMasIncomeForm() {
     strId: "",
     strName: "",
   });
-
+  const [spinning, setSpinning] = React.useState(false);
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -68,21 +68,23 @@ function RefMasIncomeForm() {
       return;
     }
 
-    const swalInstance = Swal.fire({
-      title: "Loading",
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
+    // const swalInstance = Swal.fire({
+    //   title: "Loading",
+    //   timerProgressBar: true,
+    //   didOpen: () => {
+    //     Swal.showLoading();
+    //   },
+    // });
+    setSpinning(true);
     try {
       const response = await Axios.post(
         `${process.env.REACT_APP_API_URL}api/ref-income/add`,
         formData
       );
-      if (swalInstance) {
-        swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-      }
+      setSpinning(false);
+      // if (swalInstance) {
+      //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+      // }
       console.log("Response:", response.data);
       Swal.fire({
         title: "successful!",
@@ -101,6 +103,7 @@ function RefMasIncomeForm() {
         text: `${error.response.data.error.detail}`,
         footer: '<a href="#">Why do I have this issue?</a>',
       });
+      setSpinning(false);
     }
   };
 
@@ -112,21 +115,23 @@ function RefMasIncomeForm() {
 
     const getSequence = async () => {
       console.log("Getting Inc Seq");
-      const swalInstance = Swal.fire({
-        title: "Loading",
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+      // const swalInstance = Swal.fire({
+      //   title: "Loading",
+      //   timerProgressBar: true,
+      //   didOpen: () => {
+      //     Swal.showLoading();
+      //   },
+      // });
+      setSpinning(true);
       try {
         const response = await Axios.get(
           `${process.env.REACT_APP_API_URL}api/ref-income/getSequence`
         );
         console.log(response);
-        if (swalInstance) {
-          swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-        }
+        // if (swalInstance) {
+        //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+        // }
+        setSpinning(false);
         setFormData({
           ...formData,
           strId: response.data.output_value.toString(),
@@ -135,9 +140,9 @@ function RefMasIncomeForm() {
           strId: response.data.output_value.toString(),
         });
       } catch (error) {
-        if (swalInstance) {
-          swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-        }
+        // if (swalInstance) {
+        //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+        // }
         console.error("Error:", error);
       }
     };
@@ -147,6 +152,7 @@ function RefMasIncomeForm() {
 
   return (
     <>
+      <Spin spinning={spinning} fullscreen />
       <Form
         form={form}
         name="validateOnly"

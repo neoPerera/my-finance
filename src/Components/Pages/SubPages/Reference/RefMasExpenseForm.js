@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import Swal from "sweetalert2";
 
-import { Button, Form, Input, Space } from "antd";
+import { Button, Form, Input, Space, Spin } from "antd";
 
 const SubmitButton = ({ form, onClick }) => {
   const [submittable, setSubmittable] = React.useState(false);
@@ -43,6 +43,7 @@ function RefMasExpenseForm() {
     strId: "",
     strName: "",
   });
+  const [spinning, setSpinning] = React.useState(false);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -57,7 +58,7 @@ function RefMasExpenseForm() {
       (value) => value === "" || value === null
     );
     console.log(hasEmptyAttributes);
-    
+
     if (hasEmptyAttributes) {
       Swal.fire({
         icon: "error",
@@ -68,22 +69,23 @@ function RefMasExpenseForm() {
       return;
     }
 
-    const swalInstance = Swal.fire({
-      title: "Loading",
-      timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      
-    });
+    // const swalInstance = Swal.fire({
+    //   title: "Loading",
+    //   timerProgressBar: true,
+    //   didOpen: () => {
+    //     Swal.showLoading();
+    //   },
+    // });
+    setSpinning(true);
     try {
       const response = await Axios.post(
         `${process.env.REACT_APP_API_URL}api/ref-expense/add`,
         formData
       );
-      if (swalInstance) {
-        swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-      }
+      // if (swalInstance) {
+      //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+      // }
+      setSpinning(false);
       console.log("Response:", response.data);
       Swal.fire({
         title: "successful!",
@@ -92,9 +94,8 @@ function RefMasExpenseForm() {
           // This callback is called when the modal is unmounted
           // Clean up any resources here if needed
           navigate("/home/ref-expense");
-        }
+        },
       });
-      
     } catch (error) {
       console.error("Error:", error.response);
       Swal.fire({
@@ -103,6 +104,7 @@ function RefMasExpenseForm() {
         text: `${error.response.data.error.detail}`,
         footer: '<a href="#">Why do I have this issue?</a>',
       });
+      setSpinning(false);
     }
   };
 
@@ -114,21 +116,23 @@ function RefMasExpenseForm() {
 
     const getSequence = async () => {
       console.log("Getting Exp Seq");
-      const swalInstance = Swal.fire({
-        title: "Loading",
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        }
-      });
+      // const swalInstance = Swal.fire({
+      //   title: "Loading",
+      //   timerProgressBar: true,
+      //   didOpen: () => {
+      //     Swal.showLoading();
+      //   },
+      // });
+      setSpinning(true);
       try {
         const response = await Axios.get(
           `${process.env.REACT_APP_API_URL}api/ref-expense/getSequence`
         );
         console.log(response);
-        if (swalInstance) {
-          swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-        }
+        // if (swalInstance) {
+        //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+        // }
+        setSpinning(false);
         setFormData({
           ...formData,
           strId: response.data.output_value.toString(),
@@ -136,11 +140,10 @@ function RefMasExpenseForm() {
         form.setFieldsValue({
           strId: response.data.output_value.toString(),
         });
-  
       } catch (error) {
-        if (swalInstance) {
-          swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-        }
+        // if (swalInstance) {
+        //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+        // }
         console.error("Error:", error);
       }
     };
@@ -150,6 +153,7 @@ function RefMasExpenseForm() {
 
   return (
     <>
+      <Spin spinning={spinning} fullscreen />
       <Form
         form={form}
         name="validateOnly"
@@ -186,7 +190,6 @@ function RefMasExpenseForm() {
         </Form.Item>
       </Form>
     </>
-    
   );
 }
 
