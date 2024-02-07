@@ -1,17 +1,48 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import Swal from "sweetalert2";
 
+import { Button, Form, Input, Space } from "antd";
+
+const SubmitButton = ({ form, onClick }) => {
+  const [submittable, setSubmittable] = React.useState(false);
+
+  // Watch all values
+  const values = Form.useWatch([], form);
+  React.useEffect(() => {
+    form
+      .validateFields({
+        validateOnly: true,
+      })
+      .then(
+        () => {
+          setSubmittable(true);
+        },
+        () => {
+          setSubmittable(false);
+        }
+      );
+  }, [values]);
+  return (
+    <Button
+      type="primary"
+      onClick={onClick}
+      htmlType="submit"
+      disabled={!submittable}
+    >
+      Submit
+    </Button>
+  );
+};
+
 function RefMasIncomeForm() {
-  const [loading, setLoading] = useState(true);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     strId: "",
     strName: "",
   });
-  const [isIdEditable, setIsIdEditable] = useState(true);
-  const isFirstRun = useRef(true);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -25,8 +56,8 @@ function RefMasIncomeForm() {
     const hasEmptyAttributes = Object.values(formData).some(
       (value) => value === "" || value === null
     );
-    console.log(hasEmptyAttributes);
-    
+    console.log(formData);
+
     if (hasEmptyAttributes) {
       Swal.fire({
         icon: "error",
@@ -43,7 +74,6 @@ function RefMasIncomeForm() {
       didOpen: () => {
         Swal.showLoading();
       },
-      
     });
     try {
       const response = await Axios.post(
@@ -61,9 +91,8 @@ function RefMasIncomeForm() {
           // This callback is called when the modal is unmounted
           // Clean up any resources here if needed
           navigate("/home/ref-income");
-        }
+        },
       });
-      
     } catch (error) {
       console.error("Error:", error.response);
       Swal.fire({
@@ -88,7 +117,7 @@ function RefMasIncomeForm() {
         timerProgressBar: true,
         didOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
       try {
         const response = await Axios.get(
@@ -102,7 +131,9 @@ function RefMasIncomeForm() {
           ...formData,
           strId: response.data.output_value.toString(),
         });
-        setIsIdEditable(false);
+        form.setFieldsValue({
+          strId: response.data.output_value.toString(),
+        });
       } catch (error) {
         if (swalInstance) {
           swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
@@ -115,67 +146,43 @@ function RefMasIncomeForm() {
   }, []);
 
   return (
-    <div>
-      {/* Content Header (Page header) */}
-      <section className="content-header">
-        <div className="container-fluid">
-          <div className="row mb-2">
-            <div className="col-sm-6">
-              <h1>Income Master</h1>
-            </div>
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item"><Link to="/home">Home</Link></li>
-                <li className="breadcrumb-item"><Link to="/home/ref-income">Income Master</Link></li>
-                <li className="breadcrumb-item active">Form</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-        {/* <!-- /.container-fluid --> */}
-      </section>
-      <section className="content">
-        <>
-          <div className="card card-primary">
-            <div className="card-header">
-              <h3 className="card-title">Income Master form</h3>
-            </div>
-            <form onSubmit={handleSubmit}>
-              <div className="card-body">
-                <div className="form-group">
-                  <label htmlFor="strId">ID</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="strId"
-                    placeholder="Income id"
-                    value={formData.strId}
-                    onChange={handleInputChange}
-                    readOnly={!isIdEditable}
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="strName">Income Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="strName"
-                    placeholder="Income Name"
-                    value={formData.strName}
-                    onChange={handleInputChange}
-                  />
-                </div>
-              </div>
-              <div className="card-footer">
-                <button type="submit" className="btn btn-primary">
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </>
-      </section>
-    </div>
+    <>
+      <Form
+        form={form}
+        name="validateOnly"
+        layout="vertical"
+        autoComplete="off"
+      >
+        <Form.Item
+          name="strId"
+          label="ID"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input disabled={true} />
+        </Form.Item>
+        <Form.Item
+          name="strName"
+          label="Name"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Input id="strName" onChange={handleInputChange} />
+        </Form.Item>
+        <Form.Item>
+          <Space>
+            <SubmitButton onClick={handleSubmit} form={form} />
+            {/* <Button htmlType="reset">Reset</Button> */}
+          </Space>
+        </Form.Item>
+      </Form>
+    </>
   );
 }
 

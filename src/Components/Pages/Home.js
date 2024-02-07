@@ -83,13 +83,14 @@ const Home = () => {
     console.log(item);
     console.log(key);
     console.log(keyPath);
-    if (key == "1") {
-      navigate("/home");
-    } else if (key == "2") {
-      navigate("/home/ref-income");
-    } else if (key == "3") {
-      navigate("/home/ref-expense");
-    }
+    navigate(item.props.link);
+    // if (key == "1") {
+    //   navigate("/home");
+    // } else if (key == "2") {
+    //   navigate("/home/ref-income");
+    // } else if (key == "3") {
+    //   navigate("/home/ref-expense");
+    // }
     
   };
   return (

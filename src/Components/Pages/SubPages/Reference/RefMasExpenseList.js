@@ -1,12 +1,40 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-
+import { Button, Table } from 'antd';
 
 function RefMasExpenseList() {
   const isMounted = useRef(true);
   const [expenseList, setExpenseList] = useState([]);
+  const navigate = useNavigate();
+  const columns = [
+    {
+      title: 'ID',
+      dataIndex: 'str_id',
+      key: 'str_id',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'str_name',
+      key: 'str_name',
+    },
+    {
+      title: 'Created date',
+      dataIndex: 'dtm_date',
+      key: 'dtm_date',
+    },
+    {
+      title: 'Action',
+      dataIndex: '',
+      key: 'x',
+      render: () => <a>Delete</a>,
+    },
+  ];
+
+  const handleAdd =()=>{
+    navigate('/home/ref-expense/add');
+  }
 
   useEffect(() => {
     if (isMounted.current) {
@@ -43,97 +71,117 @@ function RefMasExpenseList() {
 
   return (
     <>
-      {/* Content Header (Page header) */}
-      <section className="content-header">
-        <div className="container-fluid">
-          <div className="row mb-2">
-            <div className="col-sm-6">
-              <h1>Expense Master</h1>
-            </div>
-            <div className="col-sm-6">
-              <ol className="breadcrumb float-sm-right">
-                <li className="breadcrumb-item">
-                  <Link to="/home">Home</Link>
-                </li>
-                <li className="breadcrumb-item active">Expense Master</li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </section>
+    
+    <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>Add new</Button>
+    <Table
+    columns={columns}
+    // expandable={{
+    //   expandedRowRender: (record) => (
+    //     <p
+    //       style={{
+    //         margin: 0,
+    //       }}
+    //     >
+    //       {record.description}
+    //     </p>
+    //   ),
+    //   rowExpandable: (record) => record.name !== 'Not Expandable',
+    // }}
+    dataSource={expenseList}
+  />
+  </>
+    // <>
+    //   Content Header (Page header)
+    //   <section className="content-header">
+    //     <div className="container-fluid">
+    //       <div className="row mb-2">
+    //         <div className="col-sm-6">
+    //           <h1>Expense Master</h1>
+    //         </div>
+    //         <div className="col-sm-6">
+    //           <ol className="breadcrumb float-sm-right">
+    //             <li className="breadcrumb-item">
+    //               <Link to="/home">Home</Link>
+    //             </li>
+    //             <li className="breadcrumb-item active">Expense Master</li>
+    //           </ol>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   </section>
 
-      {/* Main content */}
-      <section className="content">
-        {/* Default box */}
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title">Projects</h3>
-            <br />
-            <Link className="btn btn-primary btn-sm" to="/home/ref-expense/add">
-              <i className="fas fa-folder"></i>
-              add expense
-            </Link>
-            <div className="card-tools">
-              <button
-                type="button"
-                className="btn btn-tool"
-                data-card-widget="collapse"
-                title="Collapse"
-              >
-                <i className="fas fa-minus" />
-              </button>
-              <button
-                type="button"
-                className="btn btn-tool"
-                data-card-widget="remove"
-                title="Remove"
-              >
-                <i className="fas fa-times" />
-              </button>
-            </div>
-          </div>
-          <div className="card-body p-0">
-            <table className="table table-striped projects">
-              <thead>
-                <tr>
-                  <th style={{ width: "1%" }}>ID</th>
-                  <th style={{ width: "20%" }}>Expense Name</th>
-                  {/* ... (other table headers) */}
-                  <th style={{ width: "20%" }}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {expenseList.map((expense, index) => (
-                  <tr key={index}>
-                    <td>{expense.str_id}</td>
-                    <td>
-                      <a>{expense.str_name}</a>
-                      <br />
-                      <small>Created {expense.dtm_date}</small>
-                    </td>
-                    {/* ... (other table cells) */}
-                    <td className="project-actions text-right">
-                      <a className="btn btn-primary btn-sm" href="#">
-                        <i className="fas fa-folder"></i>
-                        View
-                      </a>
-                      <a className="btn btn-info btn-sm" href="#">
-                        <i className="fas fa-pencil-alt"></i>
-                        Edit
-                      </a>
-                      <a className="btn btn-danger btn-sm" href="#">
-                        <i className="fas fa-trash"></i>
-                        Delete
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </>
+    //   {/* Main content */}
+    //   <section className="content">
+    //     {/* Default box */}
+    //     <div className="card">
+    //       <div className="card-header">
+    //         <h3 className="card-title">Projects</h3>
+    //         <br />
+    //         <Link className="btn btn-primary btn-sm" to="/home/ref-expense/add">
+    //           <i className="fas fa-folder"></i>
+    //           add expense
+    //         </Link>
+    //         <div className="card-tools">
+    //           <button
+    //             type="button"
+    //             className="btn btn-tool"
+    //             data-card-widget="collapse"
+    //             title="Collapse"
+    //           >
+    //             <i className="fas fa-minus" />
+    //           </button>
+    //           <button
+    //             type="button"
+    //             className="btn btn-tool"
+    //             data-card-widget="remove"
+    //             title="Remove"
+    //           >
+    //             <i className="fas fa-times" />
+    //           </button>
+    //         </div>
+    //       </div>
+    //       <div className="card-body p-0">
+    //         <table className="table table-striped projects">
+    //           <thead>
+    //             <tr>
+    //               <th style={{ width: "1%" }}>ID</th>
+    //               <th style={{ width: "20%" }}>Expense Name</th>
+    //               {/* ... (other table headers) */}
+    //               <th style={{ width: "20%" }}></th>
+    //             </tr>
+    //           </thead>
+    //           <tbody>
+    //             {expenseList.map((expense, index) => (
+    //               <tr key={index}>
+    //                 <td>{expense.str_id}</td>
+    //                 <td>
+    //                   <a>{expense.str_name}</a>
+    //                   <br />
+    //                   <small>Created {expense.dtm_date}</small>
+    //                 </td>
+    //                 {/* ... (other table cells) */}
+    //                 <td className="project-actions text-right">
+    //                   <a className="btn btn-primary btn-sm" href="#">
+    //                     <i className="fas fa-folder"></i>
+    //                     View
+    //                   </a>
+    //                   <a className="btn btn-info btn-sm" href="#">
+    //                     <i className="fas fa-pencil-alt"></i>
+    //                     Edit
+    //                   </a>
+    //                   <a className="btn btn-danger btn-sm" href="#">
+    //                     <i className="fas fa-trash"></i>
+    //                     Delete
+    //                   </a>
+    //                 </td>
+    //               </tr>
+    //             ))}
+    //           </tbody>
+    //         </table>
+    //       </div>
+    //     </div>
+    //   </section>
+    // </>
   );
 }
 

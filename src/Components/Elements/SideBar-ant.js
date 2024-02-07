@@ -1,8 +1,8 @@
 import React from "react";
 import {
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
+  BookOutlined,
+  DashboardOutlined,
+  LogoutOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 const {  Sider } = Layout;
@@ -19,18 +19,27 @@ const SideBarAnt = ({ collapsed, MenuItemClicked }) => {
         items={[
           {
             key: "1",
-            icon: <UserOutlined />,
+            icon: <DashboardOutlined />,
             label: "DashBoard",
+            link: "/home"
           },
           {
             key: "2",
-            icon: <VideoCameraOutlined />,
+            icon: <BookOutlined />,
             label: "Income Master",
+            link: "/home/ref-income"
           },
           {
             key: "3",
-            icon: <UploadOutlined />,
+            icon: <BookOutlined />,
             label: "Expense Master",
+            link: "/home/ref-expense"
+          },
+          {
+            key: "99",
+            icon: <LogoutOutlined />,
+            label: "Logout",
+            link: "/logout"
           },
         ]}
       />
