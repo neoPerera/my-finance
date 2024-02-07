@@ -35,7 +35,7 @@ const FooterAnt = () => {
             textAlign: 'center',
           }}
         >
-          Ant Design ©{new Date().getFullYear()} Created by Ant UED
+          NEO Design ©{new Date().getFullYear()}
         </Footer>
 
   );
