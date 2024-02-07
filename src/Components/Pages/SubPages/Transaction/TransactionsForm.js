@@ -2,20 +2,20 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import Swal from "sweetalert2";
-import { SelectPicker } from 'rsuite';
-import 'rsuite/dist/rsuite.min.css';
+import { SelectPicker } from "rsuite";
+import "rsuite/dist/rsuite.min.css";
 function TransactionForm() {
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     strId: "",
+    floatAmount: "",
     strName: "",
     strTransType: "",
+    strTransCat: "",
   });
   const [transTypes, setTransTypes] = useState([]);
-  const [isIdEditable, setIsIdEditable] = useState(true);
-  const isFirstRun = useRef(true);
- 
+  const [isIdEditable, setIsIdEditable] = useState(false);
+  const [isTransCatDisabled, setTransCatDisabled] = useState(true);
+  const [transCats, setTransCats] = useState([]);
 
   const handleInputChange = (e) => {
     setFormData({
@@ -23,13 +23,61 @@ function TransactionForm() {
       [e.target.id]: e.target.value,
     });
   };
-
-  const handleSelectTrans = (value) =>{
-    console.log(value);
-    setFormData({...formData,
-        strTransType: value
+  const Amount_handleInputChange = (e) => {
+    const numericValue = parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0;
+    console.log(numericValue.toLocaleString('en'));
+    const formattedCurrency = numericValue.toLocaleString('en');
+    //const formattedCurrency = numericValue.toString().replace(/\d(?=(\d{3})+\.)/g, '$&,'); // Adds commas for thousands
+    // console.log(formattedCurrency);
+      
+    setFormData({
+      ...formData,
+      floatAmount: formattedCurrency,
     });
-  }
+  };
+
+  const handleSelectCats = (value) => {
+    setFormData({ ...formData, strTransCat: value });
+  };
+
+  const handleSelectTrans = async (value) => {
+    console.log(value);
+    var strTransCatURL = "";
+    if (value == "INC") {
+      strTransCatURL = "api/ref-income/getincome";
+    } else if (value == "EXP") {
+      strTransCatURL = "api/ref-expense/getexpense";
+    }
+    setFormData({ ...formData, strTransType: value });
+    const swalInstance = Swal.fire({
+      title: "Loading",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+    try {
+      const response = await Axios.get(
+        `${process.env.REACT_APP_API_URL}${strTransCatURL}`
+      );
+      console.log(response);
+      setTransCats(
+        response.data.map((item) => ({
+          label: item.str_name,
+          value: item.str_id,
+        }))
+      );
+      if (swalInstance) {
+        swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+      }
+      setTransCatDisabled(false);
+    } catch (error) {
+      if (swalInstance) {
+        swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
+      }
+      console.error("Error:", error);
+    }
+  };
 
   const handleSubmitBtn = async (e) => {
     e.preventDefault();
@@ -91,11 +139,10 @@ function TransactionForm() {
     // }
 
     const getSequence = async () => {
-        
       console.log("Getting Inc Seq");
       const swalInstance = Swal.fire({
         title: "Loading",
-        timerProgressBar: true,
+        allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
         },
@@ -115,7 +162,6 @@ function TransactionForm() {
 
         setTransTypes(response.data.trans_types);
         setIsIdEditable(false);
-        
       } catch (error) {
         if (swalInstance) {
           swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
@@ -128,9 +174,7 @@ function TransactionForm() {
   }, []);
 
   return (
-    
     <div>
-        
       {/* Content Header (Page header) */}
       <section className="content-header">
         <div className="container-fluid">
@@ -154,7 +198,7 @@ function TransactionForm() {
         <>
           <div className="card card-primary">
             <div className="card-header">
-              <h3 className="card-title">Income Master form</h3>
+              <h3 className="card-title">Insert transaction</h3>
             </div>
             <form>
               <div className="card-body">
@@ -171,9 +215,36 @@ function TransactionForm() {
                   />
                 </div>
                 <div className="form-group">
+                  <label htmlFor="floatAmount">Amount</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="floatAmount"
+                    placeholder="Amount"
+                    value={formData.floatAmount}
+                    onChange={Amount_handleInputChange}
+                  />
+                </div>
+                <div className="form-group">
                   <label htmlFor="strTransType">Type</label>
-                  
-                  <SelectPicker onSelect={handleSelectTrans} id="strTransType" data={transTypes} style={{ width: '100%' }} />
+
+                  <SelectPicker
+                    onSelect={handleSelectTrans}
+                    id="strTransType"
+                    data={transTypes}
+                    style={{ width: "100%" }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="strTransCat">Category</label>
+
+                  <SelectPicker
+                    disabled={isTransCatDisabled}
+                    onSelect={handleSelectCats}
+                    id="strTransCat"
+                    data={transCats}
+                    style={{ width: "100%" }}
+                  />
                 </div>
                 <div className="form-group">
                   <label htmlFor="strName">Reason</label>
