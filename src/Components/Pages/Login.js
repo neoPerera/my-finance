@@ -71,12 +71,12 @@ const LogIn = () => {
     }
   };
 
-  return (
+  return (  
     <>
       <Spin spinning={spinning} fullscreen />
       <Layout style={{ minHeight: "100vh" }}>
         <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
-          <Col xs={24} sm={12} md={8} lg={6}>
+          <Col xs={24} sm={12} md={8} lg={4}>
             <Content
               style={{
                 padding: 24,

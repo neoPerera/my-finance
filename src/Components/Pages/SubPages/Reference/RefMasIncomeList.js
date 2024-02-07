@@ -14,21 +14,25 @@ function RefMasIncomeList() {
       title: "ID",
       dataIndex: "str_id",
       key: "str_id",
+      // responsive: ['md'],
     },
     {
       title: "Name",
       dataIndex: "str_name",
       key: "str_name",
+      // responsive: ['md'],
     },
     {
       title: "Created date",
       dataIndex: "dtm_date",
       key: "dtm_date",
+      // responsive: ['md'],
     },
     {
       title: "Action",
       dataIndex: "",
       key: "x",
+      // responsive: ['md'],
       render: () => <a>Delete</a>,
     },
   ];
@@ -169,6 +173,10 @@ function RefMasIncomeList() {
         Add new
       </Button>
       <Table
+      scroll={{
+        x: 1000,
+        // y: 400,
+      }}
         columns={columns}
         // expandable={{
         //   expandedRowRender: (record) => (
