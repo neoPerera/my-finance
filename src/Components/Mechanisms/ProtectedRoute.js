@@ -8,6 +8,7 @@ const ProtectedRoute = () => {
   const [auth, setAuth] = useState(null); // Use null to indicate initial loading state
   const location = useLocation();
 
+  
   useEffect(() => {
     const checkAuthentication = async () => {
       try {

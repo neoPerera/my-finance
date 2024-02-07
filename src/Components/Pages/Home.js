@@ -1,8 +1,8 @@
-import Footer from '../Elements/Footer';
-import NavBar from '../Elements/NavBar';
-import SideBar from '../Elements/SideBar';
-import NotFound from './404';
-import LogIn from './Login';
+// import Footer from '../Elements/Footer';
+// import NavBar from '../Elements/NavBar';
+// import SideBar from '../Elements/SideBar';
+// import NotFound from './404';
+// import LogIn from './Login';
 import DashBoard from './SubPages/DashBoard';
 import { BrowserRouter as Router, Route, Routes,Outlet } from 'react-router-dom';
 import RefMasExpenseForm from './SubPages/Reference/RefMasExpenseForm';
@@ -11,45 +11,123 @@ import ProtectedRoute from '../Mechanisms/ProtectedRoute';
 import RefMasIncomeList from './SubPages/Reference/RefMasIncomeList';
 import RefMasIncomeForm from './SubPages/Reference/RefMasIncomeForm';
 import TransactionForm from './SubPages/Transaction/TransactionsForm';
-function Home() {
+// import SideBarAnt from '../Elements/SideBar-ant';
+// function Home() {
+//   return (
+// //     <div className="sidebar-mini">
+// //       <div className="wrapper">
+
+// //         <NavBar/>
+// //         {/* <SideBar /> */}
+// //   {/* <!-- Content Wrapper. Contains page content --> */}
+// //   <div className="content-wrapper">
+// //     {/* <!-- Main content --> */}
+// //     {/* <DashBoard /> */}
+// //      <Routes>
+
+// //             <Route exact path='/' element={<DashBoard/>}/>
+// //             <Route exact path='ref-expense' element={<RefMasExpenseList/>}/>
+// //             <Route exact path='ref-expense/add' element={<RefMasExpenseForm/>}/>
+// //             <Route exact path='ref-income' element={<RefMasIncomeList/>}/>
+// //             <Route exact path='ref-income/add' element={<RefMasIncomeForm/>}/>
+// //             {/* Transaction routes */}
+// //             <Route exact path='transaction-add' element={<TransactionForm/>}/>
+// //             <Route path='*' element={<NotFound/>}/>
+
+// //         </Routes>
+
+// //     {/* <!-- /.content --> */}
+// //   </div>
+// //   {/* <!-- /.content-wrapper --> */}
+
+// //     <Footer />
+
+// //   {/* <!-- Control Sidebar --> */}
+// //   <aside className="control-sidebar control-sidebar-dark">
+// //     {/* <!-- Control sidebar content goes here --> */}
+// //   </aside>
+// //   {/* <!-- /.control-sidebar --> */}
+// // </div>
+// // {/* <!-- ./wrapper --> */}
+
+// //     </div>
+// <SideBarAnt />
+//   );
+// }
+
+// export default Home;
+
+// import React from "react";
+// import { Layout, theme } from "antd";
+// import SideBarAnt from "../Elements/SideBar-ant";
+// import HeaderAnt from "../Elements/Header-ant";
+// import ContentAnt from "../Elements/Content-ant";
+// import FooterAnt from "../Elements/Footer-ant";
+
+import React, { useState } from "react";
+
+import { Layout, theme } from "antd";
+import SideBarAnt from "../Elements/SideBar-ant";
+import HeaderAnt from "../Elements/Header-ant";
+import FooterAnt from "../Elements/Footer-ant";
+import { useNavigate, Link } from "react-router-dom";
+const { Content } = Layout;
+const Home = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  const navigate = useNavigate();
+  const MenuItemClicked = ({ item, key, keyPath }) => {
+    console.log("Menu ITEM CLICKED");
+    console.log(item);
+    console.log(key);
+    console.log(keyPath);
+    if (key == "1") {
+      navigate("/home");
+    } else if (key == "2") {
+      navigate("/home/ref-income");
+    } else if (key == "3") {
+      navigate("/home/ref-expense");
+    }
+    
+  };
   return (
-    <div className="sidebar-mini">
-      <div className="wrapper">
-        <NavBar/>
-        <SideBar />
-  {/* <!-- Content Wrapper. Contains page content --> */}
-  <div className="content-wrapper">
-    {/* <!-- Main content --> */}
-    {/* <DashBoard /> */}
-     <Routes>
-          
-            <Route exact path='/' element={<DashBoard/>}/>
-            <Route exact path='ref-expense' element={<RefMasExpenseList/>}/>
-            <Route exact path='ref-expense/add' element={<RefMasExpenseForm/>}/>
-            <Route exact path='ref-income' element={<RefMasIncomeList/>}/>
-            <Route exact path='ref-income/add' element={<RefMasIncomeForm/>}/>
+    <Layout
+      style={{
+        minHeight: "100vh",
+      }}
+    >
+      <SideBarAnt collapsed={collapsed} MenuItemClicked={MenuItemClicked} />
+      <Layout>
+        <HeaderAnt setCollapsed={setCollapsed} collapsed={collapsed} />
+        <Content
+          style={{
+            margin: "24px 16px",
+            padding: 24,
+            minHeight: 280,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+          }}
+        >
+          <Routes>
+            <Route exact path="/" element={<DashBoard />} />
+            <Route exact path="ref-expense" element={<RefMasExpenseList />} />
+            <Route
+              exact
+              path="ref-expense/add"
+              element={<RefMasExpenseForm />}
+            />
+            <Route exact path="ref-income" element={<RefMasIncomeList />} />
+            <Route exact path="ref-income/add" element={<RefMasIncomeForm />} />
             {/* Transaction routes */}
-            <Route exact path='transaction-add' element={<TransactionForm/>}/>
-            <Route path='*' element={<NotFound/>}/>
-          
-        </Routes>
-
-    {/* <!-- /.content --> */}
-  </div>
-  {/* <!-- /.content-wrapper --> */}
-
-    <Footer />
-
-  {/* <!-- Control Sidebar --> */}
-  <aside className="control-sidebar control-sidebar-dark">
-    {/* <!-- Control sidebar content goes here --> */}
-  </aside>
-  {/* <!-- /.control-sidebar --> */}
-</div>
-{/* <!-- ./wrapper --> */}
-
-    </div>
+            <Route exact path="transaction-add" element={<TransactionForm />} />
+            {/* <Route path="*" element={<NotFound />} /> */}
+          </Routes>
+        </Content>
+        <FooterAnt />
+      </Layout>
+    </Layout>
   );
-}
-
+};
 export default Home;
