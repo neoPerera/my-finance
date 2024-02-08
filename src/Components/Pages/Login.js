@@ -10,6 +10,7 @@ import {
   Col,
   Typography,
   Spin,
+  message,
 } from "antd";
 import FooterAnt from "../Elements/Footer-ant";
 import Swal from "sweetalert2";
@@ -24,6 +25,7 @@ const LogIn = () => {
   const [password, setPassword] = useState("");
   // const [loading, setLoading] = useState(false); // State for loading spinner
   const [spinning, setSpinning] = React.useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
   };
@@ -51,28 +53,37 @@ const LogIn = () => {
       console.log(response.data);
       if (response.data.message === "Login successful") {
         // Set a value in local storage
-        Swal.fire({
-          title: "Log in successful!",
-          icon: "success",
+        messageApi.open({
+          type: "success",
+          content: "Login successful",
+          onClose: () => {
+            setSpinning(false);
+
+            localStorage.setItem("jwt_token", response.data.token);
+            navigate("/home");
+          },
         });
-        localStorage.setItem("jwt_token", response.data.token);
-        navigate("/home");
       }
     } catch (error) {
       setSpinning(false);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Something went wrong!",
-        footer: '<a href="#">Why do I have this issue?</a>',
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "Oops...",
+      //   text: "Something went wrong!",
+      //   footer: '<a href="#">Why do I have this issue?</a>',
+      // });
+      messageApi.open({
+        type: "error",
+        content: "Something went wrong !",
       });
     } finally {
       setSpinning(false); // Stop loading, whether successful or not
     }
   };
 
-  return (  
+  return (
     <>
+      {contextHolder}
       <Spin spinning={spinning} fullscreen />
       <Layout style={{ minHeight: "100vh" }}>
         <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>

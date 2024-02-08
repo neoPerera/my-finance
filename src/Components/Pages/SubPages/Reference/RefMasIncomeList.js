@@ -3,6 +3,7 @@ import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 // import Swal from "sweetalert2";
 import { Button, Spin, Table } from "antd";
+import Title from "antd/es/typography/Title";
 
 function RefMasIncomeList() {
   const isMounted = useRef(true);
@@ -169,6 +170,7 @@ function RefMasIncomeList() {
     // </>
     <>
       <Spin spinning={spinning} fullscreen />
+      <Title level={2}>Income Master</Title>
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>

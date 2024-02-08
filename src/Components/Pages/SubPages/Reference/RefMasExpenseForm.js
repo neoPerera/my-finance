@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
-import { Button, Form, Input, Space, Spin } from "antd";
+import { Button, Form, Input, Space, Spin, message } from "antd";
+import Title from "antd/es/typography/Title";
 
 const SubmitButton = ({ form, onClick }) => {
   const [submittable, setSubmittable] = React.useState(false);
@@ -44,6 +45,7 @@ function RefMasExpenseForm() {
     strName: "",
   });
   const [spinning, setSpinning] = React.useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const handleInputChange = (e) => {
     setFormData({
@@ -60,22 +62,13 @@ function RefMasExpenseForm() {
     console.log(hasEmptyAttributes);
 
     if (hasEmptyAttributes) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `A field is empty`,
-        footer: '<a href="#">Why do I have this issue?</a>',
+      messageApi.open({
+        type: "error",
+        content: `Has empty fields. Please check`,
       });
       return;
     }
 
-    // const swalInstance = Swal.fire({
-    //   title: "Loading",
-    //   timerProgressBar: true,
-    //   didOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
     setSpinning(true);
     try {
       const response = await Axios.post(
@@ -86,23 +79,18 @@ function RefMasExpenseForm() {
       //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
       // }
       setSpinning(false);
+      form.resetFields();
       console.log("Response:", response.data);
-      Swal.fire({
-        title: "successful!",
-        icon: "success",
-        willClose: () => {
-          // This callback is called when the modal is unmounted
-          // Clean up any resources here if needed
-          navigate("/home/ref-expense");
-        },
+      const key = messageApi.open({
+        type: "success",
+        content: "This is a success message",
+        onClose: () => navigate("/home/ref-expense"),
       });
     } catch (error) {
       console.error("Error:", error.response);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `${error.response.data.error.detail}`,
-        footer: '<a href="#">Why do I have this issue?</a>',
+      messageApi.open({
+        type: "error",
+        content: `${error.response.data.error.detail}`,
       });
       setSpinning(false);
     }
@@ -153,7 +141,9 @@ function RefMasExpenseForm() {
 
   return (
     <>
+      {contextHolder}
       <Spin spinning={spinning} fullscreen />
+      <Title level={2}>Expense Master form</Title>
       <Form
         form={form}
         name="validateOnly"

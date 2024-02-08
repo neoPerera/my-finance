@@ -2,7 +2,8 @@ import React from "react";
 import {
   BookOutlined,
   DashboardOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  TransactionOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 const {  Sider } = Layout;
@@ -25,12 +26,18 @@ const SideBarAnt = ({ collapsed, MenuItemClicked }) => {
           },
           {
             key: "2",
+            icon: <TransactionOutlined />,
+            label: "Transaction",
+            link: "/home/transaction-add"
+          },
+          {
+            key: "3",
             icon: <BookOutlined />,
             label: "Income Master",
             link: "/home/ref-income"
           },
           {
-            key: "3",
+            key: "4",
             icon: <BookOutlined />,
             label: "Expense Master",
             link: "/home/ref-expense"

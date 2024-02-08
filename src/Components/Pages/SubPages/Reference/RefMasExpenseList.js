@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-import { Button, Spin, Table } from "antd";
+import { Breadcrumb, Button, Spin, Table } from "antd";
+import Title from "antd/es/typography/Title";
 
 function RefMasExpenseList() {
   const isMounted = useRef(true);
@@ -75,6 +76,7 @@ function RefMasExpenseList() {
   return (
     <>
       <Spin spinning={spinning} fullscreen />
+      <Title level={2}>Expense Master</Title>
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>
