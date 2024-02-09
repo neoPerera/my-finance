@@ -48,12 +48,12 @@ const SideBarAnt = ({ collapsed, MenuItemClicked }) => {
               
             ]
           },
-          {
-            key: "99",
-            icon: <LogoutOutlined />,
-            label: "Logout",
-            link: "/logout"
-          },
+          // {
+          //   key: "99",
+          //   icon: <LogoutOutlined />,
+          //   label: "Logout",
+          //   link: "/logout"
+          // },
         ]}
       />
     </Sider>

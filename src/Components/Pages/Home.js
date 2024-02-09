@@ -101,7 +101,7 @@ const Home = () => {
     >
       <SideBarAnt collapsed={collapsed} MenuItemClicked={MenuItemClicked} />
       <Layout>
-        <HeaderAnt setCollapsed={setCollapsed} collapsed={collapsed} />
+        <HeaderAnt setCollapsed={setCollapsed} collapsed={collapsed} MenuItemClicked={MenuItemClicked} />
         <Content
           style={{
             margin: "24px 16px",
