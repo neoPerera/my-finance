@@ -73,7 +73,7 @@ import FooterAnt from "../Elements/Footer-ant";
 import { useNavigate, Link } from "react-router-dom";
 const { Content } = Layout;
 const Home = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
