@@ -87,7 +87,7 @@ const LogIn = () => {
       <Spin spinning={spinning} fullscreen />
       <Layout style={{ minHeight: "90vh" }}>
         <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
-          <Col xs={24} sm={12} md={8} lg={6} xl={4}>
+          <Col xs={20} sm={12} md={8} lg={6} xl={4}>
             <Content
               style={{
                 padding: 24,
