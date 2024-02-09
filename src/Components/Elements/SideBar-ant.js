@@ -31,16 +31,22 @@ const SideBarAnt = ({ collapsed, MenuItemClicked }) => {
             link: "/home/transaction-add"
           },
           {
-            key: "3",
-            icon: <BookOutlined />,
-            label: "Income Master",
-            link: "/home/ref-income"
-          },
-          {
-            key: "4",
-            icon: <BookOutlined />,
-            label: "Expense Master",
-            link: "/home/ref-expense"
+            label: "Reference",
+            children:[
+              {
+                key: "3",
+                icon: <BookOutlined />,
+                label: "Income Master",
+                link: "/home/ref-income"
+              },
+              {
+                key: "4",
+                icon: <BookOutlined />,
+                label: "Expense Master",
+                link: "/home/ref-expense"
+              },
+              
+            ]
           },
           {
             key: "99",

@@ -4,7 +4,8 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
-import { Button, Form, Input, Select, Space, Spin,message } from "antd";
+import { Button, Form, Input, Select, Space, Spin, message } from "antd";
+import Title from "antd/es/typography/Title";
 
 const SubmitButton = ({ form, onClick }) => {
   const [submittable, setSubmittable] = React.useState(false);
@@ -54,6 +55,7 @@ function TransactionForm() {
   const [transCats, setTransCats] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
 
   // const error = () => {
   //   messageApi.open({
@@ -120,50 +122,40 @@ function TransactionForm() {
     );
     console.log(formData);
 
-    // if (hasEmptyAttributes) {
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Oops...",
-    //     text: `A field is empty`,
-    //     footer: '<a href="#">Why do I have this issue?</a>',
-    //   });
-    //   return;
-    // }
+    if (hasEmptyAttributes) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: `A field is empty`,
+        footer: '<a href="#">Why do I have this issue?</a>',
+      });
+      return;
+    }
 
-    // const swalInstance = Swal.fire({
-    //   title: "Loading",
-    //   timerProgressBar: true,
-    //   didOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
-    // try {
-    //   const response = await Axios.post(
-    //     `${process.env.REACT_APP_API_URL}api/ref-income/add`,
-    //     formData
-    //   );
-    //   if (swalInstance) {
-    //     swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-    //   }
-    //   console.log("Response:", response.data);
-    //   Swal.fire({
-    //     title: "successful!",
-    //     icon: "success",
-    //     willClose: () => {
-    //       // This callback is called when the modal is unmounted
-    //       // Clean up any resources here if needed
-    //       navigate("/home/ref-income");
-    //     },
-    //   });
-    // } catch (error) {
-    //   console.error("Error:", error.response);
-    //   Swal.fire({
-    //     icon: "error",
-    //     title: "Oops...",
-    //     text: `${error.response.data.error.detail}`,
-    //     footer: '<a href="#">Why do I have this issue?</a>',
-    //   });
-    // }
+    setSpinning(true);
+    try {
+      const response = await Axios.post(
+        `${process.env.REACT_APP_API_URL}api/transaction/add`,
+        formData
+      );
+      //setSpinning(false);
+      console.log("Response:", response.data);
+      messageApi.open({
+        type: "success",
+        content: "Login successful",
+        onClose: () => {
+          setSpinning(false);
+          form.resetFields();
+        },
+      });
+    } catch (error) {
+      console.error("Error:", error.response);
+
+      messageApi.open({
+        type: "error",
+        content: `${error.response.data.error.detail}`,
+      });
+    }
   };
 
   useEffect(() => {
@@ -201,7 +193,10 @@ function TransactionForm() {
 
   return (
     <>
+      {contextHolder}
       <Spin spinning={spinning} fullscreen />
+      <Title level={2}>Transaction form</Title>
+
       <Form
         form={form}
         name="validateOnly"
@@ -234,7 +229,11 @@ function TransactionForm() {
             },
           ]}
         >
-          <Input id="floatAmount" value={formData.floatAmount} onChange={handleInputChange} />
+          <Input
+            id="floatAmount"
+            value={formData.floatAmount}
+            onChange={handleInputChange}
+          />
         </Form.Item>
         {/* strTransType field */}
         <Form.Item
