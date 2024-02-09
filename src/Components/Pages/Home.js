@@ -94,7 +94,7 @@ const Home = () => {
     
   };
   return (
-    <Layout
+    <Layout 
       style={{
         minHeight: "100vh",
       }}

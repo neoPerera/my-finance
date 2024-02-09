@@ -89,7 +89,7 @@ function RefMasIncomeForm() {
       console.log("Response:", response.data);
       messageApi.open({
         type: "success",
-        content: "This is a success message",
+        content: "Successfully saved",
         onClose: () => navigate("/home/ref-income"),
       });
     } catch (error) {

@@ -57,7 +57,7 @@ const LogIn = () => {
           type: "success",
           content: "Login successful",
           onClose: () => {
-            setSpinning(false);
+            // setSpinning(false);
 
             localStorage.setItem("jwt_token", response.data.token);
             navigate("/home");

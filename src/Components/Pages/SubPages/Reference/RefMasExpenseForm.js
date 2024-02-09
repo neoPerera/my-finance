@@ -83,7 +83,7 @@ function RefMasExpenseForm() {
       console.log("Response:", response.data);
       const key = messageApi.open({
         type: "success",
-        content: "This is a success message",
+        content: "Successfully saved",
         onClose: () => navigate("/home/ref-expense"),
       });
     } catch (error) {

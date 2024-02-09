@@ -20,6 +20,10 @@ const { Header } = Layout;
  
 
 const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
+  const iconComponents = {
+    LogoutOutlined: LogoutOutlined,
+    // Add more components as needed
+  };
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -28,7 +32,7 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
     {
       key: "99",
       label: "Log out",
-      icon: <LogoutOutlined />,
+      icon: React.createElement(iconComponents['LogoutOutlined']),
       link: "/logout"
     },
   ];
@@ -66,6 +70,7 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
           }}
         >
           <Dropdown 
+          trigger={['click']}
             menu={{
               items, onClick: MenuItemClicked
             }}

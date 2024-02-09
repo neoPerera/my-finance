@@ -142,7 +142,7 @@ function TransactionForm() {
       console.log("Response:", response.data);
       messageApi.open({
         type: "success",
-        content: "Login successful",
+        content: "Successfully saved",
         onClose: () => {
           setSpinning(false);
           form.resetFields();
