@@ -24,7 +24,7 @@ const ProtectedRoute = () => {
         localStorage.removeItem("jwt_token");
         setAuth(false); // Set to false in case of an error
       }
-    };
+    }; 
 
     checkAuthentication();
   }, [location.pathname]);
