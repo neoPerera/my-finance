@@ -29,36 +29,13 @@ function DashBoard() {
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
   const data = {
-    pie: [
-      { type: "Income", value: 27 },
-      { type: "Expense", value: 25 },
-    ],
-    sankey: [
-      { source1: "INC01", target: "Income", value: 100 },
-      { source1: "INC02", target: "Income", value: 10 },
-      { source1: "Income", target: "EXP01", value: 20 },
-    ],
     transTable: {
-      data: [
-        {
-          key: "1",
-          name: "Mike",
-          age: 32,
-          address: "10 Downing Street",
-        },
-        {
-          key: "2",
-          name: "John",
-          age: 42,
-          address: "10 Downing Street",
-        },
-      ],
       columns: [
-        {
-          title: "Key",
-          dataIndex: "key",
-          key: "Key",
-        },
+        // {
+        //   title: "Key",
+        //   dataIndex: "key",
+        //   key: "Key",
+        // },
         {
           title: "Reason",
           dataIndex: "name",
