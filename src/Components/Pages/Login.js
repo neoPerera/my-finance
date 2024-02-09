@@ -77,7 +77,7 @@ const LogIn = () => {
         content: "Something went wrong !",
       });
     } finally {
-      setSpinning(false); // Stop loading, whether successful or not
+      // setSpinning(false); // Stop loading, whether successful or not
     }
   };
 
