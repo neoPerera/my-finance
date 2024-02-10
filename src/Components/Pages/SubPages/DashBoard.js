@@ -44,7 +44,7 @@ function DashBoard() {
         },
         {
           title: "Amount",
-          dataIndex: "int_amount",
+          dataIndex: "int_amount_char",
           key: "amount",
         },
       ],
