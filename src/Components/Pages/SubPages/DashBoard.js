@@ -3,6 +3,7 @@ import {
   Col,
   Flex,
   Row,
+  Skeleton,
   Space,
   Spin,
   Statistic,
@@ -101,66 +102,72 @@ function DashBoard() {
 
   return (
     <>
-      {/* Uncomment and use Layout if needed */}
-      {/* <Layout> */}
-      {contextHolder}
-      <Spin spinning={spinning} fullscreen />
-      <Flex wrap="wrap" gap="middle">
-        {/* <Row> */}
-        <Col>
-          <Card>
-            {chartData.chart4.length > 0 && (
-              <Statistic
-                title="Account Balance (LKR)"
-                value={chartData.chart4[1]}
-                precision={2}
-                formatter={formatter}
-              />
-            )}
-          </Card>
-          {/* </Layout> */}
-        </Col>
-        <Col>
-          <Card>
-            {chartData.chart1.length > 0 && (
-              <PieChart data={chartData.chart1} />
-            )}
-          </Card>
-        </Col>
-        <Space />
-        <Col>
-          <Card>
-            {chartData.chart2.length > 0 && (
-              <SankeyChart data={chartData.chart2} />
-            )}
-          </Card>
-        </Col>
-        <Col>
-          <Card>
-            {chartData.chart3.length > 0 && (
-              <LiquidChart data={chartData.chart3} />
-            )}
-          </Card>
-          {/* </Layout> */}
-        </Col>
-        <Col>
-          <Card>
-            {chartData.chart4.length > 0 && (
-              <Table
-                size="small"
-                scroll={{
-                  x: 500,
-                  // y: 400,
-                }}
-                dataSource={chartData.chart4[0]}
-                columns={data.transTable.columns}
-              />
-            )}
-          </Card>
-          {/* </Layout> */}
-        </Col>
-        {/* </Row> */}
-      </Flex>
+      {spinning ? (
+        <Skeleton active />
+      ) : (
+        <>
+          {/* Uncomment and use Layout if needed */}
+          {/* <Layout> */}
+          {contextHolder}
+          {/* <Spin spinning={spinning} fullscreen /> */}
+          <Flex wrap="wrap" gap="middle">
+            {/* <Row> */}
+            <Col>
+              <Card>
+                {chartData.chart4.length > 0 && (
+                  <Statistic
+                    title="Account Balance (LKR)"
+                    value={chartData.chart4[1]}
+                    precision={2}
+                    formatter={formatter}
+                  />
+                )}
+              </Card>
+              {/* </Layout> */}
+            </Col>
+            <Col>
+              <Card>
+                {chartData.chart1.length > 0 && (
+                  <PieChart data={chartData.chart1} />
+                )}
+              </Card>
+            </Col>
+            <Space />
+            <Col>
+              <Card>
+                {chartData.chart2.length > 0 && (
+                  <SankeyChart data={chartData.chart2} />
+                )}
+              </Card>
+            </Col>
+            <Col>
+              <Card>
+                {chartData.chart3.length > 0 && (
+                  <LiquidChart data={chartData.chart3} />
+                )}
+              </Card>
+              {/* </Layout> */}
+            </Col>
+            <Col>
+              <Card>
+                {chartData.chart4.length > 0 && (
+                  <Table
+                    size="small"
+                    scroll={{
+                      x: 500,
+                      // y: 400,
+                    }}
+                    dataSource={chartData.chart4[0]}
+                    columns={data.transTable.columns}
+                  />
+                )}
+              </Card>
+              {/* </Layout> */}
+            </Col>
+            {/* </Row> */}
+          </Flex>
+        </>
+      )}
     </>
   );
 }
