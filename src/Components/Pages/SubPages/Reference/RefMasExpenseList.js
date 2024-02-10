@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import Swal from "sweetalert2";
-import { Breadcrumb, Button, Spin, Table } from "antd";
+import { Breadcrumb, Button, Skeleton, Spin, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
 function RefMasExpenseList() {
@@ -75,33 +75,38 @@ function RefMasExpenseList() {
 
   return (
     <>
-      <Spin spinning={spinning} fullscreen />
+      {/* <Spin spinning={spinning} fullscreen /> */}
       <Title level={2}>Expense Master</Title>
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>
-      <Table
-        columns={columns}
-        scroll={{
-          x: 1000,
-          // y: 400,
-        }}
-        // expandable={{
-        //   expandedRowRender: (record) => (
-        //     <p
-        //       style={{
-        //         margin: 0,
-        //       }}
-        //     >
-        //       {record.description}
-        //     </p>
-        //   ),
-        //   rowExpandable: (record) => record.name !== 'Not Expandable',
-        // }}
-        dataSource={expenseList}
-      />
+      {spinning ? (
+        <Skeleton active />
+      ) : (
+        <>
+          <Table
+            columns={columns}
+            scroll={{
+              x: 1000,
+              // y: 400,
+            }}
+            // expandable={{
+            //   expandedRowRender: (record) => (
+            //     <p
+            //       style={{
+            //         margin: 0,
+            //       }}
+            //     >
+            //       {record.description}
+            //     </p>
+            //   ),
+            //   rowExpandable: (record) => record.name !== 'Not Expandable',
+            // }}
+            dataSource={expenseList}
+          />
+        </>
+      )}
     </>
-   
   );
 }
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 // import Swal from "sweetalert2";
-import { Button, Spin, Table } from "antd";
+import { Button, Skeleton, Spin, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
 function RefMasIncomeList() {
@@ -169,31 +169,37 @@ function RefMasIncomeList() {
     //   </section>
     // </>
     <>
-      <Spin spinning={spinning} fullscreen />
+      {/* <Spin spinning={spinning} fullscreen /> */}
       <Title level={2}>Income Master</Title>
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>
-      <Table
-      scroll={{
-        x: 1000,
-        // y: 400,
-      }}
-        columns={columns}
-        // expandable={{
-        //   expandedRowRender: (record) => (
-        //     <p
-        //       style={{
-        //         margin: 0,
-        //       }}
-        //     >
-        //       {record.description}
-        //     </p>
-        //   ),
-        //   rowExpandable: (record) => record.name !== 'Not Expandable',
-        // }}
-        dataSource={incomeList}
-      />
+      {spinning ? (
+        <Skeleton active />
+      ) : (
+        <>
+          <Table
+            scroll={{
+              x: 1000,
+              // y: 400,
+            }}
+            columns={columns}
+            // expandable={{
+            //   expandedRowRender: (record) => (
+            //     <p
+            //       style={{
+            //         margin: 0,
+            //       }}
+            //     >
+            //       {record.description}
+            //     </p>
+            //   ),
+            //   rowExpandable: (record) => record.name !== 'Not Expandable',
+            // }}
+            dataSource={incomeList}
+          />
+        </>
+      )}
     </>
   );
 }
