@@ -86,6 +86,7 @@ function RefMasExpenseList() {
         <>
           <Table
             columns={columns}
+            size="small"
             scroll={{
               x: 1000,
               // y: 400,

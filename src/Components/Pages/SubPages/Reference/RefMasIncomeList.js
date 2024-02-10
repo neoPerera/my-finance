@@ -183,6 +183,7 @@ function RefMasIncomeList() {
               x: 1000,
               // y: 400,
             }}
+            size="small"
             columns={columns}
             // expandable={{
             //   expandedRowRender: (record) => (
