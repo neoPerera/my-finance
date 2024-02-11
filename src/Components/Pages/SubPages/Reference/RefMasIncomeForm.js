@@ -156,7 +156,7 @@ function RefMasIncomeForm() {
     <>
       {contextHolder}
       <Spin spinning={spinning} fullscreen />
-      <Title level={2}>Expense Master form</Title>
+      <Title level={2}>Income Master form</Title>
       <Form
         form={form}
         name="validateOnly"
