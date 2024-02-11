@@ -11,7 +11,7 @@ import RefMasExpenseList from "./SubPages/Reference/RefMasExpenseList";
 import RefMasIncomeList from "./SubPages/Reference/RefMasIncomeList";
 import RefMasIncomeForm from "./SubPages/Reference/RefMasIncomeForm";
 import TransactionForm from "./SubPages/Transaction/TransactionsForm";
-import { Layout, theme } from "antd";
+import { Layout, Skeleton, theme } from "antd";
 import SideBarAnt from "../Elements/SideBar-ant";
 import HeaderAnt from "../Elements/Header-ant";
 import FooterAnt from "../Elements/Footer-ant";
@@ -52,13 +52,13 @@ const Home = () => {
   } = theme.useToken();
   const [responseData, setResponseData] = useState([]);
   const [sideBarFormData, setSideBarFormFormData] = useState([]);
-  const [spinning, setSpinning] = React.useState(false);
+  const [spinning, setSpinning] = React.useState(true);
   const [routeList, setRouteList] = React.useState([]);
 
   useEffect(() => {
+    setSpinning(true);
     const getForms = async () => {
       console.log("Getting Exp Seq");
-
       try {
         const response = await Axios.get(
           `${process.env.REACT_APP_API_URL}api/home/getForms`
@@ -133,6 +133,9 @@ const Home = () => {
     // Update the state with the formatted data
     setSideBarFormFormData(formattedData);
     setRouteList(formattedRoutes);
+    if (formattedRoutes) {
+      setSpinning(false);
+    }
   }, [responseData]);
 
   const navigate = useNavigate();
@@ -180,7 +183,11 @@ const Home = () => {
           }}
         >
           {/* DashBoard,RefMasExpenseList,RefMasExpenseForm,RefMasIncomeList,RefMasIncomeForm,TransactionForm */}
-          <UserRoutes routeList={routeList} />
+          {spinning ? (
+            <Skeleton active />
+          ) : (
+            <UserRoutes routeList={routeList} />
+          )}
         </Content>
         <FooterAnt />
       </Layout>
