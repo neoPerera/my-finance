@@ -17,11 +17,9 @@ import FooterAnt from "./Footer-ant";
 
 const { Header } = Layout;
 
- 
-
-const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
+const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked }) => {
   const iconComponents = {
-    LogoutOutlined: LogoutOutlined,
+    LogoutOutlined,
     // Add more components as needed
   };
   const {
@@ -32,8 +30,8 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
     {
       key: "99",
       label: "Log out",
-      icon: React.createElement(iconComponents['LogoutOutlined']),
-      link: "/logout"
+      icon: React.createElement(iconComponents["LogoutOutlined"]),
+      link: "/logout",
     },
   ];
 
@@ -47,7 +45,10 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
       style={{
         padding: 0,
         background: colorBgContainer,
-        position: "relative", // Ensure the container is positioned
+        // position: "relative", // Ensure the container is positioned
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
       }}
     >
       <Row style={{ width: "100%" }}>
@@ -69,10 +70,11 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
             top: 0, // Add top: 0 to align with the top of the container
           }}
         >
-          <Dropdown 
-          trigger={['click']}
+          <Dropdown
+            trigger={["click"]}
             menu={{
-              items, onClick: MenuItemClicked
+              items,
+              onClick: MenuItemClicked,
             }}
             placement="topRight"
           >
@@ -81,7 +83,7 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked}) => {
                 fontSize: "16px",
                 width: 64,
                 height: 64,
-                border: 0
+                border: 0,
               }}
             >
               <UserOutlined />

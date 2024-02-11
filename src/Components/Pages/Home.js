@@ -3,14 +3,19 @@
 // import SideBar from '../Elements/SideBar';
 // import NotFound from './404';
 // import LogIn from './Login';
-import DashBoard from './SubPages/DashBoard';
-import { BrowserRouter as Router, Route, Routes,Outlet } from 'react-router-dom';
-import RefMasExpenseForm from './SubPages/Reference/RefMasExpenseForm';
-import RefMasExpenseList from './SubPages/Reference/RefMasExpenseList';
-import ProtectedRoute from '../Mechanisms/ProtectedRoute';
-import RefMasIncomeList from './SubPages/Reference/RefMasIncomeList';
-import RefMasIncomeForm from './SubPages/Reference/RefMasIncomeForm';
-import TransactionForm from './SubPages/Transaction/TransactionsForm';
+import DashBoard from "./SubPages/DashBoard";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Outlet,
+} from "react-router-dom";
+import RefMasExpenseForm from "./SubPages/Reference/RefMasExpenseForm";
+import RefMasExpenseList from "./SubPages/Reference/RefMasExpenseList";
+import ProtectedRoute from "../Mechanisms/ProtectedRoute";
+import RefMasIncomeList from "./SubPages/Reference/RefMasIncomeList";
+import RefMasIncomeForm from "./SubPages/Reference/RefMasIncomeForm";
+import TransactionForm from "./SubPages/Transaction/TransactionsForm";
 // import SideBarAnt from '../Elements/SideBar-ant';
 // function Home() {
 //   return (
@@ -91,17 +96,22 @@ const Home = () => {
     // } else if (key == "3") {
     //   navigate("/home/ref-expense");
     // }
-    
   };
   return (
-    <Layout 
+    <Layout
       style={{
         minHeight: "100vh",
       }}
     >
       <SideBarAnt collapsed={collapsed} MenuItemClicked={MenuItemClicked} />
-      <Layout>
-        <HeaderAnt setCollapsed={setCollapsed} collapsed={collapsed} MenuItemClicked={MenuItemClicked} />
+      <Layout 
+      // style={{ marginLeft: 80 }}
+      >
+        <HeaderAnt
+          setCollapsed={setCollapsed}
+          collapsed={collapsed}
+          MenuItemClicked={MenuItemClicked}
+        />
         <Content
           style={{
             margin: "24px 16px",
