@@ -230,6 +230,7 @@ function TransactionForm() {
           ]}
         >
           <Input
+            type="number"
             id="floatAmount"
             value={formData.floatAmount}
             onChange={handleInputChange}
