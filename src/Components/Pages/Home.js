@@ -16,59 +16,6 @@ import ProtectedRoute from "../Mechanisms/ProtectedRoute";
 import RefMasIncomeList from "./SubPages/Reference/RefMasIncomeList";
 import RefMasIncomeForm from "./SubPages/Reference/RefMasIncomeForm";
 import TransactionForm from "./SubPages/Transaction/TransactionsForm";
-// import SideBarAnt from '../Elements/SideBar-ant';
-// function Home() {
-//   return (
-// //     <div className="sidebar-mini">
-// //       <div className="wrapper">
-
-// //         <NavBar/>
-// //         {/* <SideBar /> */}
-// //   {/* <!-- Content Wrapper. Contains page content --> */}
-// //   <div className="content-wrapper">
-// //     {/* <!-- Main content --> */}
-// //     {/* <DashBoard /> */}
-// //      <Routes>
-
-// //             <Route exact path='/' element={<DashBoard/>}/>
-// //             <Route exact path='ref-expense' element={<RefMasExpenseList/>}/>
-// //             <Route exact path='ref-expense/add' element={<RefMasExpenseForm/>}/>
-// //             <Route exact path='ref-income' element={<RefMasIncomeList/>}/>
-// //             <Route exact path='ref-income/add' element={<RefMasIncomeForm/>}/>
-// //             {/* Transaction routes */}
-// //             <Route exact path='transaction-add' element={<TransactionForm/>}/>
-// //             <Route path='*' element={<NotFound/>}/>
-
-// //         </Routes>
-
-// //     {/* <!-- /.content --> */}
-// //   </div>
-// //   {/* <!-- /.content-wrapper --> */}
-
-// //     <Footer />
-
-// //   {/* <!-- Control Sidebar --> */}
-// //   <aside className="control-sidebar control-sidebar-dark">
-// //     {/* <!-- Control sidebar content goes here --> */}
-// //   </aside>
-// //   {/* <!-- /.control-sidebar --> */}
-// // </div>
-// // {/* <!-- ./wrapper --> */}
-
-// //     </div>
-// <SideBarAnt />
-//   );
-// }
-
-// export default Home;
-
-// import React from "react";
-// import { Layout, theme } from "antd";
-// import SideBarAnt from "../Elements/SideBar-ant";
-// import HeaderAnt from "../Elements/Header-ant";
-// import ContentAnt from "../Elements/Content-ant";
-// import FooterAnt from "../Elements/Footer-ant";
-
 import React, { useState } from "react";
 
 import { Layout, theme } from "antd";
@@ -76,6 +23,7 @@ import SideBarAnt from "../Elements/SideBar-ant";
 import HeaderAnt from "../Elements/Header-ant";
 import FooterAnt from "../Elements/Footer-ant";
 import { useNavigate, Link } from "react-router-dom";
+import NotFound from "./404";
 const { Content } = Layout;
 const Home = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -133,7 +81,7 @@ const Home = () => {
             <Route exact path="ref-income/add" element={<RefMasIncomeForm />} />
             {/* Transaction routes */}
             <Route exact path="transaction-add" element={<TransactionForm />} />
-            {/* <Route path="*" element={<NotFound />} /> */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </Content>
         <FooterAnt />
