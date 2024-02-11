@@ -4,6 +4,8 @@ import {
   DashboardOutlined,
   LogoutOutlined,
   TransactionOutlined,
+  DeliveredProcedureOutlined,
+  FastForwardOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import Axios from "axios";
@@ -17,6 +19,8 @@ const SideBarAnt = ({ collapsed, MenuItemClicked }) => {
     DashboardOutlined,
     LogoutOutlined,
     TransactionOutlined,
+    DeliveredProcedureOutlined,
+    FastForwardOutlined
     // Add more components as needed
   };
 
