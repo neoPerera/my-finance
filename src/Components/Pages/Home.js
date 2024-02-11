@@ -123,7 +123,7 @@ const Home = () => {
         return;
       }
       const formattedRouteItem = {
-        path: item.str_link.substring("/home".length),
+        path: item.str_link.replace(/^\/home/, ""),
         element: item.str_component,
       };
 
@@ -204,7 +204,6 @@ const UserRoutes = ({ routeList }) => {
           element={React.createElement(arrComponents[route.element])}
         />
       ))}
-      
     </Routes>
   );
 };
