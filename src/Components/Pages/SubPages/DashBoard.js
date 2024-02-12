@@ -25,7 +25,7 @@ function DashBoard() {
     chart1: [],
     chart2: [],
     chart3: [],
-    chart4: [],
+    chart4: [[],0],
     chart4_cols: [],
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
@@ -150,7 +150,7 @@ function DashBoard() {
             </Col>
             <Col>
               <Card>
-                {chartData.chart4.length > 0 && (
+                {chartData.chart4[0].length > 0 && (
                   <Table
                     size="small"
                     scroll={{
