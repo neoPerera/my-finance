@@ -248,11 +248,21 @@ const SankeyChart = ({ data }) => {
 
 const LiquidChart = ({ data }) => {
   const [chartInstance, setChartInstance] = React.useState(null);
-  const inc = Math.round(data[1]?.value || 0);
-  const exp = Math.round(data[0]?.value || 0);
+  // const inc = Math.round(data[1]?.value || 0);
+  // const exp = Math.round(data[0]?.value || 0);
+  let inc = 0;
+  let exp = 0;
+
+  data.forEach(item => {
+    if (item.type === 'INC') {
+      inc += item.value;
+    } else if (item.type === 'EXP') {
+      exp += item.value;
+    }
+  });
 
   const val = (inc - exp) / inc;
-  console.log(val);
+  console.log(`Percentage=>${val};Income==>${inc};expence==>${exp};data==>${data}`);
   React.useEffect(() => {
     if (!chartInstance) {
       const chart = new Liquid("container3", {
