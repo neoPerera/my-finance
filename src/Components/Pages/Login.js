@@ -60,6 +60,7 @@ const LogIn = () => {
             // setSpinning(false);
 
             localStorage.setItem("jwt_token", response.data.token);
+            localStorage.setItem("username", username);
             navigate("/home");
           },
         });
