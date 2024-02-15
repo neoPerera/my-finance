@@ -105,7 +105,7 @@ function TransactionForm() {
       setTransCats(
         response.data.map((item) => ({
           label: item.str_name,
-          value: item.str_id,
+          value: item.key,
         }))
       );
       setSpinning(false);
