@@ -117,8 +117,8 @@ function DashBoard() {
           {/* <Spin spinning={spinning} fullscreen /> */}
           <Flex wrap="wrap" gap="middle">
             {/* <Row> */}
-            <Col>
-              <Card>
+            <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+              <Card title="Account Balance">
                 {/* {chartData.chart4.length > 0 && (
                   <Statistic
                     title="Account Balance (LKR)"
@@ -143,31 +143,31 @@ function DashBoard() {
               </Card>
               {/* </Layout> */}
             </Col>
-            <Col>
-              <Card>
+            <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+              <Card title="Expense Pie Chart">
                 {chartData.chart1.length > 0 && (
                   <PieChart data={chartData.chart1} />
                 )}
               </Card>
             </Col>
             <Space />
-            <Col>
-              <Card>
+            <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+              <Card title="Transaction Flow">
                 {chartData.chart2.length > 0 && (
                   <SankeyChart data={chartData.chart2} />
                 )}
               </Card>
             </Col>
-            <Col>
-              <Card>
+            <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+              <Card title="Cash account">
                 {chartData.chart3.length > 0 && (
                   <LiquidChart data={chartData.chart3} />
                 )}
               </Card>
               {/* </Layout> */}
             </Col>
-            <Col>
-              <Card>
+            <Col xs={20} sm={12} md={8} lg={6} xl={7}>
+              <Card title="Transactions">
                 {chartData.chart4[0].length > 0 && (
                   <Table
                     size="small"
