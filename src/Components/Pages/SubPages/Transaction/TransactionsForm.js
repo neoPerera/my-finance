@@ -49,9 +49,11 @@ function TransactionForm() {
     strName: "",
     strTransType: "",
     strTransCat: "",
+    strAccount: "",
   });
   const [transTypes, setTransTypes] = useState([]);
   const [isTransCatDisabled, setTransCatDisabled] = useState(true);
+  const [accounts, setAccounts] = useState([]);
   const [transCats, setTransCats] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -85,6 +87,10 @@ function TransactionForm() {
 
   const handleSelectCats = (value) => {
     setFormData({ ...formData, strTransCat: value });
+  };
+
+  const handleSelectAccount = (value) => {
+    setFormData({ ...formData, strAccount: value });
   };
 
   const handleSelectTrans = async (value) => {
@@ -181,7 +187,8 @@ function TransactionForm() {
           strId: response.data.sequence_id.toString(),
         });
 
-        setTransTypes(response.data.trans_types);
+        setTransTypes(response.data.trans_types[0]);
+        setAccounts(response.data.accounts[0]);
         // setIsIdEditable(false);
       } catch (error) {
         console.error("Error:", error);
@@ -236,6 +243,28 @@ function TransactionForm() {
             onChange={handleInputChange}
           />
         </Form.Item>
+        {/* Account selection */}
+        <Form.Item
+          name="strAccount"
+          label="Account"
+          rules={[
+            {
+              required: true,
+            },
+          ]}
+        >
+          <Select
+            showSearch
+            placeholder="Select an Account"
+            optionFilterProp="children"
+            onSelect={handleSelectAccount}
+            // onChange={onChange}
+            // onSearch={onSearch}
+            filterOption={filterOption}
+            options={accounts}
+          />
+        </Form.Item>
+
         {/* strTransType field */}
         <Form.Item
           name="strTransType"

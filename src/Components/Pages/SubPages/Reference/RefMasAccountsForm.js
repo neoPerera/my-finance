@@ -72,7 +72,7 @@ function RefMasAccountsForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${process.env.REACT_APP_API_URL}api/ref-expense/add`,
+        `${process.env.REACT_APP_API_URL}api/ref-accounts/add`,
         formData
       );
       // if (swalInstance) {
@@ -84,7 +84,7 @@ function RefMasAccountsForm() {
       const key = messageApi.open({
         type: "success",
         content: "Successfully saved",
-        onClose: () => navigate("/home/ref-expense"),
+        onClose: () => navigate("/home/ref-accounts"),
       });
     } catch (error) {
       console.error("Error:", error.response);

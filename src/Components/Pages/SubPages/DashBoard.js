@@ -25,7 +25,7 @@ function DashBoard() {
     chart1: [],
     chart2: [],
     chart3: [],
-    chart4: [[],0],
+    chart4: [[], 0],
     chart4_cols: [],
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
@@ -37,6 +37,11 @@ function DashBoard() {
         //   dataIndex: "key",
         //   key: "Key",
         // },
+        {
+          title: "Account",
+          dataIndex: "account",
+          key: "account",
+        },
         {
           title: "Reason",
           dataIndex: "name",
@@ -114,13 +119,26 @@ function DashBoard() {
             {/* <Row> */}
             <Col>
               <Card>
-                {chartData.chart4.length > 0 && (
+                {/* {chartData.chart4.length > 0 && (
                   <Statistic
                     title="Account Balance (LKR)"
                     value={chartData.chart4[1]}
                     precision={2}
                     formatter={formatter}
                   />
+                )} */}
+                {chartData.chart4[1].length > 0 && (
+                  <>
+                    {chartData.chart4[1].map((item) => (
+                      <Statistic
+                        key={item.account_name} // Assuming account_name is a unique identifier
+                        title={`${item.account_name} Balance (LKR)`} // Corrected title syntax
+                        value={item.account_balance}
+                        precision={2}
+                        formatter={formatter}
+                      />
+                    ))}
+                  </>
                 )}
               </Card>
               {/* </Layout> */}
@@ -253,16 +271,18 @@ const LiquidChart = ({ data }) => {
   let inc = 0;
   let exp = 0;
 
-  data.forEach(item => {
-    if (item.type === 'INC') {
+  data.forEach((item) => {
+    if (item.type === "INC") {
       inc += item.value;
-    } else if (item.type === 'EXP') {
+    } else if (item.type === "EXP") {
       exp += item.value;
     }
   });
 
   const val = (inc - exp) / inc;
-  console.log(`Percentage=>${val};Income==>${inc};expence==>${exp};data==>${data}`);
+  console.log(
+    `Percentage=>${val};Income==>${inc};expence==>${exp};data==>${data}`
+  );
   React.useEffect(() => {
     if (!chartInstance) {
       const chart = new Liquid("container3", {
