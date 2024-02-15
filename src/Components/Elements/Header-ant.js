@@ -21,18 +21,19 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked }) => {
   const [socket, setSocket] = useState(null);
   const [notificationList, setNotificationList] = useState([]);
   const [mappedNotificationArray, setMappedNotificationArray] = useState([]);
-  useEffect(() => {
-    console.log(
-      `Notification API ==>${process.env.REACT_APP_NOTIFICATION_API}`
-    );
-    let socket = io(process.env.REACT_APP_NOTIFICATION_API);
-    socket.emit("join", { username: localStorage.getItem("username") });
-    socket.on("notification", (props) => {
-      console.log("Received notification");
-      setNotificationList((items) => [...items, props]);
-    });
-    setSocket(socket);
-  }, []);
+//can re use . commenting temporarily
+  // useEffect(() => {
+  //   console.log(
+  //     `Notification API ==>${process.env.REACT_APP_NOTIFICATION_API}`
+  //   );
+  //   let socket = io(process.env.REACT_APP_NOTIFICATION_API);
+  //   socket.emit("join", { username: localStorage.getItem("username") });
+  //   socket.on("notification", (props) => {
+  //     console.log("Received notification");
+  //     setNotificationList((items) => [...items, props]);
+  //   });
+  //   setSocket(socket);
+  // }, []);
 
   useEffect(() => {
     const mappedNotifications = notificationList.map((item, index) => ({
