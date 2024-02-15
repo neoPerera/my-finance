@@ -13,8 +13,8 @@ function RefMasIncomeList() {
   const columns = [
     {
       title: "ID",
-      dataIndex: "str_id",
-      key: "str_id",
+      dataIndex: "key",
+      key: "key",
       // responsive: ['md'],
     },
     {

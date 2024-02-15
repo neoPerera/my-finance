@@ -25,7 +25,10 @@ import {
   TransactionOutlined,
   DeliveredProcedureOutlined,
   FastForwardOutlined,
+  AccountBookOutlined
 } from "@ant-design/icons";
+import RefMasAccountsList from "./SubPages/Reference/RefMasAccountsList";
+import RefMasAccountsForm from "./SubPages/Reference/RefMasAccountsForm";
 
 const { Content } = Layout;
 const arrComponents = {
@@ -35,6 +38,7 @@ const arrComponents = {
   TransactionOutlined,
   DeliveredProcedureOutlined,
   FastForwardOutlined,
+  AccountBookOutlined,
   DashBoard,
   RefMasExpenseList,
   RefMasExpenseForm,
@@ -42,6 +46,8 @@ const arrComponents = {
   RefMasIncomeForm,
   TransactionForm,
   NotFound,
+  RefMasAccountsList,
+  RefMasAccountsForm
   // Add more components as needed
 };
 

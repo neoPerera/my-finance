@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { Breadcrumb, Button, Skeleton, Spin, Table } from "antd";
 import Title from "antd/es/typography/Title";
 
-function RefMasExpenseList() {
+function RefMasAccountsList() {
   const isMounted = useRef(true);
   const [expenseList, setExpenseList] = useState([]);
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ function RefMasExpenseList() {
   ];
 
   const handleAdd = () => {
-    navigate("/home/ref-expense/add");
+    navigate("/home/ref-accounts/add");
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ function RefMasExpenseList() {
       try {
         console.log(process.env.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/ref-expense/getexpense`
+          `${process.env.REACT_APP_API_URL}api/ref-accounts/getaccounts`
         );
 
         console.log("Expense List Data:", response.data);
@@ -76,7 +76,7 @@ function RefMasExpenseList() {
   return (
     <>
       {/* <Spin spinning={spinning} fullscreen /> */}
-      <Title level={2}>Expense Master</Title>
+      <Title level={2}>Accounts Master</Title>
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>
@@ -111,4 +111,4 @@ function RefMasExpenseList() {
   );
 }
 
-export default RefMasExpenseList;
+export default RefMasAccountsList;
