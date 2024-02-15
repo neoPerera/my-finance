@@ -177,6 +177,7 @@ function DashBoard() {
                     }}
                     dataSource={chartData.chart4[0]}
                     columns={data.transTable.columns}
+                    pagination={{pageSize: 10}}
                   />
                 )}
               </Card>
