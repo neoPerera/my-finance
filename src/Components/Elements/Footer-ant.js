@@ -10,6 +10,7 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
+import { Link } from 'react-router-dom';
 const { Header, Content, Footer, Sider } = Layout;
 const items = [
   UserOutlined,
@@ -35,7 +36,7 @@ const FooterAnt = () => {
             textAlign: 'center',
           }}
         >
-          NEO Design ©{new Date().getFullYear()}
+          <Link to="https:www.chanuthperera.com"> NEO Design</Link> ©{new Date().getFullYear()}
         </Footer>
 
   );
