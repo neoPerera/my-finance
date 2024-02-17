@@ -1,31 +1,8 @@
 import React from "react";
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-} from "@ant-design/icons";
 import { Layout, Menu, theme } from "antd";
 import { Link } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
-const items = [
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  AppstoreOutlined,
-  TeamOutlined,
-  ShopOutlined,
-].map((icon, index) => ({
-  key: String(index + 1),
-  icon: React.createElement(icon),
-  label: `nav ${index + 1}`,
-}));
+
 const FooterAnt = () => {
   const {
     token: { colorBgContainer, borderRadiusLG },
@@ -34,6 +11,8 @@ const FooterAnt = () => {
     <Footer
       style={{
         textAlign: "center",
+        // position: "relative",
+        // bottom: 93
       }}
     >
       <Link

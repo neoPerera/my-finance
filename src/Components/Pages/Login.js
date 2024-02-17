@@ -67,12 +67,6 @@ const LogIn = () => {
       }
     } catch (error) {
       setSpinning(false);
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "Oops...",
-      //   text: "Something went wrong!",
-      //   footer: '<a href="#">Why do I have this issue?</a>',
-      // });
       messageApi.open({
         type: "error",
         content: "Something went wrong !",
@@ -83,10 +77,10 @@ const LogIn = () => {
   };
 
   return (
-    <>
+    <div>
       {contextHolder}
       <Spin spinning={spinning} fullscreen />
-      <Layout style={{ minHeight: "90vh" }}>
+      <Layout style={{ height: "90vh" }}>
         <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
           <Col xs={20} sm={12} md={8} lg={6} xl={4}>
             <Content
@@ -161,9 +155,11 @@ const LogIn = () => {
             </Content>
           </Col>
         </Row>
-        <FooterAnt />
+        <div style={{ position: "relative", bottom: 95 }}>
+          <FooterAnt />
+        </div>
       </Layout>
-    </>
+    </div>
   );
 };
 

@@ -57,6 +57,7 @@ function TransactionForm() {
   const [transCats, setTransCats] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [reloeadCompoenet, setReloadCompoenet] = useState(0);
   const navigate = useNavigate();
 
   // const error = () => {
@@ -152,6 +153,7 @@ function TransactionForm() {
         onClose: () => {
           setSpinning(false);
           form.resetFields();
+          setReloadCompoenet(reloeadCompoenet+1);
         },
       });
     } catch (error) {
@@ -196,7 +198,7 @@ function TransactionForm() {
     };
 
     getSequence();
-  }, []);
+  }, [reloeadCompoenet]);
 
   return (
     <>

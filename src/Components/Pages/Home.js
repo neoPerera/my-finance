@@ -1,8 +1,3 @@
-// import Footer from '../Elements/Footer';
-// import NavBar from '../Elements/NavBar';
-// import SideBar from '../Elements/SideBar';
-// import NotFound from './404';
-// import LogIn from './Login';
 import DashBoard from "./SubPages/DashBoard";
 import Axios from "axios";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
