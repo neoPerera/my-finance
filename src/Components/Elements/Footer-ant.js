@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -8,9 +8,9 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
-} from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
-import { Link } from 'react-router-dom';
+} from "@ant-design/icons";
+import { Layout, Menu, theme } from "antd";
+import { Link } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
 const items = [
   UserOutlined,
@@ -31,14 +31,20 @@ const FooterAnt = () => {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
   return (
-        <Footer
-          style={{
-            textAlign: 'center',
-          }}
-        >
-          <Link to="https:www.chanuthperera.com"> NEO Design</Link> ©{new Date().getFullYear()}
-        </Footer>
-
+    <Footer
+      style={{
+        textAlign: "center",
+      }}
+    >
+      <Link
+        to="https://www.chanuthperera.com"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        NEO Design
+      </Link>
+      ©{new Date().getFullYear()}
+    </Footer>
   );
 };
 export default FooterAnt;
