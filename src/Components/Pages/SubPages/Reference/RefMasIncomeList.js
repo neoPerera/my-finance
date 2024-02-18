@@ -1,3 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// Income master list
+// Developped by Chanuth Perera
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
@@ -17,18 +23,17 @@ import Title from "antd/es/typography/Title";
 import EditableCell from "../../../Elements/EditableCell";
 
 function RefMasIncomeList() {
-  const isMounted = useRef(true);
-  const [incomeList, setIncomeList] = useState([]);
+  //varaible section
   const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [incomeList, setIncomeList] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
   const [dataLoading, setDataLoading] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
-  //editable table and table related
-  const [form] = Form.useForm();
   const [editingKey, setEditingKey] = useState("");
   const isEditing = (record) => record.key === editingKey;
 
+  //function section
   const edit = (record) => {
     console.log(record);
     form.setFieldsValue({
@@ -156,6 +161,8 @@ function RefMasIncomeList() {
   const handleAdd = () => {
     navigate("/home/ref-income/add");
   };
+
+  //use effects
   useEffect(() => {
     setDataLoading(true);
     const fetchData = async () => {
