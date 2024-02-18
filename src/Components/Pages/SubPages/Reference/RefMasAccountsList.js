@@ -52,7 +52,7 @@ function RefMasAccountsList() {
       try {
         console.log(process.env.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/ref-accounts/getaccounts`
+          `${process.env.REACT_APP_API_URL}api/reference/ref-accounts/getaccounts`
         );
 
         console.log("Expense List Data:", response.data);

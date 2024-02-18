@@ -98,9 +98,9 @@ function TransactionForm() {
     console.log(value);
     var strTransCatURL = "";
     if (value == "INC") {
-      strTransCatURL = "api/ref-income/getincome";
+      strTransCatURL = "api/reference/ref-income/getincome";
     } else if (value == "EXP") {
-      strTransCatURL = "api/ref-expense/getexpense";
+      strTransCatURL = "api/reference/ref-expense/getexpense";
     }
     setFormData({ ...formData, strTransType: value });
     setSpinning(true);

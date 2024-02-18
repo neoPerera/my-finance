@@ -54,7 +54,7 @@ function RefMasIncomeList() {
       try {
         console.log(process.env.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/ref-income/getincome`
+          `${process.env.REACT_APP_API_URL}api/reference/ref-income/getincome`
         );
 
         console.log("income List Data:", response.data);

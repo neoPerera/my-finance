@@ -72,7 +72,7 @@ function RefMasAccountsForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${process.env.REACT_APP_API_URL}api/ref-accounts/add`,
+        `${process.env.REACT_APP_API_URL}api/reference/reference/ref-accounts/add`,
         formData
       );
       // if (swalInstance) {
@@ -114,7 +114,7 @@ function RefMasAccountsForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/ref-accounts/getsequence`
+          `${process.env.REACT_APP_API_URL}api/reference/ref-accounts/getsequence`
         );
         console.log(response);
         // if (swalInstance) {
