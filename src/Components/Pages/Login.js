@@ -61,6 +61,9 @@ const LogIn = () => {
 
             localStorage.setItem("jwt_token", response.data.token);
             localStorage.setItem("username", username);
+            const currentTime = new Date().getTime();
+            localStorage.setItem("lastLoginTime", currentTime.toString());
+
             navigate("/home");
           },
         });
