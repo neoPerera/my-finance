@@ -10,6 +10,7 @@ const ProtectedRoute = () => {
 
   useEffect(() => {
     const jwtToken = localStorage.getItem("jwt_token");
+    const lastLoginTime = localStorage.getItem("lastLoginTime");
 
     const checkAuthentication = async () => {
       try {
@@ -19,12 +20,29 @@ const ProtectedRoute = () => {
         } else {
           setAuth(false); // No token, set to false
         }
+
+        if (lastLoginTime) {
+          const twoHoursInMilliseconds = 2 * 60 * 60 * 1000;
+          const currentTime = new Date().getTime();
+          const storedTime = parseInt(lastLoginTime, 10);
+          console.log(`${twoHoursInMilliseconds} ${currentTime} ${storedTime}`);
+          console.log(currentTime - storedTime);
+          console.log('Original Time:', new Date(currentTime).toLocaleString());
+          console.log('lAST lOGIN Time:', new Date(storedTime).toLocaleString());
+          if (currentTime - storedTime > twoHoursInMilliseconds) {
+            console.log("Last login time has exceeded 2 hours.");
+            setAuth(false); // No token, set to false
+            localStorage.removeItem("jwt_token");
+          } else {
+            console.log("Last login time is within 2 hours.");
+          }
+        }
       } catch (error) {
         console.error("Authentication failed:", error);
         localStorage.removeItem("jwt_token");
         setAuth(false); // Set to false in case of an error
       }
-    }; 
+    };
 
     checkAuthentication();
   }, [location.pathname]);
