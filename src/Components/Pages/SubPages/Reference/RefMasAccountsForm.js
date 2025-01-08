@@ -72,7 +72,7 @@ function RefMasAccountsForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${process.env.REACT_APP_API_URL}api/reference/reference/ref-accounts/add`,
+        `${process.env.REACT_APP_API_URL}api/reference/ref-accounts/add`,
         formData
       );
       // if (swalInstance) {
