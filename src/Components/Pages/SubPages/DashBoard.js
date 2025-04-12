@@ -26,7 +26,6 @@ function DashBoard() {
     chart2: [],
     chart3: [],
     chart4: [[], 0],
-    chart4_cols: [],
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
   const data = {
@@ -83,7 +82,6 @@ function DashBoard() {
           chart2: newData.chart2[0] || [],
           chart3: newData.chart3[0] || [],
           chart4: newData.chart4 || [],
-          chart4_cols: newData.chart4_cols[0] || [],
         });
         console.log(newData);
         // if (swalInstance) {
