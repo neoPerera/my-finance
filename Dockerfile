@@ -6,20 +6,22 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-COPY env.js /usr/share/nginx/html/env.js
 COPY . .
 RUN npm run build
 
 # Step 2: Serve React app with NGINX
 FROM nginx:alpine
 
-# Copy the build into the NGINX image
+# Copy build output to NGINX public folder
 COPY --from=build /app/build /usr/share/nginx/html
 
-# Copy the NGINX configuration file
+# Copy a default NGINX config if you have custom settings
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Optional: Copy placeholder env.js (or inject it via volume later)
+#COPY env.js /usr/share/nginx/html/env.js
 
 EXPOSE 80
 
-# Command to run NGINX
-CMD envsubst '$REACT_APP_API_URL' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'
+# Start NGINX
+CMD ["nginx", "-g", "daemon off;"]
