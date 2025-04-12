@@ -50,9 +50,9 @@ function RefMasExpenseList() {
     // });
     const fetchData = async () => {
       try {
-        console.log(process.env.REACT_APP_API_URL);
+        console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/reference/ref-expense/getexpense`
+          `${window.env?.REACT_APP_API_URL}api/reference/ref-expense/getexpense`
         );
 
         console.log("Expense List Data:", response.data);

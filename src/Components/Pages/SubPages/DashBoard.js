@@ -68,9 +68,9 @@ function DashBoard() {
     const fetchData = async () => {
       setSpinning(true);
       try {
-        console.log(process.env.REACT_APP_API_URL);
+        console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/dashboard`
+          `${window.env?.REACT_APP_API_URL}api/dashboard`
         );
 
         console.log("income List Data:", response.data);

@@ -62,7 +62,7 @@ const Home = () => {
       console.log("Getting Exp Seq");
       try {
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/home/getForms`
+          `${window.env?.REACT_APP_API_URL}api/home/getForms`
         );
 
         // Assuming the fetched data is an array

@@ -56,7 +56,7 @@ function RefMasIncomeList() {
       console.log(row);
       try {
         const response = await Axios.post(
-          `${process.env.REACT_APP_API_URL}api/reference/ref-income/update`,
+          `${window.env?.REACT_APP_API_URL}api/reference/ref-income/update`,
           row
         );
         messageApi.open({
@@ -167,9 +167,9 @@ function RefMasIncomeList() {
     setDataLoading(true);
     const fetchData = async () => {
       try {
-        console.log(process.env.REACT_APP_API_URL);
+        console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/reference/ref-income/getincome`
+          `${window.env?.REACT_APP_API_URL}api/reference/ref-income/getincome`
         );
 
         console.log("income List Data:", response.data);

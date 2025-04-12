@@ -106,7 +106,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.get(
-        `${process.env.REACT_APP_API_URL}${strTransCatURL}`
+        `${window.env?.REACT_APP_API_URL}${strTransCatURL}`
       );
       console.log(response);
       setTransCats(
@@ -142,7 +142,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${process.env.REACT_APP_API_URL}api/transaction/add`,
+        `${window.env?.REACT_APP_API_URL}api/transaction/add`,
         formData
       );
       //setSpinning(false);
@@ -177,7 +177,7 @@ function TransactionForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/transaction/getsequence?type=id`
+          `${window.env?.REACT_APP_API_URL}api/transaction/getsequence?type=id`
         );
         form.setFieldsValue({
           strId: response.data.sequence_id.toString(),

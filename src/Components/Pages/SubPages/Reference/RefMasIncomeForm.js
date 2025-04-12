@@ -78,7 +78,7 @@ function RefMasIncomeForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${process.env.REACT_APP_API_URL}api/reference/ref-income/add`,
+        `${window.env?.REACT_APP_API_URL}api/reference/ref-income/add`,
         formData
       );
       setSpinning(false);
@@ -126,7 +126,7 @@ function RefMasIncomeForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${process.env.REACT_APP_API_URL}api/reference/ref-income/getSequence`
+          `${window.env?.REACT_APP_API_URL}api/reference/ref-income/getSequence`
         );
         console.log(response);
         // if (swalInstance) {
