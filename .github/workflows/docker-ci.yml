@@ -34,7 +34,7 @@ jobs:
 
       - name: 📦 Build Docker image
         run: |
-          docker build -f Dockerfile -t chanuth/myfinance:${IMAGE_TAG} .
+          docker build --no-cache -f Dockerfile -t chanuth/myfinance:${IMAGE_TAG} .
 
       - name: 📤 Push Docker image
         run: |
