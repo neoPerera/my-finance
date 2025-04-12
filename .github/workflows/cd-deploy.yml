@@ -28,5 +28,6 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_SSH_USER }}@${{ secrets.HOST_SSH }} << 'EOF'
             cd /home/ubuntu/docker/myfinance/my-finance
             sudo docker-compose down
+            sudo docker-compose pull
             sudo docker-compose up --build -d
           EOF
