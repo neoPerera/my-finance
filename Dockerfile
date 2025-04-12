@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
-COPY .env ./dist/
+ENV REACT_APP_API_URL=http://localhost:5000/
 COPY . .
 RUN npm run build
 
