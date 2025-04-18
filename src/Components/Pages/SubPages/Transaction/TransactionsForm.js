@@ -110,7 +110,7 @@ function TransactionForm() {
   const generateAccount2 =(value, strAccount)=>
   {
     form.setFieldsValue({ strAccount2: "" }); // or true, or undefined
-    if (formData.isDoubleEntry) {
+    if (value) {
       const filteredAccounts = accounts.filter(
         (acc) => acc.value !== strAccount
       );
