@@ -4,7 +4,7 @@ import Axios from "axios";
 import Swal from "sweetalert2";
 import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
-import { Button, Form, Input, Select, Space, Spin, message } from "antd";
+import { Button, Form, Input, Select, Space, Spin, message, Switch } from "antd";
 import Title from "antd/es/typography/Title";
 
 const SubmitButton = ({ form, onClick }) => {
@@ -50,10 +50,14 @@ function TransactionForm() {
     strTransType: "",
     strTransCat: "",
     strAccount: "",
+    isDoubleEntry: false,
+    strAccount2: "",
+
   });
   const [transTypes, setTransTypes] = useState([]);
   const [isTransCatDisabled, setTransCatDisabled] = useState(true);
   const [accounts, setAccounts] = useState([]);
+  const [accounts2, setAccounts2] = useState([]);
   const [transCats, setTransCats] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
   const [messageApi, contextHolder] = message.useMessage();
@@ -92,7 +96,29 @@ function TransactionForm() {
 
   const handleSelectAccount = (value) => {
     setFormData({ ...formData, strAccount: value });
+    generateAccount2(formData.isDoubleEntry, value);
+
   };
+  const handleSelectAccount2 = (value) => {
+    setFormData({ ...formData, strAccount2: value });
+  };
+
+  const isDouleEntryChange = (value) => {
+    setFormData({ ...formData, isDoubleEntry: value });
+    generateAccount2(value, formData.strAccount);
+  };
+  const generateAccount2 =(value, strAccount)=>
+  {
+    form.setFieldsValue({ strAccount2: "" }); // or true, or undefined
+    if (formData.isDoubleEntry) {
+      const filteredAccounts = accounts.filter(
+        (acc) => acc.value !== strAccount
+      );
+      setAccounts2(filteredAccounts);
+    } else {
+      setAccounts2([]); // Empty the list when double entry is off
+    }
+  }
 
   const handleSelectTrans = async (value) => {
     console.log(value);
@@ -124,10 +150,16 @@ function TransactionForm() {
 
   const handleSubmitBtn = async (e) => {
     e.preventDefault();
-    const hasEmptyAttributes = Object.values(formData).some(
+    const filteredFormData = { ...formData };
+
+    // If isDouble is false, remove account2 from the check
+    if (!filteredFormData.isDoubleEntry) {
+      delete filteredFormData.strAccount2;
+    }
+    const hasEmptyAttributes = Object.values(filteredFormData).some(
       (value) => value === "" || value === null
     );
-    console.log(formData);
+    console.log(filteredFormData);
 
     if (hasEmptyAttributes) {
       Swal.fire({
@@ -143,7 +175,7 @@ function TransactionForm() {
     try {
       const response = await Axios.post(
         `${window.env?.REACT_APP_API_URL}api/transaction/add`,
-        formData
+        filteredFormData
       );
       //setSpinning(false);
       console.log("Response:", response.data);
@@ -153,7 +185,7 @@ function TransactionForm() {
         onClose: () => {
           setSpinning(false);
           form.resetFields();
-          setReloadCompoenet(reloeadCompoenet+1);
+          setReloadCompoenet(reloeadCompoenet + 1);
         },
       });
     } catch (error) {
@@ -163,6 +195,7 @@ function TransactionForm() {
         type: "error",
         content: `${error.response.data.error.detail}`,
       });
+      setSpinning(false);
     }
   };
 
@@ -266,6 +299,40 @@ function TransactionForm() {
             options={accounts}
           />
         </Form.Item>
+
+        <Form.Item
+          name="isDoubleEntry"
+          label="Is Double Entry?"
+          rules={[
+            {
+              required: false,
+            },
+          ]}
+        >
+          <Switch onChange={isDouleEntryChange} />
+        </Form.Item>
+
+        {formData.isDoubleEntry && (
+          <Form.Item
+            name="strAccount2"
+            label="Second Account"
+            rules={[
+              {
+                required: formData.isDoubleEntry,
+                message: "Please select the second account",
+              },
+            ]}
+          >
+            <Select
+              showSearch
+              placeholder="Select 2nd Account"
+              optionFilterProp="children"
+              onSelect={handleSelectAccount2}
+              filterOption={filterOption}
+              options={accounts2}
+            />
+          </Form.Item>
+        )}
 
         {/* strTransType field */}
         <Form.Item
