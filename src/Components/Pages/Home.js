@@ -1,18 +1,6 @@
-import DashBoard from "./SubPages/DashBoard";
 import Axios from "axios";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import RefMasExpenseForm from "./SubPages/Reference/RefMasExpenseForm";
-import RefMasExpenseList from "./SubPages/Reference/RefMasExpenseList";
-import RefMasIncomeList from "./SubPages/Reference/RefMasIncomeList";
-import RefMasIncomeForm from "./SubPages/Reference/RefMasIncomeForm";
-import TransactionForm from "./SubPages/Transaction/TransactionsForm";
+import React, { useEffect, useState, Suspense } from "react";
 import { Layout, Skeleton, theme } from "antd";
-import SideBarAnt from "../Elements/SideBar-ant";
-import HeaderAnt from "../Elements/Header-ant";
-import FooterAnt from "../Elements/Footer-ant";
-import { useNavigate, Link } from "react-router-dom";
-import NotFound from "./404";
-import React, { useEffect, useState } from "react";
 import {
   BookOutlined,
   DashboardOutlined,
@@ -22,28 +10,43 @@ import {
   FastForwardOutlined,
   AccountBookOutlined
 } from "@ant-design/icons";
-import RefMasAccountsList from "./SubPages/Reference/RefMasAccountsList";
-import RefMasAccountsForm from "./SubPages/Reference/RefMasAccountsForm";
+import { useNavigate, Routes, Route } from "react-router-dom";
+import SideBarAnt from "../Elements/SideBar-ant";
+import HeaderAnt from "../Elements/Header-ant";
+import FooterAnt from "../Elements/Footer-ant";
 
 const { Content } = Layout;
+
+const LazyWithFallback = (importFunc, fallback = null) =>
+  React.lazy(() =>
+    importFunc().catch((err) => {
+      console.error("Failed to load micro frontend:", err);
+      return {
+        default: () => fallback || <div>Component unavailable</div>,
+      };
+    })
+  );
+
 const arrComponents = {
+  DashBoard: LazyWithFallback(() => import("./SubPages/DashBoard")),
+  RefMasExpenseList: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseList")),
+  RefMasExpenseForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseForm")),
+  RefMasIncomeList: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeList")),
+  RefMasIncomeForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeForm")),
+  TransactionForm: LazyWithFallback(() => import("./SubPages/Transaction/TransactionsForm")),
+  RefMasAccountsList: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsList")),
+  RefMasAccountsForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsForm")),
+  ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
+  NotFound: LazyWithFallback(() => import("./404")),
+};
+const iconComponents = {
   BookOutlined,
   DashboardOutlined,
   LogoutOutlined,
   TransactionOutlined,
   DeliveredProcedureOutlined,
   FastForwardOutlined,
-  AccountBookOutlined,
-  DashBoard,
-  RefMasExpenseList,
-  RefMasExpenseForm,
-  RefMasIncomeList,
-  RefMasIncomeForm,
-  TransactionForm,
-  NotFound,
-  RefMasAccountsList,
-  RefMasAccountsForm
-  // Add more components as needed
+  AccountBookOutlined
 };
 
 const Home = () => {
@@ -53,20 +56,17 @@ const Home = () => {
   } = theme.useToken();
   const [responseData, setResponseData] = useState([]);
   const [sideBarFormData, setSideBarFormFormData] = useState([]);
-  const [spinning, setSpinning] = React.useState(true);
-  const [routeList, setRouteList] = React.useState([]);
+  const [spinning, setSpinning] = useState(true);
+  const [routeList, setRouteList] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    setSpinning(true);
     const getForms = async () => {
-      console.log("Getting Exp Seq");
       try {
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}api/home/getForms`
         );
-
-        // Assuming the fetched data is an array
-
         setResponseData(response.data);
       } catch (error) {
         console.error("Error:", error);
@@ -77,24 +77,21 @@ const Home = () => {
   }, []);
 
   useEffect(() => {
-    if (!responseData) {
-      // Handle case where responseData is undefined
-      return;
-    }
-    console.log(`Response form lise ${responseData}`);
-    // Declare formattedData outside of the map function
+    if (!responseData) return;
+
     const formattedData = [];
     const formattedRoutes = [];
 
     responseData.forEach((item, index) => {
-      if (item.str_isMenu != "Y") {
-        return;
-      }
+      if (item.str_isMenu !== "Y") return;
+
+      const icon = item.str_icon && iconComponents[item.str_icon]
+        ? React.createElement(iconComponents[item.str_icon])
+        : null;
+
       const formattedItem = {
         key: item.str_form_id,
-        icon: item.str_icon
-          ? React.createElement(arrComponents[item.str_icon])
-          : null,
+        icon,
         label: item.str_form_name,
         link: item.str_link,
       };
@@ -103,72 +100,45 @@ const Home = () => {
         const parent = formattedData.find(
           (parentItem) => parentItem.label === item.str_menu_id
         );
-
         if (parent) {
           parent.children.push(formattedItem);
         } else {
-          const newParent = {
+          formattedData.push({
             key: index.toString(),
             label: item.str_menu_id,
             children: [formattedItem],
-          };
-          formattedData.push(newParent);
+          });
         }
       } else {
         formattedData.push(formattedItem);
       }
     });
 
-    responseData.forEach((item, index) => {
-      if (item.str_link == "/home") {
-        return;
-      }
-      const formattedRouteItem = {
+    responseData.forEach((item) => {
+      if (item.str_link === "/home") return;
+      formattedRoutes.push({
         path: item.str_link.replace(/^\/home/, ""),
         element: item.str_component,
-      };
-
-      formattedRoutes.push(formattedRouteItem);
+      });
     });
 
-    // Update the state with the formatted data
     setSideBarFormFormData(formattedData);
     setRouteList(formattedRoutes);
-    if (formattedRoutes) {
-      setSpinning(false);
-    }
+    if (formattedRoutes.length > 0) setSpinning(false);
   }, [responseData]);
 
-  const navigate = useNavigate();
-  const MenuItemClicked = ({ item, key, keyPath }) => {
-    console.log("Menu ITEM CLICKED");
-    console.log(item);
-    console.log(key);
-    console.log(keyPath);
-    navigate(item.props.link);
-    // if (key == "1") {
-    //   navigate("/home");
-    // } else if (key == "2") {
-    //   navigate("/home/ref-income");
-    // } else if (key == "3") {
-    //   navigate("/home/ref-expense");
-    // }
+  const MenuItemClicked = ({ item }) => {
+    if (item.props?.link) navigate(item.props.link);
   };
 
   return (
-    <Layout
-      style={{
-        minHeight: "100vh",
-      }}
-    >
+    <Layout style={{ minHeight: "100vh" }}>
       <SideBarAnt
         collapsed={collapsed}
         MenuItemClicked={MenuItemClicked}
         sideBarFormData={sideBarFormData}
       />
-      <Layout
-      // style={{ marginLeft: 80 }}
-      >
+      <Layout>
         <HeaderAnt
           setCollapsed={setCollapsed}
           collapsed={collapsed}
@@ -183,11 +153,12 @@ const Home = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {/* DashBoard,RefMasExpenseList,RefMasExpenseForm,RefMasIncomeList,RefMasIncomeForm,TransactionForm */}
           {spinning ? (
             <Skeleton active />
           ) : (
-            <UserRoutes routeList={routeList} />
+            <Suspense fallback={<Skeleton active />}>
+              <UserRoutes routeList={routeList} />
+            </Suspense>
           )}
         </Content>
         <FooterAnt />
@@ -195,68 +166,25 @@ const Home = () => {
     </Layout>
   );
 };
-const UserRoutes = ({ routeList }) => {
-  console.log(`Formatted routes ${JSON.stringify(routeList)}`);
 
-  return (
-    <Routes>
-      <Route
-        exact
-        path="/"
-        element={React.createElement(arrComponents["DashBoard"])}
-      />
-      {routeList.map((route, index) => (
+const UserRoutes = ({ routeList }) => (
+  <Routes>
+    <Route
+      path="/"
+      element={<arrComponents.DashBoard />}
+    />
+    {routeList.map((route, index) => {
+      const LazyComponent = arrComponents[route.element] || arrComponents.NotFound;
+      return (
         <Route
           key={index}
           path={route.path}
-          element={React.createElement(arrComponents[route.element])}
+          element={<LazyComponent />}
         />
-      ))}
-    </Routes>
-  );
-};
+      );
+    })}
+    <Route path="*" element={<arrComponents.NotFound />} />
+  </Routes>
+);
 
-const UserRoutess = ({ routeList }) => {
-  console.log(`Formatted routes ${routeList}`);
-  return (
-    <Routes>
-      <Route
-        exact
-        path="/"
-        element={React.createElement(arrComponents["DashBoard"])}
-      />
-      <Route
-        exact
-        path="ref-expense"
-        element={React.createElement(arrComponents["RefMasExpenseList"])}
-      />
-      <Route
-        exact
-        path="ref-expense/add"
-        element={React.createElement(arrComponents["RefMasExpenseForm"])}
-        // element={< />}
-      />
-      <Route
-        exact
-        path="ref-income"
-        element={React.createElement(arrComponents["RefMasIncomeList"])}
-      />
-      <Route
-        exact
-        path="ref-income/add"
-        element={React.createElement(arrComponents["RefMasIncomeForm"])}
-      />
-      {/* Transaction routes */}
-      <Route
-        exact
-        path="transaction-add"
-        element={React.createElement(arrComponents["TransactionForm"])}
-      />
-      <Route
-        path="*"
-        element={React.createElement(arrComponents["NotFound"])}
-      />
-    </Routes>
-  );
-};
 export default Home;
