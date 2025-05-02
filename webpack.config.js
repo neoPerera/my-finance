@@ -61,5 +61,8 @@ module.exports = (env, argv) => {
       publicPath: '/',
       clean: true,
     },
+    performance: {
+      hints: false, // 🚫 disables asset size warnings
+    },
   };
 };
