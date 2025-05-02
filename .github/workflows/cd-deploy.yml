@@ -10,6 +10,7 @@ jobs:
   deploy:
     name: 🚀 Deploy to Server
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # ✅ Ensure only on success
 
     steps:
       - name: 📥 Checkout code
