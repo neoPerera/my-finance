@@ -18,8 +18,6 @@ COPY --from=build /app/dist  /usr/share/nginx/html
 # Copy a default NGINX config if you have custom settings
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Optional: Copy placeholder env.js (or inject it via volume later)
-#COPY env.js /usr/share/nginx/html/env.js
 
 EXPOSE 80
 
