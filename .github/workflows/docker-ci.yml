@@ -3,6 +3,7 @@ name: CI - Build and Push Docker Image
 on:
   push:
     branches: [ '**' ]
+    tags: [ 'v*' ]   # ⬅️ triggers on version tags like v1.0.0
   workflow_dispatch:
 
 jobs:
@@ -24,11 +25,15 @@ jobs:
 
       - name: 🏷️ Set image tag
         run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-          if [ "$BRANCH_NAME" = "master" ]; then
-            IMAGE_TAG="latest"
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            IMAGE_TAG="${GITHUB_REF#refs/tags/}"     # Use the Git tag as Docker tag
           else
-            IMAGE_TAG="$BRANCH_NAME"
+            BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+            if [ "$BRANCH_NAME" = "master" ]; then
+              IMAGE_TAG="latest"
+            else
+              IMAGE_TAG="$BRANCH_NAME"
+            fi
           fi
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
 
