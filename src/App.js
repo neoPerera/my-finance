@@ -12,7 +12,7 @@ import Home from "./Components/Pages/Home";
 import NotFound from "./Components/Pages/404";
 import LogOut from "./Components/Mechanisms/LogOut";
 import Axios from 'axios';
-// const ReportApp = React.lazy(() => import("reports/ReportApp"));
+const ReportApp = React.lazy(() => import("reports/ReportApp"));
 //const ReportsApp = React.lazy(() => import('myfinanceReports/App'));
 
 const App = () => {
@@ -49,7 +49,7 @@ const App = () => {
           <Route path="/" element={<Navigate to="/home" />} />
           <Route path="/login" element={<LogIn />} />
           <Route path="/home/*" element={<Home />} />
-          {/* <Route path="/report/*" element={<ReportApp />} /> */}
+          {/* <Route path="/personelexpenseapp/*" element={<ReportApp />} /> */}
           {/* <Route  exact path='/home/ref-expense' element={<Home/>}/> */}
           {/* <Route exact path='/ref-expense' element={<Home/>}/> */}
           <Route path="/logout" element={<LogOut />} />

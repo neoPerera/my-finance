@@ -11,34 +11,39 @@ import {
   AccountBookOutlined
 } from "@ant-design/icons";
 import { useNavigate, Routes, Route } from "react-router-dom";
+
 import SideBarAnt from "../Elements/SideBar-ant";
 import HeaderAnt from "../Elements/Header-ant";
 import FooterAnt from "../Elements/Footer-ant";
+import NotFound from "./404";
 
 const { Content } = Layout;
 
+// === Lazy load micro frontends with fallback ===
 const LazyWithFallback = (importFunc, fallback = null) =>
   React.lazy(() =>
     importFunc().catch((err) => {
       console.error("Failed to load micro frontend:", err);
       return {
-        default: () => fallback || <div>Component unavailable</div>,
+        default: () => fallback || <NotFound />,
       };
     })
   );
 
+// === Component registry ===
 const arrComponents = {
   DashBoard: LazyWithFallback(() => import("./SubPages/DashBoard")),
-  RefMasExpenseList: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseList")),
-  RefMasExpenseForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseForm")),
-  RefMasIncomeList: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeList")),
-  RefMasIncomeForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeForm")),
-  TransactionForm: LazyWithFallback(() => import("./SubPages/Transaction/TransactionsForm")),
-  RefMasAccountsList: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsList")),
-  RefMasAccountsForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsForm")),
-  ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
+  RefMasExpenseList: LazyWithFallback(() => import("reports/RefMasExpenseList")),
+  RefMasExpenseForm: LazyWithFallback(() => import("reports/RefMasExpenseForm")),
+  RefMasIncomeList: LazyWithFallback(() => import("reports/RefMasIncomeList")),
+  RefMasIncomeForm: LazyWithFallback(() => import("reports/RefMasIncomeForm")),
+  TransactionForm: LazyWithFallback(() => import("reports/TransactionsForm")),
+  RefMasAccountsList: LazyWithFallback(() => import("reports/RefMasAccountsList")),
+  RefMasAccountsForm: LazyWithFallback(() => import("reports/RefMasAccountsForm")),
   NotFound: LazyWithFallback(() => import("./404")),
 };
+
+// === Icon registry ===
 const iconComponents = {
   BookOutlined,
   DashboardOutlined,
@@ -49,11 +54,26 @@ const iconComponents = {
   AccountBookOutlined
 };
 
+// === Tracks which components need `navigate` ===
+const microFrontsNeedingNavigate = {
+  RefMasAccountsForm: true,
+  RefMasAccountsList: true
+};
+
+// === HOC to optionally inject `navigate` prop ===
+const withOptionalNavigate = (Component, passNavigate = false) => {
+  return (props) => {
+    const navigate = useNavigate();
+    return <Component {...props} {...(passNavigate ? { navigate } : {})} />;
+  };
+};
+
 const Home = () => {
   const [collapsed, setCollapsed] = useState(true);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
   const [responseData, setResponseData] = useState([]);
   const [sideBarFormData, setSideBarFormFormData] = useState([]);
   const [spinning, setSpinning] = useState(true);
@@ -64,12 +84,10 @@ const Home = () => {
   useEffect(() => {
     const getForms = async () => {
       try {
-        const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/home/getForms`
-        );
+        const response = await Axios.get(`${window.env?.REACT_APP_API_URL}api/home/getForms`);
         setResponseData(response.data);
       } catch (error) {
-        console.error("Error:", error);
+        console.error("Error loading forms:", error);
       }
     };
 
@@ -169,19 +187,10 @@ const Home = () => {
 
 const UserRoutes = ({ routeList }) => (
   <Routes>
-    <Route
-      path="/"
-      element={<arrComponents.DashBoard />}
-    />
+    <Route path="/" element={<arrComponents.DashBoard />} />
     {routeList.map((route, index) => {
-      const LazyComponent = arrComponents[route.element] || arrComponents.NotFound;
-      return (
-        <Route
-          key={index}
-          path={route.path}
-          element={<LazyComponent />}
-        />
-      );
+      const Component = arrComponents[route.element] || arrComponents.NotFound;
+      return <Route key={index} path={route.path} element={<Component />} />;
     })}
     <Route path="*" element={<arrComponents.NotFound />} />
   </Routes>

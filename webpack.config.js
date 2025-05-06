@@ -45,12 +45,22 @@ module.exports = (env, argv) => {
     plugins: [
       new ModuleFederationPlugin({
         name: 'myfinance',
+        filename: "remoteEntry.js",
+        exposes: {
+          "./axiosInstance": "./src/Components/Mechanisms/axiosInstance.js",
+          "./SideBar": "./src/Components/Elements/SideBar-ant.js",
+          "./HeaderAnt": "./src/Components/Elements/Header-ant.js",
+          "./FooterAnt": "./src/Components/Elements/Footer-ant.js"
+        },
         remotes: {
           reports: 'myfinanceReports@http://localhost:3001/remoteEntry.js',
         },
         shared: {
           react: { singleton: true, requiredVersion: '^19.1.0' },
           'react-dom': { singleton: true, requiredVersion: '^19.1.0' },
+          "react-router-dom": { singleton: true },
+          axios: { singleton: true, eager: true },
+          "antd": { singleton: true, requiredVersion: "^5.0.0" },
         },
       }),
       new HtmlWebpackPlugin({
