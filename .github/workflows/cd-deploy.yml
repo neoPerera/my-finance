@@ -6,10 +6,13 @@ on:
     types:
       - completed
   workflow_dispatch:
+
 jobs:
   deploy:
     name: 🚀 Deploy to Server
     runs-on: ubuntu-latest
+
+    # Run only if CI was successful, or it's a manual dispatch
     if: |
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success') ||
       (github.event_name == 'workflow_dispatch')
@@ -18,9 +21,15 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v3
 
-      - name: 🏷️ Extract tag name
+      - name: 🏷️ Set TAG_NAME based on trigger
         run: |
-          echo "TAG_NAME=$(echo '${{ github.event.workflow_run.head_branch }}' | sed 's|refs/tags/||')" >> $GITHUB_ENV
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
+            echo "Manually triggered on tag: $TAG"
+            echo "TAG_NAME=$TAG" >> $GITHUB_ENV
+          else
+            echo "TAG_NAME=$(echo '${{ github.event.workflow_run.head_branch }}' | sed 's|refs/tags/||')" >> $GITHUB_ENV
+          fi
 
       - name: 🔐 Setup SSH
         uses: webfactory/ssh-agent@v0.9.0
@@ -30,12 +39,14 @@ jobs:
       - name: 🚀 Deploy over SSH
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.HOST_SSH_USER }}@${{ secrets.HOST_SSH }} << EOF
-            echo "Using tag: ${{ env.TAG_NAME }}"
+            echo "Using tag: $TAG_NAME"
             cd /home/ubuntu/docker/myfinance/my-finance
 
-            echo "IMAGE_TAG=${{ env.TAG_NAME }}" > .env
+            echo "IMAGE_TAG=$TAG_NAME" > .env
 
             sudo docker-compose down
             sudo docker-compose pull
             sudo docker-compose up -d
           EOF
+        env:
+          TAG_NAME: ${{ env.TAG_NAME }}
