@@ -14,7 +14,7 @@ import * as React from "react";
 import { Liquid, Pie, Sankey } from "@antv/g2plot";
 import { useState, useEffect, useRef } from "react";
 import CountUp from "react-countup";
-import Axios from "axios";
+import Axios from "../../Mechanisms/axiosInstance";
 
 function DashBoard() {
   // Use React state to manage the chart instance
@@ -69,7 +69,7 @@ function DashBoard() {
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/dashboard`
+          `api/dashboard`
         );
 
         console.log("income List Data:", response.data);

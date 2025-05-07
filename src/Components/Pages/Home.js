@@ -1,4 +1,4 @@
-import Axios from "axios";
+import Axios from "../Mechanisms/axiosInstance";
 import React, { useEffect, useState, Suspense } from "react";
 import { Layout, Skeleton, theme } from "antd";
 import {
@@ -84,7 +84,7 @@ const Home = () => {
   useEffect(() => {
     const getForms = async () => {
       try {
-        const response = await Axios.get(`${window.env?.REACT_APP_API_URL}api/home/getForms`);
+        const response = await Axios.get(`api/home/getForms`);
         setResponseData(response.data);
       } catch (error) {
         console.error("Error loading forms:", error);

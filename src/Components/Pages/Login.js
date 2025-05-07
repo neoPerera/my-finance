@@ -15,7 +15,7 @@ import {
 import FooterAnt from "../Elements/Footer-ant";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios from "../Mechanisms/axiosInstance";
 
 const { Content } = Layout;
 
@@ -42,7 +42,7 @@ const LogIn = () => {
       // });
 
       const response = await axios.post(
-        `${window.env?.REACT_APP_API_URL}api/login`,
+        `api/login`,
         {
           username: username,
           password: password,

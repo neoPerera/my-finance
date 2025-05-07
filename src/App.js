@@ -16,31 +16,7 @@ const ReportApp = React.lazy(() => import("reports/ReportApp"));
 //const ReportsApp = React.lazy(() => import('myfinanceReports/App'));
 
 const App = () => {
-  useEffect(() => {
-    // Add a request interceptor
-    const requestInterceptor = Axios.interceptors.request.use(
-      (config) => {
-        // Get the token from localStorage or your authentication state
-        const token = localStorage.getItem('jwt_token');
 
-        // Add the Bearer token to the Authorization header
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
-        }
-        
-        return config;
-      },
-      (error) => {
-        // Do something with the request error
-        return Promise.reject(error);
-      }
-    );
-
-    // Clean up the interceptor when the component unmounts
-    return () => {
-      Axios.interceptors.request.eject(requestInterceptor);
-    };
-  }, []);
 
   return (
     <Router>
