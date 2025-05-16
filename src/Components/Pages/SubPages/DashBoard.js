@@ -151,7 +151,7 @@ function DashBoard() {
                     {chartData.chartExpenses.map((item) => (
                       <Statistic
                         key={item.type} // Assuming account_name is a unique identifier
-                        title={`${item.type} Balance (LKR)`} // Corrected title syntax
+                        title={`${item.type} Expenses (LKR)`} // Corrected title syntax
                         value={item.value}
                         precision={2}
                         formatter={formatter}
