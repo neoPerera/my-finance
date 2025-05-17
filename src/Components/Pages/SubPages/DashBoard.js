@@ -26,7 +26,8 @@ function DashBoard() {
     chart2: [],
     chart3: [],
     chart4: [[], 0],
-    chartExpenses: []
+    chartExpenses: [],
+    chartIncomes: []
   });
   const formatter = (value) => <CountUp end={value} separator="," />;
   const data = {
@@ -83,7 +84,8 @@ function DashBoard() {
           chart2: newData.chart2[0] || [],
           chart3: newData.chart3[0] || [],
           chart4: newData.chart4 || [],
-          chartExpenses: newData.chartExpenses[0] || []
+          chartExpenses: newData.chartExpenses[0] || [],
+          chartIncomes: newData.chartIncomes[0] || []
         });
         console.log(newData);
         // if (swalInstance) {
@@ -134,6 +136,25 @@ function DashBoard() {
                         key={item.account_name} // Assuming account_name is a unique identifier
                         title={`${item.account_name} Balance (LKR)`} // Corrected title syntax
                         value={item.account_balance}
+                        precision={2}
+                        formatter={formatter}
+                      />
+                    ))}
+                  </>
+                )}
+              </Card>
+              {/* </Layout> */}
+            </Col>
+            <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+              <Card title="Account Incomes">
+
+                {chartData.chartIncomes.length > 0 && (
+                  <>
+                    {chartData.chartIncomes.map((item) => (
+                      <Statistic
+                        key={item.type} // Assuming account_name is a unique identifier
+                        title={`${item.type} Incomes (LKR)`} // Corrected title syntax
+                        value={item.value}
                         precision={2}
                         formatter={formatter}
                       />
