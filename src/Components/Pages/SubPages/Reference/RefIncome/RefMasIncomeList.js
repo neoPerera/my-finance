@@ -1,12 +1,11 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
-// /////////////////////////////////////////////////////////////////////////////////////////////////////
 // Income master list
-// Developped by Chanuth Perera
-// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// Developed by Chanuth Perera
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Skeleton,
@@ -15,32 +14,29 @@ import {
   Form,
   Typography,
   Popconfirm,
-  InputNumber,
-  Input,
   message,
 } from "antd";
 import Title from "antd/es/typography/Title";
 import EditableCell from "../../../../Elements/EditableCell";
 
 function RefMasIncomeList() {
-  //varaible section
+  // Hooks
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [incomeList, setIncomeList] = useState([]);
-  const [spinning, setSpinning] = React.useState(false);
-  const [dataLoading, setDataLoading] = React.useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [spinning, setSpinning] = useState(false);
+  const [dataLoading, setDataLoading] = useState(false);
   const [editingKey, setEditingKey] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+
+  // Helpers
   const isEditing = (record) => record.key === editingKey;
 
-  //function section
   const edit = (record) => {
-    console.log(record);
-    form.setFieldsValue({
-      str_name: record.str_name,
-    });
+    form.setFieldsValue({ str_name: record.str_name });
     setEditingKey(record.key);
   };
+
   const cancel = () => {
     setEditingKey("");
   };
@@ -48,137 +44,111 @@ function RefMasIncomeList() {
   const save = async (key) => {
     try {
       setSpinning(true);
-      let row = {
-        str_id: key,
-        updates: "",
-      };
-      row.updates = await form.validateFields();
-      console.log(row);
-      try {
-        const response = await Axios.post(
-          `${window.env?.REACT_APP_API_URL}api/reference/ref-income/update`,
-          row
-        );
-        messageApi.open({
-          type: "success",
-          content: "Successfully saved",
-          // onClose: () => {
-          // },
-        });
-        setSpinning(false);
-        const newData = [...incomeList];
-        const index = newData.findIndex((item) => key === item.key);
-        if (index > -1) {
-          const item = newData[index];
-          newData.splice(index, 1, {
-            ...item,
-            ...row.updates,
-          });
-          setIncomeList(newData);
-        }
 
-        console.log("Response:", response.data);
-      } catch (error) {
-        messageApi.open({
-          type: "error",
-          content: `${error.response.data.error.detail}`,
-        });
-        console.error("Error:", error.response);
+      const updates = await form.validateFields();
+      const row = {
+        str_id: key,
+        updates,
+      };
+
+      const response = await Axios.post(
+        `${window.env?.REACT_APP_API_URL}api/reference/ref-income/update`,
+        row
+      );
+
+      messageApi.success("Successfully saved");
+
+      const updatedList = [...incomeList];
+      const index = updatedList.findIndex((item) => key === item.key);
+      if (index > -1) {
+        updatedList.splice(index, 1, { ...updatedList[index], ...updates });
+        setIncomeList(updatedList);
       }
 
+      console.log("Update response:", response.data);
+    } catch (error) {
+      messageApi.error(error?.response?.data?.error?.detail || "Update failed");
+      console.error("Update error:", error);
+    } finally {
       setEditingKey("");
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
+      setSpinning(false);
     }
   };
 
+  const handleAdd = () => {
+    navigate("/home/ref-income/add");
+  };
+
+  // Table Columns
   const columns = [
     {
       title: "ID",
       dataIndex: "key",
       key: "key",
-      // responsive: ['md'],
     },
     {
       title: "Name",
       dataIndex: "str_name",
       key: "str_name",
       editable: true,
-      // responsive: ['md'],
     },
     {
       title: "Created date",
       dataIndex: "dtm_date",
       key: "dtm_date",
-      // responsive: ['md'],
     },
     {
-      title: "operation",
+      title: "Operation",
       dataIndex: "operation",
       render: (_, record) => {
         const editable = isEditing(record);
         return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{
-                marginRight: 8,
-              }}
-            >
+          <>
+            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
               Save
             </Typography.Link>
             <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
               <a>Cancel</a>
             </Popconfirm>
-          </span>
+          </>
         ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
+          <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
             Edit
           </Typography.Link>
         );
       },
     },
   ];
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record) => ({
-        record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
 
-  const handleAdd = () => {
-    navigate("/home/ref-income/add");
-  };
+  const mergedColumns = columns.map((col) =>
+    !col.editable
+      ? col
+      : {
+        ...col,
+        onCell: (record) => ({
+          record,
+          inputType: "text",
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+        }),
+      }
+  );
 
-  //use effects
+  // Load Data
   useEffect(() => {
-    setDataLoading(true);
     const fetchData = async () => {
+      setDataLoading(true);
       try {
-        console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}api/reference/ref-income/getincome`
         );
-
-        console.log("income List Data:", response.data);
-
-        // Set the fetched data to the state
         setIncomeList(response.data);
-        setDataLoading(false);
+        console.log("Income list:", response.data);
       } catch (error) {
-        console.error("Error fetching income list:", error);
+        console.error("Failed to fetch income list:", error);
+      } finally {
+        setDataLoading(false);
       }
     };
 
@@ -193,28 +163,19 @@ function RefMasIncomeList() {
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add new
       </Button>
+
       {dataLoading ? (
         <Skeleton active />
       ) : (
-        <>
-          <Form form={form} component={false}>
-            <Table
-              components={{
-                body: {
-                  cell: EditableCell,
-                },
-              }}
-              scroll={{
-                x: 1000,
-                // y: 400,
-              }}
-              size="small"
-              // columns={columns}
-              columns={mergedColumns}
-              dataSource={incomeList}
-            />
-          </Form>
-        </>
+        <Form form={form} component={false}>
+          <Table
+            components={{ body: { cell: EditableCell } }}
+            scroll={{ x: 1000 }}
+            size="small"
+            columns={mergedColumns}
+            dataSource={incomeList}
+          />
+        </Form>
       )}
     </>
   );

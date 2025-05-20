@@ -1,15 +1,33 @@
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import React, { useEffect, useRef, useState } from "react";
-import Swal from "sweetalert2";
-import { Breadcrumb, Button, Skeleton, Spin, Table } from "antd";
+import {
+  Breadcrumb,
+  Button,
+  Skeleton,
+  Spin,
+  Table,
+  Typography,
+  Form,
+  Popconfirm,
+  message,
+} from "antd";
 import Title from "antd/es/typography/Title";
+import EditableCell from "../../../../Elements/EditableCell";
 
 function RefMasAccountsList() {
+  // Refs and state
   const isMounted = useRef(true);
-  const [expenseList, setExpenseList] = useState([]);
   const navigate = useNavigate();
-  const [spinning, setSpinning] = React.useState(false);
+  const [form] = Form.useForm();
+  const [accountList, setAccountList] = useState([]);
+  const [spinning, setSpinning] = useState(false);
+  const [editingKey, setEditingKey] = useState("");
+  const [messageApi, contextHolder] = message.useMessage();
+
+  const isEditing = (record) => record.key === editingKey;
+
+  // Column definitions
   const columns = [
     {
       title: "ID",
@@ -20,92 +38,156 @@ function RefMasAccountsList() {
       title: "Name",
       dataIndex: "str_name",
       key: "str_name",
+      editable: true,
     },
     {
-      title: "Created date",
+      title: "Created Date",
       dataIndex: "dtm_date",
       key: "dtm_date",
     },
     {
-      title: "Action",
-      dataIndex: "",
-      key: "x",
-      render: () => <a>Delete</a>,
+      title: "Operation",
+      dataIndex: "operation",
+      render: (_, record) => {
+        const editable = isEditing(record);
+        return editable ? (
+          <span>
+            <Typography.Link
+              onClick={() => save(record.key)}
+              style={{ marginRight: 8 }}
+            >
+              Save
+            </Typography.Link>
+            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
+              <a>Cancel</a>
+            </Popconfirm>
+          </span>
+        ) : (
+          <Typography.Link
+            disabled={editingKey !== ""}
+            onClick={() => edit(record)}
+          >
+            Edit
+          </Typography.Link>
+        );
+      },
     },
   ];
+
+  // Add editable cell configuration
+  const mergedColumns = columns.map((col) =>
+    !col.editable
+      ? col
+      : {
+        ...col,
+        onCell: (record) => ({
+          record,
+          inputType: "text",
+          dataIndex: col.dataIndex,
+          title: col.title,
+          editing: isEditing(record),
+        }),
+      }
+  );
+
+  // Handlers
+  const edit = (record) => {
+    form.setFieldsValue({ str_name: record.str_name });
+    setEditingKey(record.key);
+  };
+
+  const cancel = () => {
+    setEditingKey("");
+  };
+
+  const save = async (key) => {
+    try {
+      setSpinning(true);
+
+      const updates = await form.validateFields();
+      const row = { str_id: key, updates };
+
+      const response = await Axios.post(
+        `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/update`,
+        row
+      );
+
+      messageApi.success("Successfully saved");
+
+      const updatedList = [...accountList];
+      const index = updatedList.findIndex((item) => item.key === key);
+      if (index > -1) {
+        const item = updatedList[index];
+        updatedList.splice(index, 1, {
+          ...item,
+          ...updates,
+        });
+        setAccountList(updatedList);
+      }
+
+      console.log("Update response:", response.data);
+      setEditingKey("");
+    } catch (error) {
+      if (error.response?.data?.error?.detail) {
+        messageApi.error(error.response.data.error.detail);
+      } else {
+        messageApi.error("An error occurred while saving");
+      }
+      console.error("Save error:", error);
+    } finally {
+      setSpinning(false);
+    }
+  };
 
   const handleAdd = () => {
     navigate("/home/ref-accounts/add");
   };
 
+  // Initial data fetch
   useEffect(() => {
-    // if (isMounted.current) {
-    setSpinning(true);
-    // const swalInstance = Swal.fire({
-    //   title: "Loading",
-    //   timerProgressBar: true,
-    //   didOpen: () => {
-    //     Swal.showLoading();
-    //   },
-    // });
     const fetchData = async () => {
+      setSpinning(true);
       try {
-        console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/getaccounts`
         );
-
-        console.log("Expense List Data:", response.data);
-
-        // Set the fetched data to the state
-        setExpenseList(response.data);
-        // if (swalInstance) {
-        //   swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-        // }
-        setSpinning(false);
+        console.log("Accounts List:", response.data);
+        setAccountList(response.data);
       } catch (error) {
-        console.error("Error fetching expense list:", error);
+        console.error("Error fetching accounts list:", error);
+      } finally {
+        setSpinning(false);
       }
     };
 
     fetchData();
-    //   isMounted.current = false;
-    // }
   }, []);
 
   return (
     <>
-      {/* <Spin spinning={spinning} fullscreen /> */}
+      {contextHolder}
       <Title level={2}>Accounts Master</Title>
+
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        Add new
+        Add New
       </Button>
+
       {spinning ? (
         <Skeleton active />
       ) : (
-        <>
+        <Form form={form} component={false}>
           <Table
-            columns={columns}
-            size="small"
-            scroll={{
-              x: 1000,
-              // y: 400,
+            components={{
+              body: {
+                cell: EditableCell,
+              },
             }}
-            // expandable={{
-            //   expandedRowRender: (record) => (
-            //     <p
-            //       style={{
-            //         margin: 0,
-            //       }}
-            //     >
-            //       {record.description}
-            //     </p>
-            //   ),
-            //   rowExpandable: (record) => record.name !== 'Not Expandable',
-            // }}
-            dataSource={expenseList}
+            columns={mergedColumns}
+            dataSource={accountList}
+            size="small"
+            scroll={{ x: 1000 }}
           />
-        </>
+        </Form>
       )}
     </>
   );
