@@ -29,13 +29,13 @@ const LazyWithFallback = (importFunc, fallback = null) =>
 
 const arrComponents = {
   DashBoard: LazyWithFallback(() => import("./SubPages/DashBoard")),
-  RefMasExpenseList: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseList")),
-  RefMasExpenseForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasExpenseForm")),
-  RefMasIncomeList: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeList")),
-  RefMasIncomeForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasIncomeForm")),
+  RefMasExpenseList: LazyWithFallback(() => import("./SubPages/Reference/RexExpenses/RefMasExpenseList")),
+  RefMasExpenseForm: LazyWithFallback(() => import("./SubPages/Reference/RexExpenses/RefMasExpenseForm")),
+  RefMasIncomeList: LazyWithFallback(() => import("./SubPages/Reference/RefIncome/RefMasIncomeList")),
+  RefMasIncomeForm: LazyWithFallback(() => import("./SubPages/Reference/RefIncome/RefMasIncomeForm")),
   TransactionForm: LazyWithFallback(() => import("./SubPages/Transaction/TransactionsForm")),
-  RefMasAccountsList: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsList")),
-  RefMasAccountsForm: LazyWithFallback(() => import("./SubPages/Reference/RefMasAccountsForm")),
+  RefMasAccountsList: LazyWithFallback(() => import("./SubPages/Reference/RefAccounts/RefMasAccountsList")),
+  RefMasAccountsForm: LazyWithFallback(() => import("./SubPages/Reference/RefAccounts/RefMasAccountsForm")),
   ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
   NotFound: LazyWithFallback(() => import("./404")),
 };
