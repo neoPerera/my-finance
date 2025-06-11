@@ -51,6 +51,7 @@ const DashboardAccountIncome = () => {
                                 <>
                                     {chartData.map((item) => (
                                         <Statistic
+                                            valueStyle={{ color: 'green' }}
                                             key={item.type}
                                             title={`${item.type} Incomes (LKR)`}
                                             value={item.value}

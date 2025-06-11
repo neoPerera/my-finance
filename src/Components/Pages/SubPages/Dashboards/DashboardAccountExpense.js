@@ -49,7 +49,8 @@ const DashboardAccountExpense = () => {
               {chartData.length > 0 && (
                 <>
                   {chartData.map((item) => (
-                    <Statistic
+                    <Statistic 
+                      valueStyle={{ color: 'red' }}
                       key={item.type}
                       title={`${item.type} Expenses (LKR)`}
                       value={item.value}
@@ -62,7 +63,8 @@ const DashboardAccountExpense = () => {
             </Card>
           </Col>
         </>
-      )}
+      )
+      }
     </>
   );
 };
