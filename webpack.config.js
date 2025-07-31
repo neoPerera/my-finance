@@ -45,9 +45,9 @@ module.exports = (env, argv) => {
     plugins: [
       new ModuleFederationPlugin({
         name: 'myfinance',
-        remotes: {
-          reports: 'myfinanceReports@http://localhost:3001/remoteEntry.js',
-        },
+        // remotes: {
+        //   reports: 'myfinanceReports@http://localhost:3001/remoteEntry.js',
+        // },
         shared: {
           react: { singleton: true, requiredVersion: '^19.1.0' },
           'react-dom': { singleton: true, requiredVersion: '^19.1.0' },
