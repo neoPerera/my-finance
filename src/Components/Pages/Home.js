@@ -36,7 +36,7 @@ const arrComponents = {
   TransactionForm: LazyWithFallback(() => import("./SubPages/Transaction/TransactionsForm")),
   RefMasAccountsList: LazyWithFallback(() => import("./SubPages/Reference/RefAccounts/RefMasAccountsList")),
   RefMasAccountsForm: LazyWithFallback(() => import("./SubPages/Reference/RefAccounts/RefMasAccountsForm")),
-  ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
+  //ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
   NotFound: LazyWithFallback(() => import("./404")),
 };
 const iconComponents = {
