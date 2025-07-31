@@ -7,7 +7,7 @@ import CountUp from "react-countup";
 const DashboardAccountBalance = () => {
   const [spinning, setSpinning] = React.useState(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [chartData, setChartData] = React.useState([[], 0]);
+  const [chartData, setChartData] = React.useState([]);
 
   const formatter = (value) => <CountUp end={value} separator="," />;
 
