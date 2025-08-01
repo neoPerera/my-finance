@@ -13,7 +13,7 @@ import {
   message,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import EditableCell from "../../../../Elements/EditableCell";
+import EditableCell from "../../../../../Elements/EditableCell";
 
 function RefMasAccountsList() {
   // Refs and state

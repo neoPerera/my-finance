@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from "react";
 import Axios from "axios";
-import Loading from "../../../Elements/Loading";
+import Loading from "../../../../Elements/Loading";
 import "./DashboardCard.css";
 
 const DashboardTransactionsTable = () => {
