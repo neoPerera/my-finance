@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
-import { SelectPicker } from "rsuite";
-import "rsuite/dist/rsuite.min.css";
+import HelpDropdown from "../../../../Elements/imports/HelpDropdown";
 import "./TransactionForm.css";
 
 const SubmitButton = ({ form, onClick, disabled }) => {
@@ -18,9 +17,7 @@ const SubmitButton = ({ form, onClick, disabled }) => {
   );
 };
 
-// Filter `option.label` match the user type `input`
-const filterOption = (input, option) =>
-  (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
 
 function TransactionForm() {
   const [formData, setFormData] = useState({
@@ -395,19 +392,14 @@ function TransactionForm() {
               <label htmlFor="strAccount" className="form-label">
                 Account <span className="required">*</span>
               </label>
-              <select
-                id="strAccount"
-                className={`form-select ${errors.strAccount ? 'error' : ''}`}
+              <HelpDropdown
+                options={accounts}
                 value={formData.strAccount}
-                onChange={(e) => handleSelectAccount(e.target.value)}
-              >
-                <option value="">Select an Account</option>
-                {accounts.map((account) => (
-                  <option key={account.value} value={account.value}>
-                    {account.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleSelectAccount}
+                placeholder="Select an Account"
+                searchPlaceholder="Search accounts..."
+                className={errors.strAccount ? 'error' : ''}
+              />
               {errors.strAccount && <span className="error-message">{errors.strAccount}</span>}
             </div>
 
@@ -435,19 +427,14 @@ function TransactionForm() {
                 <label htmlFor="strAccount2" className="form-label">
                   Second Account <span className="required">*</span>
                 </label>
-                <select
-                  id="strAccount2"
-                  className={`form-select ${errors.strAccount2 ? 'error' : ''}`}
+                <HelpDropdown
+                  options={accounts2}
                   value={formData.strAccount2}
-                  onChange={(e) => handleSelectAccount2(e.target.value)}
-                >
-                  <option value="">Select 2nd Account</option>
-                  {accounts2.map((account) => (
-                    <option key={account.value} value={account.value}>
-                      {account.label}
-                    </option>
-                  ))}
-                </select>
+                  onChange={handleSelectAccount2}
+                  placeholder="Select 2nd Account"
+                  searchPlaceholder="Search accounts..."
+                  className={errors.strAccount2 ? 'error' : ''}
+                />
                 {errors.strAccount2 && <span className="error-message">{errors.strAccount2}</span>}
               </div>
             )}
@@ -457,19 +444,14 @@ function TransactionForm() {
               <label htmlFor="strTransType" className="form-label">
                 Transaction Type <span className="required">*</span>
               </label>
-              <select
-                id="strTransType"
-                className={`form-select ${errors.strTransType ? 'error' : ''}`}
+              <HelpDropdown
+                options={transTypes}
                 value={formData.strTransType}
-                onChange={(e) => handleSelectTrans(e.target.value)}
-              >
-                <option value="">Select a type</option>
-                {transTypes.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
+                onChange={handleSelectTrans}
+                placeholder="Select a type"
+                searchPlaceholder="Search transaction types..."
+                className={errors.strTransType ? 'error' : ''}
+              />
               {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
             </div>
 
@@ -478,20 +460,15 @@ function TransactionForm() {
               <label htmlFor="strTransCat" className="form-label">
                 Category <span className="required">*</span>
               </label>
-              <select
-                id="strTransCat"
-                className={`form-select ${errors.strTransCat ? 'error' : ''}`}
+              <HelpDropdown
+                options={transCats}
                 value={formData.strTransCat}
-                onChange={(e) => handleSelectCats(e.target.value)}
+                onChange={handleSelectCats}
+                placeholder="Select a category"
+                searchPlaceholder="Search categories..."
+                className={errors.strTransCat ? 'error' : ''}
                 disabled={isTransCatDisabled}
-              >
-                <option value="">Select a category</option>
-                {transCats.map((cat) => (
-                  <option key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </option>
-                ))}
-              </select>
+              />
               {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
             </div>
 
