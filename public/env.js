@@ -1,3 +1,3 @@
 window.env = {
-    REACT_APP_API_URL:"https://api-myfinance.chanuthperera.com/"
+    REACT_APP_API_URL:"https://api-dot-net-myfinance.chanuthperera.com/"
   };
