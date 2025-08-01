@@ -4,6 +4,7 @@
   min-height: 100vh;
   width: 100%;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .dashboard-grid {
@@ -13,6 +14,7 @@
   max-width: 100%;
   margin: 0 auto;
   align-items: stretch;
+  overflow: visible;
 }
 
 /* Ensure all cards have equal height and proper alignment */
@@ -21,6 +23,7 @@
   min-height: 200px;
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 /* Ultra-wide screens (1920px+) - 3 columns for stats, 1 full-width for table */
@@ -151,6 +154,23 @@
   .dashboard-grid {
     grid-template-columns: 1fr;
     gap: 12px;
+    max-width: 100%;
+  }
+  
+  .table-card {
+    grid-column: 1;
+  }
+}
+
+/* iPhone 11 and similar devices (375px width) */
+@media (max-width: 414px) {
+  .dashboard {
+    padding: 8px 12px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
     max-width: 100%;
   }
   

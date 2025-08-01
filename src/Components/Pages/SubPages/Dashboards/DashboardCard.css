@@ -10,6 +10,7 @@
   min-height: 200px;
   display: flex;
   flex-direction: column;
+  max-height: 400px;
 }
 
 .dashboard-card:hover {
@@ -38,7 +39,28 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100% - 80px); /* Account for header height */
+}
+
+/* Custom scrollbar for card content */
+.card-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.card-content::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.card-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.card-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 /* Statistic Items */
@@ -133,6 +155,7 @@
 /* Table Styles */
 .table-card {
   grid-column: 1 / -1;
+  max-height: 500px;
 }
 
 .table-container {
@@ -144,11 +167,13 @@
   flex-direction: column;
   min-height: 400px;
   position: relative;
+  max-height: 400px;
 }
 
 /* Add scrollbar styling for better UX */
 .table-container::-webkit-scrollbar {
   height: 8px;
+  width: 8px;
 }
 
 .table-container::-webkit-scrollbar-track {
@@ -215,6 +240,7 @@
 @media (max-width: 768px) {
   .table-container {
     min-height: 300px;
+    max-height: 350px;
   }
   
   .custom-table {
@@ -235,6 +261,7 @@
 @media (max-width: 480px) {
   .table-container {
     min-height: 250px;
+    max-height: 300px;
   }
   
   .custom-table {
@@ -255,6 +282,7 @@
 @media (max-width: 360px) {
   .table-container {
     min-height: 200px;
+    max-height: 250px;
   }
   
   .custom-table {
@@ -319,6 +347,7 @@
 @media (max-width: 1024px) {
   .dashboard-card {
     min-height: 180px;
+    max-height: 350px;
   }
   
   .card-header {
@@ -331,6 +360,7 @@
   
   .card-content {
     padding: 18px;
+    max-height: calc(100% - 76px);
   }
   
   .statistic-item {
@@ -351,6 +381,7 @@
   .dashboard-card {
     margin-bottom: 0;
     min-height: 160px;
+    max-height: 300px;
   }
   
   .card-header {
@@ -363,6 +394,7 @@
   
   .card-content {
     padding: 16px;
+    max-height: calc(100% - 72px);
   }
   
   .statistic-item {
@@ -397,6 +429,7 @@
 @media (max-width: 480px) {
   .dashboard-card {
     min-height: 140px;
+    max-height: 280px;
   }
   
   .card-header {
@@ -409,6 +442,7 @@
   
   .card-content {
     padding: 12px;
+    max-height: calc(100% - 64px);
   }
   
   .statistic-item {
@@ -441,10 +475,11 @@
   }
 }
 
-/* Extra small screens */
-@media (max-width: 360px) {
+/* iPhone 11 and similar devices (375px width) */
+@media (max-width: 414px) {
   .dashboard-card {
     min-height: 120px;
+    max-height: 250px;
   }
   
   .card-header {
@@ -457,6 +492,56 @@
   
   .card-content {
     padding: 10px;
+    max-height: calc(100% - 60px);
+  }
+  
+  .statistic-item {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .statistic-title {
+    font-size: 11px;
+  }
+  
+  .statistic-value {
+    font-size: 16px;
+  }
+  
+  .pagination {
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .pagination-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 50px;
+  }
+  
+  .pagination-info {
+    font-size: 11px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+  .dashboard-card {
+    min-height: 120px;
+    max-height: 220px;
+  }
+  
+  .card-header {
+    padding: 10px;
+  }
+  
+  .card-header h3 {
+    font-size: 14px;
+  }
+  
+  .card-content {
+    padding: 10px;
+    max-height: calc(100% - 60px);
   }
   
   .statistic-item {
