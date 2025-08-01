@@ -156,6 +156,8 @@
 .table-card {
   grid-column: 1 / -1;
   max-height: 500px;
+  display: flex;
+  flex-direction: column;
 }
 
 .table-container {
@@ -236,7 +238,7 @@
   border-bottom: none;
 }
 
-/* Pagination Styles */
+/* Pagination Styles - Updated for outside table container */
 .pagination {
   display: flex;
   align-items: center;
@@ -246,6 +248,8 @@
   background: #f8fafc;
   border-top: 1px solid #e5e7eb;
   flex-shrink: 0;
+  border-radius: 0 0 12px 12px;
+  margin-top: auto;
 }
 
 .pagination-btn {
@@ -311,6 +315,26 @@
   .statistic-value {
     font-size: 22px;
   }
+  
+  .table-container {
+    min-height: 300px;
+    max-height: 350px;
+  }
+  
+  .pagination {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .pagination-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+    min-width: 70px;
+  }
+  
+  .pagination-info {
+    font-size: 13px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -344,6 +368,11 @@
   
   .statistic-value {
     font-size: 20px;
+  }
+  
+  .table-container {
+    min-height: 250px;
+    max-height: 300px;
   }
   
   .pagination {
@@ -392,6 +421,11 @@
   
   .statistic-value {
     font-size: 18px;
+  }
+  
+  .table-container {
+    min-height: 200px;
+    max-height: 250px;
   }
   
   .pagination {
@@ -480,31 +514,6 @@
     overflow-wrap: break-word;
   }
   
-  .pagination {
-    padding: 8px 6px;
-    gap: 4px;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    box-sizing: border-box;
-  }
-  
-  .pagination-btn {
-    padding: 4px 8px;
-    font-size: 11px;
-    min-width: 40px;
-    min-height: 28px;
-    border-radius: 4px;
-  }
-  
-  .pagination-info {
-    font-size: 10px;
-    width: 100%;
-    text-align: center;
-    margin-top: 2px;
-  }
-  
   /* Table optimizations for iPhone 11 */
   .table-container {
     min-height: 180px;
@@ -535,6 +544,34 @@
     max-width: 80px;
     word-wrap: break-word;
     overflow-wrap: break-word;
+  }
+  
+  /* Pagination moved outside table - iPhone 11 styles */
+  .pagination {
+    padding: 8px 6px;
+    gap: 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 0 0 10px 10px;
+    margin-top: auto;
+  }
+  
+  .pagination-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 40px;
+    min-height: 28px;
+    border-radius: 4px;
+  }
+  
+  .pagination-info {
+    font-size: 10px;
+    width: 100%;
+    text-align: center;
+    margin-top: 2px;
   }
   
   /* Enhanced scrollbar for iPhone 11 */

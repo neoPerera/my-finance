@@ -98,34 +98,34 @@ const DashboardTransactionsTable = () => {
                     ))}
                   </tbody>
                 </table>
-                
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className="pagination">
-                    <button 
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="pagination-btn"
-                    >
-                      Previous
-                    </button>
-                    <span className="pagination-info">
-                      Page {currentPage} of {totalPages}
-                    </span>
-                    <button 
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      disabled={currentPage === totalPages}
-                      className="pagination-btn"
-                    >
-                      Next
-                    </button>
-                  </div>
-                )}
               </div>
             )}
           </>
         )}
       </div>
+      
+      {/* Pagination moved outside table container to bottom of card */}
+      {!spinning && !errorMessage && chartData.length > 0 && totalPages > 1 && (
+        <div className="pagination">
+          <button 
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-btn"
+          >
+            Previous
+          </button>
+          <span className="pagination-info">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button 
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="pagination-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
