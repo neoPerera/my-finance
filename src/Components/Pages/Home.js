@@ -144,7 +144,7 @@ const Home = () => {
     if (formattedRoutes.length > 0) setSpinning(false);
   }, [responseData]);
 
-  const MenuItemClicked = ({ item }) => {
+  const MenuItemClicked = (item) => {
     if (item.props?.link) navigate(item.props.link);
   };
 

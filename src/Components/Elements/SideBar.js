@@ -4,10 +4,11 @@ import "./SideBar.css";
 
 const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded, setIsMobileExpanded, isLoading = false }) => {
   const [expandedMenus, setExpandedMenus] = useState(new Set());
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+  const [dropdownExpandedMenus, setDropdownExpandedMenus] = useState(new Set());
   const [dropdownMenu, setDropdownMenu] = useState(null);
   const [activeMenuItem, setActiveMenuItem] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
 
   // Enhanced mobile and tablet detection
   useEffect(() => {
@@ -21,6 +22,11 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  // Debug dropdown expansion state
+  useEffect(() => {
+    console.log('Dropdown expanded menus state changed:', Array.from(dropdownExpandedMenus));
+  }, [dropdownExpandedMenus]);
 
   // Enhanced click outside handling with better touch support
   const handleClickOutside = useCallback((event) => {
@@ -37,8 +43,9 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
     // Close dropdown when clicking outside - but not when clicking inside the dropdown
     if (dropdownMenu && !event.target.closest('.sidebar') && !event.target.closest('.sidebar-dropdown')) {
       setDropdownMenu(null);
+      setDropdownExpandedMenus(new Set()); // Clear dropdown expansion state
     }
-  }, [isMobile, isMobileExpanded, setIsMobileExpanded, dropdownMenu]);
+  }, [isMobile, isMobileExpanded, dropdownMenu]);
 
   useEffect(() => {
     // Add both mouse and touch events for better mobile support
@@ -60,6 +67,7 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
         }
         if (dropdownMenu) {
           setDropdownMenu(null);
+          setDropdownExpandedMenus(new Set()); // Clear dropdown expansion state
         }
       }
     };
@@ -69,30 +77,45 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
   }, [isMobile, isMobileExpanded, setIsMobileExpanded, dropdownMenu]);
 
   const handleMenuClick = useCallback((item) => {
-    if (item.props?.link) {
-      MenuItemClicked({ item });
-      // Set active menu item
-      setActiveMenuItem(item.key);
-      // Close mobile sidebar after navigation
-      if (isMobile) {
-        setIsMobileExpanded(false);
-      }
-      // Close dropdown after navigation
-      setDropdownMenu(null);
+    MenuItemClicked(item);
+    setActiveMenuItem(item.key);
+    if (isMobile) {
+      setIsMobileExpanded(false);
     }
-  }, [MenuItemClicked, isMobile, setIsMobileExpanded]);
+    if (dropdownMenu) {
+      setDropdownMenu(null);
+      setDropdownExpandedMenus(new Set()); // Clear dropdown expansion state
+    }
+  }, [MenuItemClicked, isMobile, dropdownMenu]);
 
   const toggleMenuExpansion = useCallback((menuKey) => {
     setExpandedMenus(prev => {
-      const newExpandedMenus = new Set(prev);
-      if (newExpandedMenus.has(menuKey)) {
-        newExpandedMenus.delete(menuKey);
+      const newSet = new Set(prev);
+      if (newSet.has(menuKey)) {
+        newSet.delete(menuKey);
       } else {
-        newExpandedMenus.add(menuKey);
+        newSet.add(menuKey);
       }
-      return newExpandedMenus;
+      return newSet;
     });
   }, []);
+
+  const toggleDropdownMenuExpansion = useCallback((menuKey) => {
+    console.log('Toggling dropdown menu expansion for:', menuKey);
+    console.log('Current dropdown expanded menus:', Array.from(dropdownExpandedMenus));
+    setDropdownExpandedMenus(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(menuKey)) {
+        newSet.delete(menuKey);
+        console.log('Removed from expanded set:', menuKey);
+      } else {
+        newSet.add(menuKey);
+        console.log('Added to expanded set:', menuKey);
+      }
+      console.log('New expanded set:', Array.from(newSet));
+      return newSet;
+    });
+  }, [dropdownExpandedMenus]);
 
   const handleOverlayClick = useCallback(() => {
     setIsMobileExpanded(false);
@@ -128,40 +151,11 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
     });
   }, []);
 
-  const renderDropdownMenu = useCallback((dropdownData) => {
-    const { item, position } = dropdownData;
-    
-    return (
-      <div 
-        className="sidebar-dropdown"
-        style={{
-          position: 'fixed',
-          left: position.x,
-          top: position.y,
-          zIndex: 1002
-        }}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="dropdown-header">
-          <span className="dropdown-title">{item.label}</span>
-        </div>
-        <div className="dropdown-items">
-          {item.children && item.children.length > 0 ? (
-            renderNestedItems(item.children)
-          ) : (
-            <div className="dropdown-item" onClick={() => handleMenuClick(item)}>
-              <span className="dropdown-icon">{item.icon}</span>
-              <span className="dropdown-label">{item.label}</span>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }, [handleMenuClick]);
-
-  const renderDropdownItem = (menuItem, level = 0) => {
+  const renderDropdownItem = useCallback((menuItem, level = 0) => {
     const hasChildren = menuItem.children && menuItem.children.length > 0;
-    const isExpanded = expandedMenus.has(menuItem.key);
+    const isExpanded = dropdownExpandedMenus.has(menuItem.key);
+    
+    console.log('Rendering dropdown item:', menuItem.label, 'hasChildren:', hasChildren, 'isExpanded:', isExpanded, 'level:', level);
     
     const DropdownFolderIcon = () => (
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -176,7 +170,8 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
             className="dropdown-item-content"
             onClick={(e) => {
               e.stopPropagation();
-              toggleMenuExpansion(menuItem.key);
+              console.log('Clicking on dropdown item with children:', menuItem.label);
+              toggleDropdownMenuExpansion(menuItem.key);
             }}
           >
             <DropdownFolderIcon />
@@ -187,7 +182,7 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
           </div>
           {isExpanded && (
             <div className="dropdown-nested-items">
-              {renderNestedItems(menuItem.children, level + 1)}
+              {menuItem.children.map(child => renderDropdownItem(child, level + 1))}
             </div>
           )}
         </div>
@@ -207,13 +202,38 @@ const SideBar = ({ collapsed, MenuItemClicked, sideBarFormData, isMobileExpanded
         <span className="dropdown-label">{menuItem.label}</span>
       </div>
     );
-  };
+  }, [dropdownExpandedMenus, toggleDropdownMenuExpansion, activeMenuItem, handleMenuClick]);
 
-  const renderNestedItems = (menuItems, level = 0) => {
-    if (!menuItems || menuItems.length === 0) return null;
+  const renderDropdownMenu = useCallback((dropdownData) => {
+    const { item, position } = dropdownData;
     
-    return menuItems.map(menuItem => renderDropdownItem(menuItem, level));
-  };
+    return (
+      <div 
+        className="sidebar-dropdown"
+        style={{
+          position: 'fixed',
+          left: position.x,
+          top: position.y,
+          zIndex: 1002
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="dropdown-header">
+          <span className="dropdown-title">{item.label}</span>
+        </div>
+        <div className="dropdown-items">
+          {item.children && item.children.length > 0 ? (
+            item.children.map(child => renderDropdownItem(child, 0))
+          ) : (
+            <div className="dropdown-item" onClick={() => handleMenuClick(item)}>
+              <span className="dropdown-icon">{item.icon}</span>
+              <span className="dropdown-label">{item.label}</span>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }, [handleMenuClick, renderDropdownItem]);
 
   const renderMenuItem = useCallback((item, level = 0) => {
     const hasChildren = item.children && item.children.length > 0;

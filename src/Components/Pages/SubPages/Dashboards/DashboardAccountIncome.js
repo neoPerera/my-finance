@@ -6,7 +6,7 @@ import Loading from "../../../Elements/Loading";
 import "./DashboardCard.css";
 
 const DashboardAccountIncome = () => {
-    const [spinning, setSpinning] = useState(false);
+    const [spinning, setSpinning] = useState(true);
     const [chartData, setChartData] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -49,21 +49,22 @@ const DashboardAccountIncome = () => {
                     <Loading />
                 ) : errorMessage ? (
                     <div className="error-message">{errorMessage}</div>
-                ) : (
+                ) : chartData.length > 0 ? (
                     <>
-                        {chartData.length > 0 && (
-                            <>
-                                {chartData.map((item) => (
-                                    <div key={item.type} className="statistic-item">
-                                        <div className="statistic-title">{item.type} Incomes (LKR)</div>
-                                        <div className="statistic-value income">
-                                            <CountUp end={item.value} separator="," decimals={2} />
-                                        </div>
-                                    </div>
-                                ))}
-                            </>
-                        )}
+                        {chartData.map((item) => (
+                            <div key={item.type} className="statistic-item">
+                                <div className="statistic-title">{item.type} Incomes (LKR)</div>
+                                <div className="statistic-value income">
+                                    <CountUp end={item.value} separator="," decimals={2} />
+                                </div>
+                            </div>
+                        ))}
                     </>
+                ) : (
+                    <div className="no-data-message">
+                        <div className="no-data-icon">📊</div>
+                        <div className="no-data-text">No income data available</div>
+                    </div>
                 )}
             </div>
         </div>

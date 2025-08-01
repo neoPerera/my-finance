@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
-import Loading from "../../../Elements/Loading";
 import "./TransactionForm.css";
 
 const SubmitButton = ({ form, onClick, disabled }) => {
@@ -330,8 +329,6 @@ function TransactionForm() {
 
   return (
     <div className="transaction-form-container">
-      <Loading active={spinning} fullscreen={true} />
-      
       <div className="form-header">
         <h2>Transaction Form</h2>
         <p>Add a new transaction to your financial records</p>
@@ -353,171 +350,177 @@ function TransactionForm() {
         </div>
       )}
 
-      <form className="transaction-form" onSubmit={handleSubmitBtn}>
-        <div className="form-grid">
-          {/* ID Field */}
-          <div className="form-group">
-            <label htmlFor="strId" className="form-label">
-              ID <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="strId"
-              className={`form-input ${errors.strId ? 'error' : ''}`}
-              value={formData.strId}
-              onChange={handleInputChange}
-              disabled={true}
-              placeholder="Auto-generated ID"
-            />
-            {errors.strId && <span className="error-message">{errors.strId}</span>}
-          </div>
-
-          {/* Amount Field */}
-          <div className="form-group">
-            <label htmlFor="floatAmount" className="form-label">
-              Amount <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="floatAmount"
-              className={`form-input ${errors.floatAmount ? 'error' : ''}`}
-              value={formData.floatAmount}
-              onChange={Amount_handleInputChange}
-              placeholder="Enter amount"
-            />
-            {errors.floatAmount && <span className="error-message">{errors.floatAmount}</span>}
-          </div>
-
-          {/* Account Selection */}
-          <div className="form-group">
-            <label htmlFor="strAccount" className="form-label">
-              Account <span className="required">*</span>
-            </label>
-            <select
-              id="strAccount"
-              className={`form-select ${errors.strAccount ? 'error' : ''}`}
-              value={formData.strAccount}
-              onChange={(e) => handleSelectAccount(e.target.value)}
-            >
-              <option value="">Select an Account</option>
-              {accounts.map((account) => (
-                <option key={account.value} value={account.value}>
-                  {account.label}
-                </option>
-              ))}
-            </select>
-            {errors.strAccount && <span className="error-message">{errors.strAccount}</span>}
-          </div>
-
-          {/* Double Entry Toggle */}
-          <div className="form-group">
-            <label className="form-label">Double Entry</label>
-            <div className="toggle-container">
-              <label className="toggle-switch">
-                <input
-                  type="checkbox"
-                  checked={formData.isDoubleEntry}
-                  onChange={(e) => isDouleEntryChange(e.target.checked)}
-                />
-                <span className="toggle-slider"></span>
-              </label>
-              <span className="toggle-label">
-                {formData.isDoubleEntry ? 'Enabled' : 'Disabled'}
-              </span>
-            </div>
-          </div>
-
-          {/* Second Account (Conditional) */}
-          {formData.isDoubleEntry && (
+      {spinning ? (
+        <div className="form-loading">
+          <div className="form-loading-spinner"></div>
+        </div>
+      ) : (
+        <form className="transaction-form" onSubmit={handleSubmitBtn}>
+          <div className="form-grid">
+            {/* ID Field */}
             <div className="form-group">
-              <label htmlFor="strAccount2" className="form-label">
-                Second Account <span className="required">*</span>
+              <label htmlFor="strId" className="form-label">
+                ID <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="strId"
+                className={`form-input ${errors.strId ? 'error' : ''}`}
+                value={formData.strId}
+                onChange={handleInputChange}
+                disabled={true}
+                placeholder="Auto-generated ID"
+              />
+              {errors.strId && <span className="error-message">{errors.strId}</span>}
+            </div>
+
+            {/* Amount Field */}
+            <div className="form-group">
+              <label htmlFor="floatAmount" className="form-label">
+                Amount <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="floatAmount"
+                className={`form-input ${errors.floatAmount ? 'error' : ''}`}
+                value={formData.floatAmount}
+                onChange={Amount_handleInputChange}
+                placeholder="Enter amount"
+              />
+              {errors.floatAmount && <span className="error-message">{errors.floatAmount}</span>}
+            </div>
+
+            {/* Account Selection */}
+            <div className="form-group">
+              <label htmlFor="strAccount" className="form-label">
+                Account <span className="required">*</span>
               </label>
               <select
-                id="strAccount2"
-                className={`form-select ${errors.strAccount2 ? 'error' : ''}`}
-                value={formData.strAccount2}
-                onChange={(e) => handleSelectAccount2(e.target.value)}
+                id="strAccount"
+                className={`form-select ${errors.strAccount ? 'error' : ''}`}
+                value={formData.strAccount}
+                onChange={(e) => handleSelectAccount(e.target.value)}
               >
-                <option value="">Select 2nd Account</option>
-                {accounts2.map((account) => (
+                <option value="">Select an Account</option>
+                {accounts.map((account) => (
                   <option key={account.value} value={account.value}>
                     {account.label}
                   </option>
                 ))}
               </select>
-              {errors.strAccount2 && <span className="error-message">{errors.strAccount2}</span>}
+              {errors.strAccount && <span className="error-message">{errors.strAccount}</span>}
             </div>
-          )}
 
-          {/* Transaction Type */}
-          <div className="form-group">
-            <label htmlFor="strTransType" className="form-label">
-              Transaction Type <span className="required">*</span>
-            </label>
-            <select
-              id="strTransType"
-              className={`form-select ${errors.strTransType ? 'error' : ''}`}
-              value={formData.strTransType}
-              onChange={(e) => handleSelectTrans(e.target.value)}
-            >
-              <option value="">Select a type</option>
-              {transTypes.map((type) => (
-                <option key={type.value} value={type.value}>
-                  {type.label}
-                </option>
-              ))}
-            </select>
-            {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
+            {/* Double Entry Toggle */}
+            <div className="form-group">
+              <label className="form-label">Double Entry</label>
+              <div className="toggle-container">
+                <label className="toggle-switch">
+                  <input
+                    type="checkbox"
+                    checked={formData.isDoubleEntry}
+                    onChange={(e) => isDouleEntryChange(e.target.checked)}
+                  />
+                  <span className="toggle-slider"></span>
+                </label>
+                <span className="toggle-label">
+                  {formData.isDoubleEntry ? 'Enabled' : 'Disabled'}
+                </span>
+              </div>
+            </div>
+
+            {/* Second Account (Conditional) */}
+            {formData.isDoubleEntry && (
+              <div className="form-group">
+                <label htmlFor="strAccount2" className="form-label">
+                  Second Account <span className="required">*</span>
+                </label>
+                <select
+                  id="strAccount2"
+                  className={`form-select ${errors.strAccount2 ? 'error' : ''}`}
+                  value={formData.strAccount2}
+                  onChange={(e) => handleSelectAccount2(e.target.value)}
+                >
+                  <option value="">Select 2nd Account</option>
+                  {accounts2.map((account) => (
+                    <option key={account.value} value={account.value}>
+                      {account.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.strAccount2 && <span className="error-message">{errors.strAccount2}</span>}
+              </div>
+            )}
+
+            {/* Transaction Type */}
+            <div className="form-group">
+              <label htmlFor="strTransType" className="form-label">
+                Transaction Type <span className="required">*</span>
+              </label>
+              <select
+                id="strTransType"
+                className={`form-select ${errors.strTransType ? 'error' : ''}`}
+                value={formData.strTransType}
+                onChange={(e) => handleSelectTrans(e.target.value)}
+              >
+                <option value="">Select a type</option>
+                {transTypes.map((type) => (
+                  <option key={type.value} value={type.value}>
+                    {type.label}
+                  </option>
+                ))}
+              </select>
+              {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
+            </div>
+
+            {/* Transaction Category */}
+            <div className="form-group">
+              <label htmlFor="strTransCat" className="form-label">
+                Category <span className="required">*</span>
+              </label>
+              <select
+                id="strTransCat"
+                className={`form-select ${errors.strTransCat ? 'error' : ''}`}
+                value={formData.strTransCat}
+                onChange={(e) => handleSelectCats(e.target.value)}
+                disabled={isTransCatDisabled}
+              >
+                <option value="">Select a category</option>
+                {transCats.map((cat) => (
+                  <option key={cat.value} value={cat.value}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+              {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
+            </div>
+
+            {/* Reason Field */}
+            <div className="form-group full-width">
+              <label htmlFor="strName" className="form-label">
+                Reason <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                id="strName"
+                className={`form-input ${errors.strName ? 'error' : ''}`}
+                value={formData.strName}
+                onChange={handleInputChange}
+                placeholder="Enter transaction reason"
+              />
+              {errors.strName && <span className="error-message">{errors.strName}</span>}
+            </div>
           </div>
 
-          {/* Transaction Category */}
-          <div className="form-group">
-            <label htmlFor="strTransCat" className="form-label">
-              Category <span className="required">*</span>
-            </label>
-            <select
-              id="strTransCat"
-              className={`form-select ${errors.strTransCat ? 'error' : ''}`}
-              value={formData.strTransCat}
-              onChange={(e) => handleSelectCats(e.target.value)}
-              disabled={isTransCatDisabled}
-            >
-              <option value="">Select a category</option>
-              {transCats.map((cat) => (
-                <option key={cat.value} value={cat.value}>
-                  {cat.label}
-                </option>
-              ))}
-            </select>
-            {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
-          </div>
-
-          {/* Reason Field */}
-          <div className="form-group full-width">
-            <label htmlFor="strName" className="form-label">
-              Reason <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              id="strName"
-              className={`form-input ${errors.strName ? 'error' : ''}`}
-              value={formData.strName}
-              onChange={handleInputChange}
-              placeholder="Enter transaction reason"
+          {/* Submit Button */}
+          <div className="form-actions">
+            <SubmitButton 
+              onClick={handleSubmitBtn} 
+              disabled={!isFormValid() || spinning}
             />
-            {errors.strName && <span className="error-message">{errors.strName}</span>}
           </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="form-actions">
-          <SubmitButton 
-            onClick={handleSubmitBtn} 
-            disabled={!isFormValid() || spinning}
-          />
-        </div>
-      </form>
+        </form>
+      )}
     </div>
   );
 }
