@@ -2,21 +2,25 @@
   padding: 24px;
   background: #f8fafc;
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
   max-width: 1400px;
   margin: 0 auto;
-  align-items: start;
+  align-items: stretch;
 }
 
 /* Ensure all cards have equal height and proper alignment */
 .dashboard-card {
   height: 100%;
   min-height: 200px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Table card should span full width on larger screens */
@@ -26,10 +30,10 @@
   }
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* Large screens - 3 columns for stats, 1 full-width for table */
+@media (min-width: 1024px) and (max-width: 1199px) {
   .dashboard-grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
   
@@ -38,7 +42,20 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Medium screens - 2 columns for stats, 1 full-width for table */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  
+  .table-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Small screens - 1 column for all cards */
+@media (max-width: 767px) {
   .dashboard {
     padding: 16px;
   }
@@ -53,6 +70,7 @@
   }
 }
 
+/* Extra small screens */
 @media (max-width: 480px) {
   .dashboard {
     padding: 12px;
@@ -60,5 +78,28 @@
   
   .dashboard-grid {
     gap: 12px;
+  }
+}
+
+/* Ensure proper spacing on very large screens */
+@media (min-width: 1400px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+  }
+  
+  .table-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Sidebar-aware responsive adjustments */
+@media (max-width: 1024px) {
+  .dashboard {
+    padding: 20px;
+  }
+  
+  .dashboard-grid {
+    gap: 20px;
   }
 } 

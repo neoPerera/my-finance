@@ -38,6 +38,7 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  overflow: hidden;
 }
 
 /* Statistic Items */
@@ -66,6 +67,8 @@
   font-weight: 500;
   margin-bottom: 8px;
   letter-spacing: 0.025em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .statistic-value {
@@ -73,6 +76,8 @@
   font-weight: 700;
   color: #1e293b;
   letter-spacing: -0.025em;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 .statistic-value.income {
@@ -111,6 +116,27 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 400px;
+  position: relative;
+}
+
+/* Add scrollbar styling for better UX */
+.table-container::-webkit-scrollbar {
+  height: 8px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 .custom-table {
@@ -119,11 +145,15 @@
   background: white;
   font-size: 14px;
   flex: 1;
+  min-width: 600px;
 }
 
 .custom-table thead {
   background: #f8fafc;
   border-bottom: 2px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .custom-table th {
@@ -135,6 +165,7 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+  background: #f8fafc;
 }
 
 .custom-table td {
@@ -143,6 +174,7 @@
   color: #374151;
   word-wrap: break-word;
   max-width: 200px;
+  vertical-align: top;
 }
 
 .custom-table tbody tr:hover {
@@ -151,6 +183,67 @@
 
 .custom-table tbody tr:last-child td {
   border-bottom: none;
+}
+
+/* Enhanced table responsiveness */
+@media (max-width: 768px) {
+  .table-container {
+    min-height: 300px;
+  }
+  
+  .custom-table {
+    min-width: 500px;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  
+  .custom-table th {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .table-container {
+    min-height: 250px;
+  }
+  
+  .custom-table {
+    min-width: 400px;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+  
+  .custom-table th {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .table-container {
+    min-height: 200px;
+  }
+  
+  .custom-table {
+    min-width: 350px;
+  }
+  
+  .custom-table th,
+  .custom-table td {
+    padding: 4px 6px;
+    font-size: 11px;
+  }
+  
+  .custom-table th {
+    font-size: 10px;
+  }
 }
 
 /* Pagination Styles */
@@ -196,11 +289,42 @@
   white-space: nowrap;
 }
 
-/* Responsive Design */
+/* Enhanced Responsive Design */
+@media (max-width: 1024px) {
+  .dashboard-card {
+    min-height: 180px;
+  }
+  
+  .card-header {
+    padding: 18px;
+  }
+  
+  .card-header h3 {
+    font-size: 17px;
+  }
+  
+  .card-content {
+    padding: 18px;
+  }
+  
+  .statistic-item {
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  
+  .statistic-title {
+    font-size: 13px;
+  }
+  
+  .statistic-value {
+    font-size: 22px;
+  }
+}
+
 @media (max-width: 768px) {
   .dashboard-card {
     margin-bottom: 0;
-    min-height: 180px;
+    min-height: 160px;
   }
   
   .card-header {
@@ -228,15 +352,6 @@
     font-size: 20px;
   }
   
-  .custom-table {
-    font-size: 13px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 8px 12px;
-  }
-  
   .pagination {
     padding: 12px;
     gap: 12px;
@@ -255,7 +370,7 @@
 
 @media (max-width: 480px) {
   .dashboard-card {
-    min-height: 160px;
+    min-height: 140px;
   }
   
   .card-header {
@@ -283,15 +398,6 @@
     font-size: 18px;
   }
   
-  .custom-table {
-    font-size: 12px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 6px 8px;
-  }
-  
   .pagination {
     padding: 10px;
     gap: 8px;
@@ -306,5 +412,52 @@
   
   .pagination-info {
     font-size: 12px;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 360px) {
+  .dashboard-card {
+    min-height: 120px;
+  }
+  
+  .card-header {
+    padding: 10px;
+  }
+  
+  .card-header h3 {
+    font-size: 14px;
+  }
+  
+  .card-content {
+    padding: 10px;
+  }
+  
+  .statistic-item {
+    padding: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .statistic-title {
+    font-size: 11px;
+  }
+  
+  .statistic-value {
+    font-size: 16px;
+  }
+  
+  .pagination {
+    padding: 8px;
+    gap: 6px;
+  }
+  
+  .pagination-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: 50px;
+  }
+  
+  .pagination-info {
+    font-size: 11px;
   }
 } 
