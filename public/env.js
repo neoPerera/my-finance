@@ -1,3 +1,3 @@
 window.env = {
-    REACT_APP_API_URL:"http://localhost:5057/"
+    REACT_APP_API_URL:"https://api-myfinance.chanuthperera.com/"
   };
