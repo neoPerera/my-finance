@@ -1,48 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
-import Swal from "sweetalert2";
 import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
-import { Button, Form, Input, Select, Space, Spin, message, Switch } from "antd";
-import Title from "antd/es/typography/Title";
+import "./TransactionForm.css";
 
-const SubmitButton = ({ form, onClick }) => {
-  const [submittable, setSubmittable] = React.useState(false);
-
-  // Watch all values
-  const values = Form.useWatch([], form);
-  React.useEffect(() => {
-    form
-      .validateFields({
-        validateOnly: true,
-      })
-      .then(
-        () => {
-          setSubmittable(true);
-        },
-        () => {
-          setSubmittable(false);
-        }
-      );
-  }, [values]);
+const SubmitButton = ({ form, onClick, disabled }) => {
   return (
-    <Button
-      type="primary"
+    <button
+      type="button"
       onClick={onClick}
-      htmlType="submit"
-      disabled={!submittable}
+      disabled={disabled}
+      className="submit-btn"
     >
       Submit
-    </Button>
+    </button>
   );
 };
+
 // Filter `option.label` match the user type `input`
 const filterOption = (input, option) =>
   (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
 function TransactionForm() {
-  const [form] = Form.useForm();
   const [formData, setFormData] = useState({
     strId: "",
     floatAmount: "",
@@ -52,7 +32,6 @@ function TransactionForm() {
     strAccount: "",
     isDoubleEntry: false,
     strAccount2: "",
-
   });
   const [transTypes, setTransTypes] = useState([]);
   const [isTransCatDisabled, setTransCatDisabled] = useState(true);
@@ -60,56 +39,95 @@ function TransactionForm() {
   const [accounts2, setAccounts2] = useState([]);
   const [transCats, setTransCats] = useState([]);
   const [spinning, setSpinning] = React.useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [reloeadCompoenet, setReloadCompoenet] = useState(0);
   const navigate = useNavigate();
 
-  // const error = () => {
-  //   messageApi.open({
-  //     type: 'error',
-  //     content: 'This is an error message',
-  //   });
-  // };
+  const clearMessages = () => {
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
+
   const handleInputChange = (e) => {
+    const { id, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.id]: e.target.value,
+      [id]: value,
     });
+    // Clear error when user starts typing
+    if (errors[id]) {
+      setErrors({
+        ...errors,
+        [id]: "",
+      });
+    }
+    clearMessages();
   };
+
   const Amount_handleInputChange = (e) => {
     const numericValue =
       parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0;
     console.log(numericValue.toLocaleString("en"));
     const formattedCurrency = numericValue.toLocaleString("en");
-    //const formattedCurrency = numericValue.toString().replace(/\d(?=(\d{3})+\.)/g, '$&,'); // Adds commas for thousands
-    // console.log(formattedCurrency);
 
     setFormData({
       ...formData,
       floatAmount: formattedCurrency,
     });
+    
+    if (errors.floatAmount) {
+      setErrors({
+        ...errors,
+        floatAmount: "",
+      });
+    }
+    clearMessages();
   };
 
   const handleSelectCats = (value) => {
     setFormData({ ...formData, strTransCat: value });
+    if (errors.strTransCat) {
+      setErrors({
+        ...errors,
+        strTransCat: "",
+      });
+    }
+    clearMessages();
   };
 
   const handleSelectAccount = (value) => {
     setFormData({ ...formData, strAccount: value });
     generateAccount2(formData.isDoubleEntry, value);
-
+    
+    if (errors.strAccount) {
+      setErrors({
+        ...errors,
+        strAccount: "",
+      });
+    }
+    clearMessages();
   };
+
   const handleSelectAccount2 = (value) => {
     setFormData({ ...formData, strAccount2: value });
+    if (errors.strAccount2) {
+      setErrors({
+        ...errors,
+        strAccount2: "",
+      });
+    }
+    clearMessages();
   };
 
   const isDouleEntryChange = (value) => {
     setFormData({ ...formData, isDoubleEntry: value });
     generateAccount2(value, formData.strAccount);
+    clearMessages();
   };
-  const generateAccount2 =(value, strAccount)=>
-  {
-    form.setFieldsValue({ strAccount2: "" }); // or true, or undefined
+
+  const generateAccount2 = (value, strAccount) => {
     if (value) {
       const filteredAccounts = accounts.filter(
         (acc) => acc.value !== strAccount
@@ -118,7 +136,7 @@ function TransactionForm() {
     } else {
       setAccounts2([]); // Empty the list when double entry is off
     }
-  }
+  };
 
   const handleSelectTrans = async (value) => {
     console.log(value);
@@ -145,30 +163,86 @@ function TransactionForm() {
       setTransCatDisabled(false);
     } catch (error) {
       console.error("Error:", error);
+      setSpinning(false);
+      setErrorMessage("Failed to load transaction categories. Please try again.");
     }
+    
+    if (errors.strTransType) {
+      setErrors({
+        ...errors,
+        strTransType: "",
+      });
+    }
+    clearMessages();
   };
 
-  const handleSubmitBtn = async (e) => {
-    e.preventDefault();
+  const validateForm = () => {
+    const newErrors = {};
     const filteredFormData = { ...formData };
 
     // If isDouble is false, remove account2 from the check
     if (!filteredFormData.isDoubleEntry) {
       delete filteredFormData.strAccount2;
     }
-    const hasEmptyAttributes = Object.values(filteredFormData).some(
-      (value) => value === "" || value === null
-    );
-    console.log(filteredFormData);
 
-    if (hasEmptyAttributes) {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: `A field is empty`,
-        footer: '<a href="#">Why do I have this issue?</a>',
-      });
+    // Validate required fields
+    if (!filteredFormData.strId || filteredFormData.strId.trim() === "") {
+      newErrors.strId = "ID is required";
+    }
+
+    if (!filteredFormData.floatAmount || filteredFormData.floatAmount.trim() === "") {
+      newErrors.floatAmount = "Amount is required";
+    } else {
+      // Validate amount format
+      const amountValue = parseFloat(filteredFormData.floatAmount.replace(/[^0-9.]/g, ""));
+      if (isNaN(amountValue) || amountValue <= 0) {
+        newErrors.floatAmount = "Please enter a valid amount greater than 0";
+      }
+    }
+
+    if (!filteredFormData.strAccount || filteredFormData.strAccount.trim() === "") {
+      newErrors.strAccount = "Account selection is required";
+    }
+
+    if (!filteredFormData.strTransType || filteredFormData.strTransType.trim() === "") {
+      newErrors.strTransType = "Transaction type is required";
+    }
+
+    if (!filteredFormData.strTransCat || filteredFormData.strTransCat.trim() === "") {
+      newErrors.strTransCat = "Category is required";
+    }
+
+    if (!filteredFormData.strName || filteredFormData.strName.trim() === "") {
+      newErrors.strName = "Reason is required";
+    }
+
+    // Validate second account if double entry is enabled
+    if (filteredFormData.isDoubleEntry) {
+      if (!filteredFormData.strAccount2 || filteredFormData.strAccount2.trim() === "") {
+        newErrors.strAccount2 = "Second account is required for double entry";
+      } else if (filteredFormData.strAccount2 === filteredFormData.strAccount) {
+        newErrors.strAccount2 = "Second account must be different from the first account";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmitBtn = async (e) => {
+    e.preventDefault();
+    clearMessages();
+    
+    if (!validateForm()) {
+      setErrorMessage("Please correct the errors below before submitting.");
       return;
+    }
+
+    const filteredFormData = { ...formData };
+
+    // If isDouble is false, remove account2 from the check
+    if (!filteredFormData.isDoubleEntry) {
+      delete filteredFormData.strAccount2;
     }
 
     setSpinning(true);
@@ -177,34 +251,47 @@ function TransactionForm() {
         `${window.env?.REACT_APP_API_URL}api/transaction/add`,
         filteredFormData
       );
-      //setSpinning(false);
       console.log("Response:", response.data);
-      messageApi.open({
-        type: "success",
-        content: "Successfully saved",
-        onClose: () => {
-          setSpinning(false);
-          form.resetFields();
-          setReloadCompoenet(reloeadCompoenet + 1);
-        },
-      });
+      
+      setSuccessMessage("Transaction saved successfully!");
+      setSpinning(false);
+      
+      // Reset form after successful submission
+      setTimeout(() => {
+        setFormData({
+          strId: "",
+          floatAmount: "",
+          strName: "",
+          strTransType: "",
+          strTransCat: "",
+          strAccount: "",
+          isDoubleEntry: false,
+          strAccount2: "",
+        });
+        setErrors({});
+        setSuccessMessage("");
+        setReloadCompoenet(reloeadCompoenet + 1);
+      }, 2000);
+      
     } catch (error) {
       console.error("Error:", error.response);
-
-      messageApi.open({
-        type: "error",
-        content: `${error.response.data.error.detail}`,
-      });
       setSpinning(false);
+      
+      if (error.response?.data?.error?.detail) {
+        setErrorMessage(error.response.data.error.detail);
+      } else if (error.response?.status === 500) {
+        setErrorMessage("Server error. Please try again later.");
+      } else if (error.response?.status === 400) {
+        setErrorMessage("Invalid data. Please check your input.");
+      } else if (error.code === 'NETWORK_ERROR') {
+        setErrorMessage("Network error. Please check your connection.");
+      } else {
+        setErrorMessage("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
   useEffect(() => {
-    // if (isFirstRun.current) {
-    //   isFirstRun.current = false;
-    //   return;
-    // }
-
     const getSequence = async () => {
       console.log("Getting Inc Seq");
       setSpinning(true);
@@ -212,9 +299,6 @@ function TransactionForm() {
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}api/transaction/getsequence?type=id`
         );
-        form.setFieldsValue({
-          strId: response.data.sequence_id.toString(),
-        });
         console.log(response);
         setSpinning(false);
         setFormData({
@@ -224,276 +308,221 @@ function TransactionForm() {
 
         setTransTypes(response.data.trans_types[0]);
         setAccounts(response.data.accounts[0]);
-        // setIsIdEditable(false);
       } catch (error) {
         console.error("Error:", error);
+        setSpinning(false);
+        setErrorMessage("Failed to load initial data. Please refresh the page.");
       }
     };
 
     getSequence();
   }, [reloeadCompoenet]);
 
+  const isFormValid = () => {
+    const requiredFields = ['strId', 'floatAmount', 'strName', 'strTransType', 'strTransCat', 'strAccount'];
+    if (formData.isDoubleEntry) {
+      requiredFields.push('strAccount2');
+    }
+    
+    return requiredFields.every(field => formData[field] && formData[field] !== "");
+  };
+
   return (
-    <>
-      {contextHolder}
-      <Spin spinning={spinning} fullscreen />
-      <Title level={2}>Transaction form</Title>
+    <div className="transaction-form-container">
+      {spinning && (
+        <div className="loading-overlay">
+          <div className="loading-spinner"></div>
+          <p>Processing...</p>
+        </div>
+      )}
+      
+      <div className="form-header">
+        <h2>Transaction Form</h2>
+        <p>Add a new transaction to your financial records</p>
+      </div>
 
-      <Form
-        form={form}
-        name="validateOnly"
-        layout="vertical"
-        autoComplete="off"
-      >
-        <Form.Item
-          name="strId"
-          label="ID"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input
-            // id="strId"
-            // value={formData.strId}
-            onChange={handleInputChange}
-            disabled={true}
-          />
-        </Form.Item>
-        {/* AMOUNT FIELD */}
-        <Form.Item
-          name="floatAmount"
-          label="Amount"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input
-            type="number"
-            id="floatAmount"
-            value={formData.floatAmount}
-            onChange={handleInputChange}
-          />
-        </Form.Item>
-        {/* Account selection */}
-        <Form.Item
-          name="strAccount"
-          label="Account"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            placeholder="Select an Account"
-            optionFilterProp="children"
-            onSelect={handleSelectAccount}
-            // onChange={onChange}
-            // onSearch={onSearch}
-            filterOption={filterOption}
-            options={accounts}
-          />
-        </Form.Item>
+      {/* Success Message */}
+      {successMessage && (
+        <div className="success-message">
+          <span className="success-icon">✓</span>
+          {successMessage}
+        </div>
+      )}
 
-        <Form.Item
-          name="isDoubleEntry"
-          label="Is Double Entry?"
-          rules={[
-            {
-              required: false,
-            },
-          ]}
-        >
-          <Switch onChange={isDouleEntryChange} />
-        </Form.Item>
+      {/* Error Message */}
+      {errorMessage && (
+        <div className="error-message-global">
+          <span className="error-icon">✕</span>
+          {errorMessage}
+        </div>
+      )}
 
-        {formData.isDoubleEntry && (
-          <Form.Item
-            name="strAccount2"
-            label="Second Account"
-            rules={[
-              {
-                required: formData.isDoubleEntry,
-                message: "Please select the second account",
-              },
-            ]}
-          >
-            <Select
-              showSearch
-              placeholder="Select 2nd Account"
-              optionFilterProp="children"
-              onSelect={handleSelectAccount2}
-              filterOption={filterOption}
-              options={accounts2}
+      <form className="transaction-form" onSubmit={handleSubmitBtn}>
+        <div className="form-grid">
+          {/* ID Field */}
+          <div className="form-group">
+            <label htmlFor="strId" className="form-label">
+              ID <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="strId"
+              className={`form-input ${errors.strId ? 'error' : ''}`}
+              value={formData.strId}
+              onChange={handleInputChange}
+              disabled={true}
+              placeholder="Auto-generated ID"
             />
-          </Form.Item>
-        )}
+            {errors.strId && <span className="error-message">{errors.strId}</span>}
+          </div>
 
-        {/* strTransType field */}
-        <Form.Item
-          name="strTransType"
-          label="Transaction Type"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            placeholder="Select a type"
-            optionFilterProp="children"
-            onSelect={handleSelectTrans}
-            // onChange={onChange}
-            // onSearch={onSearch}
-            filterOption={filterOption}
-            options={transTypes}
+          {/* Amount Field */}
+          <div className="form-group">
+            <label htmlFor="floatAmount" className="form-label">
+              Amount <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="floatAmount"
+              className={`form-input ${errors.floatAmount ? 'error' : ''}`}
+              value={formData.floatAmount}
+              onChange={Amount_handleInputChange}
+              placeholder="Enter amount"
+            />
+            {errors.floatAmount && <span className="error-message">{errors.floatAmount}</span>}
+          </div>
+
+          {/* Account Selection */}
+          <div className="form-group">
+            <label htmlFor="strAccount" className="form-label">
+              Account <span className="required">*</span>
+            </label>
+            <select
+              id="strAccount"
+              className={`form-select ${errors.strAccount ? 'error' : ''}`}
+              value={formData.strAccount}
+              onChange={(e) => handleSelectAccount(e.target.value)}
+            >
+              <option value="">Select an Account</option>
+              {accounts.map((account) => (
+                <option key={account.value} value={account.value}>
+                  {account.label}
+                </option>
+              ))}
+            </select>
+            {errors.strAccount && <span className="error-message">{errors.strAccount}</span>}
+          </div>
+
+          {/* Double Entry Toggle */}
+          <div className="form-group">
+            <label className="form-label">Double Entry</label>
+            <div className="toggle-container">
+              <label className="toggle-switch">
+                <input
+                  type="checkbox"
+                  checked={formData.isDoubleEntry}
+                  onChange={(e) => isDouleEntryChange(e.target.checked)}
+                />
+                <span className="toggle-slider"></span>
+              </label>
+              <span className="toggle-label">
+                {formData.isDoubleEntry ? 'Enabled' : 'Disabled'}
+              </span>
+            </div>
+          </div>
+
+          {/* Second Account (Conditional) */}
+          {formData.isDoubleEntry && (
+            <div className="form-group">
+              <label htmlFor="strAccount2" className="form-label">
+                Second Account <span className="required">*</span>
+              </label>
+              <select
+                id="strAccount2"
+                className={`form-select ${errors.strAccount2 ? 'error' : ''}`}
+                value={formData.strAccount2}
+                onChange={(e) => handleSelectAccount2(e.target.value)}
+              >
+                <option value="">Select 2nd Account</option>
+                {accounts2.map((account) => (
+                  <option key={account.value} value={account.value}>
+                    {account.label}
+                  </option>
+                ))}
+              </select>
+              {errors.strAccount2 && <span className="error-message">{errors.strAccount2}</span>}
+            </div>
+          )}
+
+          {/* Transaction Type */}
+          <div className="form-group">
+            <label htmlFor="strTransType" className="form-label">
+              Transaction Type <span className="required">*</span>
+            </label>
+            <select
+              id="strTransType"
+              className={`form-select ${errors.strTransType ? 'error' : ''}`}
+              value={formData.strTransType}
+              onChange={(e) => handleSelectTrans(e.target.value)}
+            >
+              <option value="">Select a type</option>
+              {transTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+            {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
+          </div>
+
+          {/* Transaction Category */}
+          <div className="form-group">
+            <label htmlFor="strTransCat" className="form-label">
+              Category <span className="required">*</span>
+            </label>
+            <select
+              id="strTransCat"
+              className={`form-select ${errors.strTransCat ? 'error' : ''}`}
+              value={formData.strTransCat}
+              onChange={(e) => handleSelectCats(e.target.value)}
+              disabled={isTransCatDisabled}
+            >
+              <option value="">Select a category</option>
+              {transCats.map((cat) => (
+                <option key={cat.value} value={cat.value}>
+                  {cat.label}
+                </option>
+              ))}
+            </select>
+            {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
+          </div>
+
+          {/* Reason Field */}
+          <div className="form-group full-width">
+            <label htmlFor="strName" className="form-label">
+              Reason <span className="required">*</span>
+            </label>
+            <input
+              type="text"
+              id="strName"
+              className={`form-input ${errors.strName ? 'error' : ''}`}
+              value={formData.strName}
+              onChange={handleInputChange}
+              placeholder="Enter transaction reason"
+            />
+            {errors.strName && <span className="error-message">{errors.strName}</span>}
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="form-actions">
+          <SubmitButton 
+            onClick={handleSubmitBtn} 
+            disabled={!isFormValid() || spinning}
           />
-        </Form.Item>
-        {/* Trans cat  */}
-        <Form.Item
-          name="strTransCat"
-          label="Category"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Select
-            showSearch
-            disabled={isTransCatDisabled}
-            placeholder="Select a category"
-            optionFilterProp="children"
-            // onChange={onChange}
-            // onSearch={onSearch}
-            onSelect={handleSelectCats}
-            filterOption={filterOption}
-            options={transCats}
-          />
-        </Form.Item>
-        <Form.Item
-          name="strName"
-          label="Reason"
-          rules={[
-            {
-              required: true,
-            },
-          ]}
-        >
-          <Input id="strName" onChange={handleInputChange} />
-        </Form.Item>
-        <Form.Item>
-          <Space>
-            <SubmitButton onClick={handleSubmitBtn} form={form} />
-            {/* <Button htmlType="reset">Reset</Button> */}
-          </Space>
-        </Form.Item>
-      </Form>
-    </>
-    // <div>
-    //   {/* Content Header (Page header) */}
-    //   <section className="content-header">
-    //     <div className="container-fluid">
-    //       <div className="row mb-2">
-    //         <div className="col-sm-6">
-    //           <h1>Transaction</h1>
-    //         </div>
-    //         <div className="col-sm-6">
-    //           <ol className="breadcrumb float-sm-right">
-    //             <li className="breadcrumb-item">
-    //               <Link to="/home">Home</Link>
-    //             </li>
-    //             <li className="breadcrumb-item active">Form</li>
-    //           </ol>
-    //         </div>
-    //       </div>
-    //     </div>
-    //     {/* <!-- /.container-fluid --> */}
-    //   </section>
-    //   <section className="content">
-    //     <>
-    //       <div className="card card-primary">
-    //         <div className="card-header">
-    //           <h3 className="card-title">Insert transaction</h3>
-    //         </div>
-    //         <form>
-    //           <div className="card-body">
-    //             <div className="form-group">
-    //               <label htmlFor="strId">ID</label>
-    //               <input
-    //                 type="text"
-    //                 className="form-control"
-    //                 id="strId"
-    //                 placeholder="Income id"
-    //                 value={formData.strId}
-    //                 onChange={handleInputChange}
-    //                 readOnly={!isIdEditable}
-    //               />
-    //             </div>
-    //             <div className="form-group">
-    //               <label htmlFor="floatAmount">Amount</label>
-    //               <input
-    //                 type="text"
-    //                 className="form-control"
-    //                 id="floatAmount"
-    //                 placeholder="Amount"
-    //                 value={formData.floatAmount}
-    //                 onChange={Amount_handleInputChange}
-    //               />
-    //             </div>
-    //             <div className="form-group">
-    //               <label htmlFor="strTransType">Type</label>
-
-    //               <SelectPicker
-    //                 onSelect={handleSelectTrans}
-    //                 id="strTransType"
-    //                 data={transTypes}
-    //                 style={{ width: "100%" }}
-    //               />
-    //             </div>
-    //             <div className="form-group">
-    //               <label htmlFor="strTransCat">Category</label>
-
-    //               <SelectPicker
-    //                 disabled={isTransCatDisabled}
-    //                 onSelect={handleSelectCats}
-    //                 id="strTransCat"
-    //                 data={transCats}
-    //                 style={{ width: "100%" }}
-    //               />
-    //             </div>
-    //             <div className="form-group">
-    //               <label htmlFor="strName">Reason</label>
-    //               <input
-    //                 type="text"
-    //                 className="form-control"
-    //                 id="strName"
-    //                 placeholder="Reason"
-    //                 value={formData.strName}
-    //                 onChange={handleInputChange}
-    //               />
-    //             </div>
-    //           </div>
-    //           <div className="card-footer">
-    //             <button
-    //               id="btnTransSave"
-    //               onClick={handleSubmitBtn}
-    //               className="btn btn-primary"
-    //             >
-    //               Save
-    //             </button>
-    //           </div>
-    //         </form>
-    //       </div>
-    //     </>
-    //   </section>
-    // </div>
+        </div>
+      </form>
+    </div>
   );
 }
 
