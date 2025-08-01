@@ -1,6 +1,5 @@
 import Axios from "axios";
 import React, { useEffect, useState, Suspense } from "react";
-import { Layout, Skeleton, theme } from "antd";
 import {
   BookOutlined,
   DashboardOutlined,
@@ -9,13 +8,13 @@ import {
   DeliveredProcedureOutlined,
   FastForwardOutlined,
   AccountBookOutlined
-} from "@ant-design/icons";
+} from "../Elements/Icons";
 import { useNavigate, Routes, Route } from "react-router-dom";
-import SideBarAnt from "../Elements/SideBar-ant";
-import HeaderAnt from "../Elements/Header-ant";
-import FooterAnt from "../Elements/Footer-ant";
-
-const { Content } = Layout;
+import SideBar from "../Elements/SideBar";
+import Header from "../Elements/Header";
+import Footer from "../Elements/Footer";
+import Loading from "../Elements/Loading";
+import "./Home.css";
 
 const LazyWithFallback = (importFunc, fallback = null) =>
   React.lazy(() =>
@@ -51,13 +50,11 @@ const iconComponents = {
 
 const Home = () => {
   const [collapsed, setCollapsed] = useState(true);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
   const [responseData, setResponseData] = useState([]);
   const [sideBarFormData, setSideBarFormFormData] = useState([]);
   const [spinning, setSpinning] = useState(true);
   const [routeList, setRouteList] = useState([]);
+  const [isMobileSidebarExpanded, setIsMobileSidebarExpanded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -94,21 +91,41 @@ const Home = () => {
         icon,
         label: item.str_form_name,
         link: item.str_link,
+        props: { link: item.str_link }
       };
 
       if (item.str_menu_id) {
-        const parent = formattedData.find(
-          (parentItem) => parentItem.label === item.str_menu_id
-        );
-        if (parent) {
-          parent.children.push(formattedItem);
-        } else {
-          formattedData.push({
-            key: index.toString(),
-            label: item.str_menu_id,
-            children: [formattedItem],
-          });
-        }
+        // Parse the menu hierarchy from str_menu_id (e.g., "myfinance/reference/expense")
+        const menuPath = item.str_menu_id.split('/');
+        
+        // Find or create the menu hierarchy
+        let currentLevel = formattedData;
+        let currentPath = '';
+        
+        menuPath.forEach((pathSegment, pathIndex) => {
+          currentPath += (currentPath ? '/' : '') + pathSegment;
+          
+          // Find existing menu at this level
+          let existingMenu = currentLevel.find(menu => menu.label === pathSegment);
+          
+          if (!existingMenu) {
+            // Create new menu level
+            existingMenu = {
+              key: `${currentPath}-${pathIndex}`,
+              label: pathSegment,
+              children: []
+            };
+            currentLevel.push(existingMenu);
+          }
+          
+          // If this is the last segment, add the actual menu item
+          if (pathIndex === menuPath.length - 1) {
+            existingMenu.children.push(formattedItem);
+          } else {
+            // Move to next level
+            currentLevel = existingMenu.children;
+          }
+        });
       } else {
         formattedData.push(formattedItem);
       }
@@ -131,39 +148,44 @@ const Home = () => {
     if (item.props?.link) navigate(item.props.link);
   };
 
+  const handleToggleSidebar = () => {
+    // Check if we're on mobile
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      setIsMobileSidebarExpanded(!isMobileSidebarExpanded);
+    } else {
+      setCollapsed(!collapsed);
+    }
+  };
+
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <SideBarAnt
+    <div className="home-layout">
+      <SideBar
         collapsed={collapsed}
         MenuItemClicked={MenuItemClicked}
         sideBarFormData={sideBarFormData}
+        isMobileExpanded={isMobileSidebarExpanded}
+        setIsMobileExpanded={setIsMobileSidebarExpanded}
       />
-      <Layout>
-        <HeaderAnt
+      <div className="main-content">
+        <Header
           setCollapsed={setCollapsed}
           collapsed={collapsed}
           MenuItemClicked={MenuItemClicked}
+          onToggleSidebar={handleToggleSidebar}
         />
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-          }}
-        >
+        <main className="content-area">
           {spinning ? (
-            <Skeleton active />
+            <Loading />
           ) : (
-            <Suspense fallback={<Skeleton active />}>
+            <Suspense fallback={<Loading />}>
               <UserRoutes routeList={routeList} />
             </Suspense>
           )}
-        </Content>
-        <FooterAnt />
-      </Layout>
-    </Layout>
+        </main>
+        <Footer />
+      </div>
+    </div>
   );
 };
 

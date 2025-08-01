@@ -1,50 +1,45 @@
 import React from 'react';
-import { Col, Card, Table, message, Skeleton } from 'antd';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Axios from "axios";
-import CountUp from "react-countup";
+import Loading from "../../../Elements/Loading";
+import "./DashboardCard.css";
 
 const DashboardTransactionsTable = () => {
-  const [spinning, setSpinning] = React.useState(null);
-  const [messageApi, contextHolder] = message.useMessage();
-  const [chartData, setChartData] = React.useState([]);
-  const data = {
-    transTable: {
-      columns: [
-        // {
-        //   title: "Key",
-        //   dataIndex: "key",
-        //   key: "Key",
-        // },
-        {
-          title: "Account",
-          dataIndex: "account",
-          key: "account",
-        },
-        {
-          title: "Reason",
-          dataIndex: "name",
-          key: "age",
-        },
-        {
-          title: "Amount",
-          dataIndex: "int_amount_char",
-          key: "amount",
-        },
-      ],
+  const [spinning, setSpinning] = useState(false);
+  const [chartData, setChartData] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
+
+  const columns = [
+    {
+      title: "Account",
+      dataIndex: "account",
+      key: "account",
     },
-  };
+    {
+      title: "Reason",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Amount",
+      dataIndex: "int_amount_char",
+      key: "amount",
+    },
+  ];
 
   useEffect(() => {
     const fetchData = async () => {
       setSpinning(true);
+      setErrorMessage("");
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}api/dashboard/getdashboardtransactions`
         );
 
-        console.log("income List Data:", response.data);
+        console.log("transactions List Data:", response.data);
 
         const newData = response.data;
 
@@ -54,38 +49,84 @@ const DashboardTransactionsTable = () => {
         setSpinning(false);
       } catch (error) {
         setSpinning(false);
-        messageApi.open({
-          type: "error",
-          content: `${error}`,
-        });
-        console.error("Error fetching income list:", error);
+        setErrorMessage(`Error: ${error.message}`);
+        console.error("Error fetching transactions list:", error);
       }
     };
     fetchData();
   }, []);
 
+  // Calculate pagination
+  const totalPages = Math.ceil(chartData.length / pageSize);
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const currentData = chartData.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
-    <>
-      {spinning ? (
-        <Skeleton.Node active />
-      ) : (
-        <>
-          <Col xs={20} sm={12} md={8} lg={6} xl={7}>
-            <Card title="Transactions">
-              {chartData.length > 0 && (
-                <Table
-                  size="small"
-                  scroll={{ x: 500 }}
-                  dataSource={chartData}
-                  columns={data?.transTable?.columns || []}
-                  pagination={{ pageSize: 10 }}
-                />
-              )}
-            </Card>
-          </Col>
-        </>
-      )}
-    </>
+    <div className="dashboard-card table-card">
+      <div className="card-header">
+        <h3>Transactions</h3>
+      </div>
+      <div className="card-content">
+        {spinning ? (
+          <Loading />
+        ) : errorMessage ? (
+          <div className="error-message">{errorMessage}</div>
+        ) : (
+          <>
+            {chartData.length > 0 && (
+              <div className="table-container">
+                <table className="custom-table">
+                  <thead>
+                    <tr>
+                      {columns.map((column) => (
+                        <th key={column.key}>{column.title}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentData.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.account}</td>
+                        <td>{item.name}</td>
+                        <td>{item.int_amount_char}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                
+                {/* Pagination */}
+                {totalPages > 1 && (
+                  <div className="pagination">
+                    <button 
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="pagination-btn"
+                    >
+                      Previous
+                    </button>
+                    <span className="pagination-info">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button 
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="pagination-btn"
+                    >
+                      Next
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
   );
 };
 

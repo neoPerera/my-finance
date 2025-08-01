@@ -1,0 +1,64 @@
+.dashboard {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+/* Ensure all cards have equal height and proper alignment */
+.dashboard-card {
+  height: 100%;
+  min-height: 200px;
+}
+
+/* Table card should span full width on larger screens */
+@media (min-width: 1200px) {
+  .table-card {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  
+  .table-card {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 16px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .table-card {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard {
+    padding: 12px;
+  }
+  
+  .dashboard-grid {
+    gap: 12px;
+  }
+} 

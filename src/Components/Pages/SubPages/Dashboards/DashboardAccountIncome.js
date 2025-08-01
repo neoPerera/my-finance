@@ -1,18 +1,21 @@
 import React from 'react';
-import { Col, Card, Statistic, message, Skeleton } from 'antd';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import Axios from "axios";
 import CountUp from "react-countup";
+import Loading from "../../../Elements/Loading";
+import "./DashboardCard.css";
 
 const DashboardAccountIncome = () => {
-    const [spinning, setSpinning] = React.useState(null);
-    const [messageApi, contextHolder] = message.useMessage();
-    const [chartData, setChartData] = React.useState([]);
+    const [spinning, setSpinning] = useState(false);
+    const [chartData, setChartData] = useState([]);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const formatter = (value) => <CountUp end={value} separator="," />;
 
     useEffect(() => {
         const fetchData = async () => {
             setSpinning(true);
+            setErrorMessage("");
             try {
                 console.log(window.env?.REACT_APP_API_URL);
                 const response = await Axios.get(
@@ -29,10 +32,7 @@ const DashboardAccountIncome = () => {
                 setSpinning(false);
             } catch (error) {
                 setSpinning(false);
-                messageApi.open({
-                    type: "error",
-                    content: `${error}`,
-                });
+                setErrorMessage(`Error: ${error.message}`);
                 console.error("Error fetching income list:", error);
             }
         };
@@ -40,32 +40,33 @@ const DashboardAccountIncome = () => {
     }, []);
 
     return (
-        <>
-            {spinning ? (
-                <Skeleton.Node active />
-            ) : (
-                <>
-                    <Col xs={20} sm={12} md={8} lg={6} xl={4}>
-                        <Card title="Account Incomes">
-                            {chartData.length > 0 && (
-                                <>
-                                    {chartData.map((item) => (
-                                        <Statistic
-                                            valueStyle={{ color: 'green' }}
-                                            key={item.type}
-                                            title={`${item.type} Incomes (LKR)`}
-                                            value={item.value}
-                                            precision={2}
-                                            formatter={formatter}
-                                        />
-                                    ))}
-                                </>
-                            )}
-                        </Card>
-                    </Col>
-                </>
-            )}
-        </>
+        <div className="dashboard-card">
+            <div className="card-header">
+                <h3>Account Incomes</h3>
+            </div>
+            <div className="card-content">
+                {spinning ? (
+                    <Loading />
+                ) : errorMessage ? (
+                    <div className="error-message">{errorMessage}</div>
+                ) : (
+                    <>
+                        {chartData.length > 0 && (
+                            <>
+                                {chartData.map((item) => (
+                                    <div key={item.type} className="statistic-item">
+                                        <div className="statistic-title">{item.type} Incomes (LKR)</div>
+                                        <div className="statistic-value income">
+                                            <CountUp end={item.value} separator="," decimals={2} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+        </div>
     );
 };
 

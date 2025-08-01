@@ -1,27 +1,22 @@
-import { Spin } from "antd";
-import React, { useEffect, useState } from "react";
-import Swal from "sweetalert2";
+import React from "react";
+import "./Loading.css";
 
-function Loading() {
+const Loading = ({ active = true, fullscreen = false }) => {
+  if (!active) return null;
 
-  // useEffect(() => {
-  //   const swalInstance = Swal.fire({
-  //     title: "Loading",
-  //     timerProgressBar: true,
-  //     didOpen: () => {
-  //       Swal.showLoading();
-  //     }
-  //   });
+  if (fullscreen) {
+    return (
+      <div className="loading-fullscreen">
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
 
-  //   return () => {
-  //     // Cleanup function, runs on component unmount
-  //     if (swalInstance) {
-  //       swalInstance.close(); // Close the SweetAlert2 modal when the component unmounts
-  //     }
-  //   };
-  // }, []); // Empty dependency array to run the effect only once
-
-  return <><Spin spinning={true} fullscreen /></>;
-}
+  return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+    </div>
+  );
+};
 
 export default Loading;

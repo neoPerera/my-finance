@@ -1,34 +1,21 @@
 import React from "react";
-import {
-  Flex,
-  message,
-} from "antd";
 import DashboardAccountBalance from "./Dashboards/DashboardAccountBalance";
 import DashboardAccountIncome from "./Dashboards/DashboardAccountIncome";
 import DashboardAccountExpense from "./Dashboards/DashboardAccountExpense";
 import DashboardTransactionsTable from "./Dashboards/DashboardTransactionsTable";
+import "./DashBoard.css";
 
 function DashBoard() {
-
-  const [messageApi, contextHolder] = message.useMessage();
-  
-
   return (
-    <>
-
-      {contextHolder}
-      <Flex wrap="wrap" gap="middle">
-        {/* <Row> */}
+    <div className="dashboard">
+      <div className="dashboard-grid">
         <DashboardAccountBalance />
         <DashboardAccountIncome />
         <DashboardAccountExpense />
         <DashboardTransactionsTable />
-      </Flex>
-    </>
-
+      </div>
+    </div>
   );
 }
-
-
 
 export default DashBoard;
