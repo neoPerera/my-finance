@@ -11,7 +11,7 @@ import {
   message,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import EditableCell from "../../../../Elements/EditableCell";
+import EditableCell from "../../../../../Elements/EditableCell";
 
 function RefMasExpenseList() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ function RefMasExpenseList() {
     setSpinning(true);
     try {
       const response = await Axios.get(
-        `${window.env?.REACT_APP_API_URL}api/reference/ref-expense/getexpense`
+        `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-expense/getexpense`
       );
       setData(response.data);
     } catch (error) {
@@ -72,7 +72,7 @@ function RefMasExpenseList() {
       };
 
       await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/reference/ref-expense/update`,
+        `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-expense/update`,
         payload
       );
 

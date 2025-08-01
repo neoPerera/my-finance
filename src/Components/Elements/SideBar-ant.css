@@ -1,0 +1,311 @@
+/* Custom SideBar Styles */
+.custom-sidebar {
+  background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-sidebar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  z-index: 1;
+}
+
+.custom-sidebar .ant-layout-sider-children {
+  background: transparent !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Logo Section */
+.logo-section {
+  padding: 24px 16px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s ease;
+}
+
+.logo-container.expanded {
+  justify-content: flex-start;
+}
+
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1890ff, #40a9ff);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.3);
+  flex-shrink: 0;
+}
+
+.logo-icon .anticon {
+  font-size: 20px;
+  color: #ffffff;
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.logo-text.collapsed {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+}
+
+/* Menu Styles */
+.custom-sidebar .ant-menu {
+  background: transparent !important;
+  border: none !important;
+  flex: 1;
+}
+
+.custom-sidebar .ant-menu-item {
+  margin: 4px 12px !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-sidebar .ant-menu-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  border-radius: 12px;
+}
+
+.custom-sidebar .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-sidebar .ant-menu-item:hover::before {
+  opacity: 1;
+}
+
+.custom-sidebar .ant-menu-item:hover .ant-menu-title-content {
+  color: #ffffff !important;
+}
+
+.custom-sidebar .ant-menu-item:hover .anticon {
+  color: #40a9ff !important;
+  transform: scale(1.1);
+}
+
+.custom-sidebar .ant-menu-item-selected {
+  background: linear-gradient(135deg, #1890ff, #40a9ff) !important;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+}
+
+.custom-sidebar .ant-menu-item-selected::before {
+  opacity: 0;
+}
+
+.custom-sidebar .ant-menu-item-selected .ant-menu-title-content {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.custom-sidebar .ant-menu-item-selected .anticon {
+  color: #ffffff !important;
+}
+
+.custom-sidebar .ant-menu-title-content {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.custom-sidebar .anticon {
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+/* Submenu Styles */
+.custom-sidebar .ant-menu-submenu .ant-menu-submenu-title {
+  margin: 4px 12px !important;
+  border-radius: 12px !important;
+  height: 48px !important;
+  line-height: 48px !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.custom-sidebar .ant-menu-submenu .ant-menu-submenu-title:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+}
+
+.custom-sidebar .ant-menu-submenu .ant-menu-submenu-title:hover .anticon {
+  color: #40a9ff !important;
+}
+
+.custom-sidebar .ant-menu-submenu .ant-menu-submenu-title .anticon {
+  color: rgba(255, 255, 255, 0.65) !important;
+  transition: all 0.3s ease;
+}
+
+.custom-sidebar .ant-menu-sub {
+  background: rgba(0, 0, 0, 0.2) !important;
+  margin: 0 12px !important;
+  border-radius: 8px !important;
+  padding: 8px 0 !important;
+}
+
+.custom-sidebar .ant-menu-sub .ant-menu-item {
+  margin: 2px 8px !important;
+  border-radius: 8px !important;
+  height: 40px !important;
+  line-height: 40px !important;
+}
+
+.custom-sidebar .ant-menu-sub .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.custom-sidebar .ant-menu-sub .ant-menu-item-selected {
+  background: rgba(24, 144, 255, 0.2) !important;
+  border: 1px solid rgba(24, 144, 255, 0.3);
+}
+
+/* User Section */
+.user-section {
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: auto;
+  flex-shrink: 0;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+}
+
+.user-info:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.user-avatar {
+  width: 36px !important;
+  height: 36px !important;
+  background: linear-gradient(135deg, #52c41a, #73d13d) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  flex-shrink: 0;
+}
+
+.user-details {
+  flex: 1;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.user-details.collapsed {
+  opacity: 0;
+  width: 0;
+}
+
+.user-name {
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.user-role {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* Scrollbar Styling */
+.custom-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+}
+
+.custom-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.custom-sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Animation for menu items */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.custom-sidebar .ant-menu-item {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .custom-sidebar {
+    position: fixed !important;
+    z-index: 1000;
+  }
+  
+  .logo-section {
+    padding: 16px 12px;
+  }
+  
+  .user-section {
+    padding: 12px;
+  }
+} 

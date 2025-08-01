@@ -10,18 +10,52 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   NotificationOutlined,
+  SettingOutlined,
+  BellOutlined,
+  HomeOutlined,
 } from "@ant-design/icons";
 
-import { Layout, Button, theme, Dropdown, Row, Col, Badge } from "antd";
+import { Layout, Button, theme, Dropdown, Row, Col, Badge, Typography, Avatar, Space, Breadcrumb } from "antd";
 import FooterAnt from "./Footer-ant";
 import { io } from "socket.io-client";
+import { useLocation } from "react-router-dom";
+import "./Header-ant.css";
+
 const { Header } = Layout;
+const { Title, Text } = Typography;
 
 const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked }) => {
   const [socket, setSocket] = useState(null);
   const [notificationList, setNotificationList] = useState([]);
   const [mappedNotificationArray, setMappedNotificationArray] = useState([]);
-//can re use . commenting temporarily
+  const [currentPageTitle, setCurrentPageTitle] = useState("Dashboard");
+  const [userName, setUserName] = useState("User");
+  const [userRole, setUserRole] = useState("Administrator");
+  const location = useLocation();
+
+  // Get user info from localStorage
+  useEffect(() => {
+    const storedUserName = localStorage.getItem("username") || "User";
+    setUserName(storedUserName);
+  }, []);
+
+  // Update page title based on current route
+  useEffect(() => {
+    const pathname = location.pathname;
+    let title = "Dashboard";
+    
+    if (pathname.includes("/dashboard")) title = "Dashboard";
+    else if (pathname.includes("/expense")) title = "Expense Management";
+    else if (pathname.includes("/income")) title = "Income Management";
+    else if (pathname.includes("/transaction")) title = "Transactions";
+    else if (pathname.includes("/account")) title = "Account Management";
+    else if (pathname.includes("/purchasing")) title = "Purchasing";
+    else if (pathname.includes("/report")) title = "Reports";
+    
+    setCurrentPageTitle(title);
+  }, [location.pathname]);
+
+  //can re use . commenting temporarily
   // useEffect(() => {
   //   console.log(
   //     `Notification API ==>${process.env.REACT_APP_NOTIFICATION_API}`
@@ -46,113 +80,153 @@ const HeaderAnt = ({ collapsed, setCollapsed, MenuItemClicked }) => {
 
   const iconComponents = {
     LogoutOutlined,
+    SettingOutlined,
     // Add more components as needed
   };
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const items = [
+  const userMenuItems = [
     {
-      key: "99",
+      key: "profile",
+      label: "Profile",
+      icon: <UserOutlined />,
+    },
+    {
+      key: "settings",
+      label: "Settings",
+      icon: <SettingOutlined />,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
       label: "Log out",
-      icon: React.createElement(iconComponents["LogoutOutlined"]),
+      icon: <LogoutOutlined />,
       link: "/logout",
     },
   ];
 
+  const notificationItems = mappedNotificationArray.length > 0 ? mappedNotificationArray : [
+    {
+      key: "no-notifications",
+      label: "No new notifications",
+      disabled: true,
+    }
+  ];
+
   const handleClick = () => {
-    // Call setCollapsed function to update the state in the parent component
     setCollapsed(!collapsed);
   };
 
+  const handleUserMenuClick = ({ key }) => {
+    if (key === "logout") {
+      MenuItemClicked({ item: { props: { link: "/logout" } } });
+    }
+    // Handle other menu items as needed
+  };
+
+  const getBreadcrumbItems = () => {
+    const pathname = location.pathname;
+    const segments = pathname.split('/').filter(Boolean);
+    
+    const breadcrumbItems = [
+      {
+        title: <HomeOutlined />,
+        href: '/home',
+      }
+    ];
+
+    segments.forEach((segment, index) => {
+      if (segment !== 'home') {
+        breadcrumbItems.push({
+          title: segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' '),
+        });
+      }
+    });
+
+    return breadcrumbItems;
+  };
+
   return (
-    <Header
-      style={{
-        padding: 0,
-        background: colorBgContainer,
-        // position: "relative", // Ensure the container is positioned
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
-      }}
-    >
+    <Header className="custom-header">
       <Row style={{ width: "100%" }}>
+        {/* Toggle Button */}
         <Button
+          className="toggle-button"
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
           onClick={handleClick}
-          style={{
-            fontSize: "16px",
-            width: 64,
-            height: 64,
-          }}
+          aria-label="Toggle sidebar"
         />
-        <Col
-          style={{
-            position: "absolute",
-            right: 65,
-            top: 0, // Add top: 0 to align with the top of the container
-          }}
-        >
-          <Dropdown
-            trigger={["click"]}
-            menu={{
-              items: mappedNotificationArray,
-              // onClick: MenuItemClicked,
-            }}
-            placement="topRight"
-            onOpenChange={(open) => {
-              console.log("Drop Down nots "+ open);
-              if (!open) {
-                // Dropdown is closed, execute your function here
-                setMappedNotificationArray([]);
-                setNotificationList([]);
-              }
-            }}
-          >
-            <Button
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-                border: 0,
-              }}
-            >
-              <Badge size="small" count={mappedNotificationArray.length}>
-                <NotificationOutlined />
-              </Badge>
-            </Button>
-          </Dropdown>
-        </Col>
+        
+        {/* Header Content */}
+        <div className="header-content">
+          {/* Title and Breadcrumb */}
+          <div className="header-title-section">
+            <Title level={3} className="page-title">
+              {currentPageTitle}
+            </Title>
+            <Breadcrumb 
+              items={getBreadcrumbItems()}
+              separator={<span style={{ color: '#8c8c8c' }}>/</span>}
+              className="header-breadcrumb"
+            />
+          </div>
 
-        <Col
-          style={{
-            position: "absolute",
-            right: 0,
-            top: 0, // Add top: 0 to align with the top of the container
-          }}
-        >
-          <Dropdown
-            trigger={["click"]}
-            menu={{
-              items,
-              onClick: MenuItemClicked,
-            }}
-            placement="topRight"
-          >
-            <Button
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-                border: 0,
+          {/* Header Actions */}
+          <div className="header-actions">
+            {/* Notification Button */}
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: notificationItems,
+                onClick: MenuItemClicked,
+              }}
+              placement="bottomRight"
+              onOpenChange={(open) => {
+                if (!open) {
+                  setMappedNotificationArray([]);
+                  setNotificationList([]);
+                }
               }}
             >
-              <UserOutlined />
-            </Button>
-          </Dropdown>
-        </Col>
+              <Button className="notification-button" aria-label="Notifications">
+                <Badge size="small" count={mappedNotificationArray.length}>
+                  <BellOutlined />
+                </Badge>
+              </Button>
+            </Dropdown>
+
+            {/* User Menu */}
+            <Dropdown
+              trigger={["click"]}
+              menu={{
+                items: userMenuItems,
+                onClick: handleUserMenuClick,
+              }}
+              placement="bottomRight"
+            >
+              <Button className="user-button" aria-label="User menu">
+                <Space>
+                  <Avatar 
+                    size="small" 
+                    style={{ 
+                      backgroundColor: '#1890ff',
+                      fontSize: '12px'
+                    }}
+                  >
+                    {userName.charAt(0).toUpperCase()}
+                  </Avatar>
+                  <span className="user-name">{userName}</span>
+                </Space>
+              </Button>
+            </Dropdown>
+          </div>
+        </div>
       </Row>
     </Header>
   );

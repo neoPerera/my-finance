@@ -1,0 +1,550 @@
+/* Enhanced Custom Header Styles */
+.custom-header {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 1000;
+  padding: 0 !important;
+  height: 70px !important;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.custom-header::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(24, 144, 255, 0.2), transparent);
+}
+
+.custom-header .ant-row {
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  padding: 0 16px;
+}
+
+/* Enhanced Toggle Button */
+.toggle-button {
+  width: 48px !important;
+  height: 48px !important;
+  border: none !important;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1), rgba(24, 144, 255, 0.05)) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  margin-right: 16px;
+  flex-shrink: 0;
+}
+
+.toggle-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(24, 144, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.toggle-button:hover {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.15), rgba(24, 144, 255, 0.1)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(24, 144, 255, 0.2);
+}
+
+.toggle-button:hover::before {
+  width: 40px;
+  height: 40px;
+}
+
+.toggle-button:hover .anticon {
+  color: #1890ff !important;
+  transform: scale(1.1);
+}
+
+.toggle-button .anticon {
+  font-size: 18px !important;
+  color: #595959 !important;
+  transition: all 0.3s ease;
+}
+
+.toggle-button:active {
+  transform: translateY(0);
+}
+
+/* Header Content Container */
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 0;
+  gap: 16px;
+}
+
+/* Header Title Section */
+.header-title-section {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #262626 !important;
+  background: linear-gradient(135deg, #1890ff, #40a9ff) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+/* Header Breadcrumb */
+.header-breadcrumb {
+  font-size: 12px;
+  color: #8c8c8c;
+}
+
+.header-breadcrumb .ant-breadcrumb-item {
+  color: #8c8c8c;
+}
+
+.header-breadcrumb .ant-breadcrumb-item a {
+  color: #8c8c8c;
+  transition: color 0.3s ease;
+}
+
+.header-breadcrumb .ant-breadcrumb-item a:hover {
+  color: #1890ff;
+}
+
+.header-breadcrumb .ant-breadcrumb-item:last-child {
+  color: #262626;
+  font-weight: 500;
+}
+
+/* Header Actions Container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* Enhanced Notification Button */
+.notification-button {
+  width: 48px !important;
+  height: 48px !important;
+  border: none !important;
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.1), rgba(250, 173, 20, 0.05)) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.notification-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(250, 173, 20, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.notification-button:hover {
+  background: linear-gradient(135deg, rgba(250, 173, 20, 0.15), rgba(250, 173, 20, 0.1)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(250, 173, 20, 0.2);
+}
+
+.notification-button:hover::before {
+  width: 40px;
+  height: 40px;
+}
+
+.notification-button:hover .anticon {
+  color: #faad14 !important;
+  transform: scale(1.1);
+}
+
+.notification-button .anticon {
+  font-size: 18px !important;
+  color: #595959 !important;
+  transition: all 0.3s ease;
+}
+
+.notification-button:active {
+  transform: translateY(0);
+}
+
+/* Enhanced User Button */
+.user-button {
+  height: 48px !important;
+  border: none !important;
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.1), rgba(82, 196, 26, 0.05)) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative;
+  overflow: hidden;
+  padding: 0 16px !important;
+}
+
+.user-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(82, 196, 26, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s ease;
+}
+
+.user-button:hover {
+  background: linear-gradient(135deg, rgba(82, 196, 26, 0.15), rgba(82, 196, 26, 0.1)) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(82, 196, 26, 0.2);
+}
+
+.user-button:hover::before {
+  width: 40px;
+  height: 40px;
+}
+
+.user-button:hover .anticon {
+  color: #52c41a !important;
+  transform: scale(1.1);
+}
+
+.user-button .anticon {
+  font-size: 18px !important;
+  color: #595959 !important;
+  transition: all 0.3s ease;
+}
+
+.user-button:active {
+  transform: translateY(0);
+}
+
+.user-name {
+  color: #262626;
+  font-weight: 500;
+  font-size: 14px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+/* Enhanced Badge Styling */
+.ant-badge .ant-badge-count {
+  background: linear-gradient(135deg, #ff4d4f, #ff7875) !important;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3) !important;
+  border: 2px solid #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 10px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  line-height: 14px !important;
+  border-radius: 9px !important;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* Enhanced Dropdown Menu Styling */
+.ant-dropdown-menu {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 12px 0 !important;
+  min-width: 200px !important;
+}
+
+.ant-dropdown-menu-item {
+  padding: 12px 20px !important;
+  margin: 4px 12px !important;
+  border-radius: 12px !important;
+  transition: all 0.3s ease !important;
+  font-weight: 500 !important;
+  color: #262626 !important;
+}
+
+.ant-dropdown-menu-item:hover {
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1), rgba(24, 144, 255, 0.05)) !important;
+  color: #1890ff !important;
+  transform: translateX(4px);
+}
+
+.ant-dropdown-menu-item .anticon {
+  margin-right: 12px !important;
+  font-size: 16px !important;
+  color: #8c8c8c !important;
+  transition: all 0.3s ease;
+}
+
+.ant-dropdown-menu-item:hover .anticon {
+  color: #1890ff !important;
+  transform: scale(1.1);
+}
+
+.ant-dropdown-menu-item-disabled {
+  color: #bfbfbf !important;
+  cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .custom-header {
+    height: 64px !important;
+  }
+  
+  .page-title {
+    font-size: 22px !important;
+  }
+  
+  .toggle-button,
+  .notification-button,
+  .user-button {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  
+  .toggle-button .anticon,
+  .notification-button .anticon,
+  .user-button .anticon {
+    font-size: 16px !important;
+  }
+  
+  .user-name {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .custom-header .ant-row {
+    padding: 0 12px;
+  }
+  
+  .toggle-button {
+    margin-right: 12px;
+  }
+  
+  .header-content {
+    gap: 12px;
+  }
+  
+  .header-actions {
+    gap: 8px;
+  }
+  
+  .page-title {
+    font-size: 20px !important;
+  }
+  
+  .header-breadcrumb {
+    font-size: 11px;
+  }
+  
+  .user-button {
+    padding: 0 12px !important;
+  }
+  
+  .user-name {
+    font-size: 12px;
+    margin-left: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .custom-header {
+    height: 60px !important;
+  }
+  
+  .custom-header .ant-row {
+    padding: 0 8px;
+  }
+  
+  .toggle-button {
+    margin-right: 8px;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .toggle-button .anticon {
+    font-size: 15px !important;
+  }
+  
+  .header-content {
+    gap: 8px;
+  }
+  
+  .page-title {
+    font-size: 18px !important;
+  }
+  
+  .header-breadcrumb {
+    display: none;
+  }
+  
+  .header-actions {
+    gap: 6px;
+  }
+  
+  .notification-button,
+  .user-button {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .notification-button .anticon,
+  .user-button .anticon {
+    font-size: 15px !important;
+  }
+  
+  .user-button {
+    padding: 0 8px !important;
+  }
+  
+  .user-name {
+    display: none;
+  }
+  
+  .user-button .ant-space {
+    gap: 4px !important;
+  }
+}
+
+/* Animation for header elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-header .ant-row > * {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+/* Glass morphism effect */
+.custom-header {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Focus indicators for accessibility */
+.toggle-button:focus,
+.notification-button:focus,
+.user-button:focus {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+}
+
+/* Loading state for buttons */
+.toggle-button:disabled,
+.notification-button:disabled,
+.user-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .custom-header {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .page-title {
+    color: #ffffff !important;
+  }
+  
+  .user-name {
+    color: #ffffff;
+  }
+  
+  .header-breadcrumb .ant-breadcrumb-item {
+    color: #a6a6a6;
+  }
+  
+  .header-breadcrumb .ant-breadcrumb-item:last-child {
+    color: #ffffff;
+  }
+  
+  .toggle-button,
+  .notification-button,
+  .user-button {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .toggle-button:hover,
+  .notification-button:hover,
+  .user-button:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+  }
+  
+  .ant-dropdown-menu {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+  }
+  
+  .ant-dropdown-menu-item {
+    color: #ffffff !important;
+  }
+  
+  .ant-dropdown-menu-item:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+  }
+} 

@@ -5,17 +5,34 @@ import {
   LogoutOutlined,
   TransactionOutlined,
   DeliveredProcedureOutlined,
-  FastForwardOutlined
+  FastForwardOutlined,
+  UserOutlined,
+  SettingOutlined,
+  BellOutlined
 } from "@ant-design/icons";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, theme, Avatar, Typography, Divider, Badge } from "antd";
+import "./SideBar-ant.css";
+
 const { Sider } = Layout;
-const SideBarAnt = ({ collapsed, MenuItemClicked,sideBarFormData }) => {
-  
+const { Text } = Typography;
+
+const SideBarAnt = ({ collapsed, MenuItemClicked, sideBarFormData }) => {
+  const [userName, setUserName] = useState("User");
+  const [userRole, setUserRole] = useState("Administrator");
+
+  useEffect(() => {
+    // Get user info from localStorage or context
+    const storedUserName = localStorage.getItem("username") || "User";
+    setUserName(storedUserName);
+  }, []);
 
   return (
     <Sider
+      className="custom-sidebar"
       collapsible
       collapsed={collapsed}
+      width={280}
+      collapsedWidth={80}
       style={{
         overflow: 'auto',
         height: '100vh',
@@ -27,15 +44,43 @@ const SideBarAnt = ({ collapsed, MenuItemClicked,sideBarFormData }) => {
         scrollbarGutter: 'stable',
       }}
     >
-      <div className="demo-logo-vertical" />
+      <div className="logo-section">
+        <div className={`logo-container ${!collapsed ? 'expanded' : ''}`}>
+          <div className="logo-icon">
+            <BookOutlined />
+          </div>
+          <div className={`logo-text ${collapsed ? 'collapsed' : ''}`}>
+            MyFinance
+          </div>
+        </div>
+      </div>
+
       <Menu
         theme="dark"
         mode="inline"
-        // defaultSelectedKeys={["1"]}
         onClick={MenuItemClicked}
         items={sideBarFormData}
+        style={{
+          flex: 1,
+          border: 'none',
+        }}
       />
+
+      <div className="user-section">
+        <div className="user-info">
+          <Avatar 
+            className="user-avatar" 
+            icon={<UserOutlined />}
+            size={36}
+          />
+          <div className={`user-details ${collapsed ? 'collapsed' : ''}`}>
+            <div className="user-name">{userName}</div>
+            <div className="user-role">{userRole}</div>
+          </div>
+        </div>
+      </div>
     </Sider>
   );
 };
+
 export default SideBarAnt;

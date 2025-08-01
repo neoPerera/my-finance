@@ -1,0 +1,169 @@
+/* Custom Footer Styles */
+.custom-footer {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%) !important;
+  border-top: 1px solid rgba(0, 0, 0, 0.06) !important;
+  padding: 16px 24px !important;
+  text-align: center !important;
+  position: relative !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.custom-footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.06), transparent);
+}
+
+.custom-footer a {
+  color: #1890ff !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.1), rgba(24, 144, 255, 0.05));
+}
+
+.custom-footer a::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.2), rgba(24, 144, 255, 0.1));
+  border-radius: 6px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.custom-footer a:hover {
+  color: #40a9ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+}
+
+.custom-footer a:hover::before {
+  opacity: 1;
+}
+
+.custom-footer a:active {
+  transform: translateY(0);
+}
+
+/* Footer content styling */
+.footer-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #595959;
+  font-weight: 500;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: #262626;
+}
+
+.footer-brand::before {
+  content: '❤️';
+  font-size: 12px;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+.footer-copyright {
+  color: #8c8c8c;
+  font-size: 13px;
+}
+
+/* Special styling for login page footer */
+.login-footer .custom-footer {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.login-footer .custom-footer::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+}
+
+.login-footer .custom-footer a {
+  color: rgba(255, 255, 255, 0.9) !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.login-footer .custom-footer a:hover {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+.login-footer .footer-content {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.login-footer .footer-brand {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.login-footer .footer-copyright {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .custom-footer {
+    padding: 12px 16px !important;
+  }
+  
+  .footer-content {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .footer-brand {
+    font-size: 13px;
+  }
+  
+  .footer-copyright {
+    font-size: 12px;
+  }
+}
+
+/* Animation for footer */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-footer {
+  animation: fadeInUp 0.5s ease-out;
+} 

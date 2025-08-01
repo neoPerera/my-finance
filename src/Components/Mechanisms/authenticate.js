@@ -10,7 +10,7 @@ const Authenticate = async () => {
 
     try {
         console.log("Checking token validity");
-        const response = await axios.get(`${window.env?.REACT_APP_API_URL}api/user/validatejwt`, {
+        const response = await axios.get(`${window.env?.REACT_APP_API_URL}main/user/validatejwt`, {
             headers: {
                 Authorization: `Bearer ${jwtToken}`, // Include the token in the Authorization header
             },

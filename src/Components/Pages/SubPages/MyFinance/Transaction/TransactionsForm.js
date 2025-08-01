@@ -6,13 +6,14 @@ import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import { Button, Form, Input, Select, Space, Spin, message, Switch } from "antd";
 import Title from "antd/es/typography/Title";
-
+import HelpDropdown from '../../../../Elements/Custom/HelpDropdown';
 const SubmitButton = ({ form, onClick }) => {
   const [submittable, setSubmittable] = React.useState(false);
 
   // Watch all values
   const values = Form.useWatch([], form);
   React.useEffect(() => {
+    console.log(values);
     form
       .validateFields({
         validateOnly: true,
@@ -64,6 +65,14 @@ function TransactionForm() {
   const [reloeadCompoenet, setReloadCompoenet] = useState(0);
   const navigate = useNavigate();
 
+  const [selected, setSelected] = useState(null);
+
+  const items = [
+    { key: 'A101', name: 'Item A', category: 'Category 1', uom: 'pcs', availableQty: 100 },
+    { key: 'B202', name: 'Item B', category: 'Category 2', uom: 'box', availableQty: 50 },
+    { key: 'C303', name: 'Item C', category: 'Category 3', uom: 'kg', availableQty: 75 }
+  ];
+
   // const error = () => {
   //   messageApi.open({
   //     type: 'error',
@@ -94,21 +103,34 @@ function TransactionForm() {
     setFormData({ ...formData, strTransCat: value });
   };
 
+    const handleSelectCatsv2 = (item) => {
+    handleSelectCats(item.value);
+  };
+
   const handleSelectAccount = (value) => {
     setFormData({ ...formData, strAccount: value });
     generateAccount2(formData.isDoubleEntry, value);
 
   };
+
+  const handleSelectAccountv2 = (item) => {
+    console.log(item);
+    setFormData({ ...formData, strAccount: item.value });
+    generateAccount2(formData.isDoubleEntry, item.value);
+
+  };
   const handleSelectAccount2 = (value) => {
     setFormData({ ...formData, strAccount2: value });
+  };
+    const handleSelectAccount2v2 = (item) => {
+    setFormData({ ...formData, strAccount2: item.value });
   };
 
   const isDouleEntryChange = (value) => {
     setFormData({ ...formData, isDoubleEntry: value });
     generateAccount2(value, formData.strAccount);
   };
-  const generateAccount2 =(value, strAccount)=>
-  {
+  const generateAccount2 = (value, strAccount) => {
     form.setFieldsValue({ strAccount2: "" }); // or true, or undefined
     if (value) {
       const filteredAccounts = accounts.filter(
@@ -124,9 +146,9 @@ function TransactionForm() {
     console.log(value);
     var strTransCatURL = "";
     if (value == "INC") {
-      strTransCatURL = "api/reference/ref-income/getincome";
+      strTransCatURL = "myfinance/reference/ref-income/getincome";
     } else if (value == "EXP") {
-      strTransCatURL = "api/reference/ref-expense/getexpense";
+      strTransCatURL = "myfinance/reference/ref-expense/getexpense";
     }
     setFormData({ ...formData, strTransType: value });
     setSpinning(true);
@@ -147,6 +169,11 @@ function TransactionForm() {
       console.error("Error:", error);
     }
   };
+  const handleSelectTransv2 = async (item) => {
+    console.log("handleSelectTransv2 received:", item);
+    await handleSelectTrans(item.value);
+  };
+  
 
   const handleSubmitBtn = async (e) => {
     e.preventDefault();
@@ -174,7 +201,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/transaction/add`,
+        `${window.env?.REACT_APP_API_URL}myfinance/transaction/add`,
         filteredFormData
       );
       //setSpinning(false);
@@ -210,7 +237,7 @@ function TransactionForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/transaction/getsequence?type=id`
+          `${window.env?.REACT_APP_API_URL}myfinance/transaction/getsequence?type=id`
         );
         form.setFieldsValue({
           strId: response.data.sequence_id.toString(),
@@ -238,7 +265,6 @@ function TransactionForm() {
       {contextHolder}
       <Spin spinning={spinning} fullscreen />
       <Title level={2}>Transaction form</Title>
-
       <Form
         form={form}
         name="validateOnly"
@@ -288,7 +314,12 @@ function TransactionForm() {
             },
           ]}
         >
-          <Select
+          <HelpDropdown
+            items={accounts}
+            selectedItem={formData.strAccount}
+            onSelect={handleSelectAccountv2}
+          />
+          {/* <Select
             showSearch
             placeholder="Select an Account"
             optionFilterProp="children"
@@ -297,7 +328,7 @@ function TransactionForm() {
             // onSearch={onSearch}
             filterOption={filterOption}
             options={accounts}
-          />
+          /> */}
         </Form.Item>
 
         <Form.Item
@@ -323,14 +354,19 @@ function TransactionForm() {
               },
             ]}
           >
-            <Select
+            <HelpDropdown
+              items={accounts2}
+              selectedItem={formData.strAccount2}
+              onSelect={handleSelectAccount2v2}
+            />
+            {/* <Select
               showSearch
               placeholder="Select 2nd Account"
               optionFilterProp="children"
               onSelect={handleSelectAccount2}
               filterOption={filterOption}
               options={accounts2}
-            />
+            /> */}
           </Form.Item>
         )}
 
@@ -344,7 +380,12 @@ function TransactionForm() {
             },
           ]}
         >
-          <Select
+          <HelpDropdown
+            items={transTypes}
+            selectedItem={formData.strTransType}
+            onSelect={handleSelectTransv2}
+          />
+          {/* <Select
             showSearch
             placeholder="Select a type"
             optionFilterProp="children"
@@ -353,7 +394,7 @@ function TransactionForm() {
             // onSearch={onSearch}
             filterOption={filterOption}
             options={transTypes}
-          />
+          /> */}
         </Form.Item>
         {/* Trans cat  */}
         <Form.Item
@@ -365,7 +406,12 @@ function TransactionForm() {
             },
           ]}
         >
-          <Select
+          <HelpDropdown
+            items={transCats}
+            selectedItem={formData.strTransCat}
+            onSelect={handleSelectCatsv2}
+          />
+          {/* <Select
             showSearch
             disabled={isTransCatDisabled}
             placeholder="Select a category"
@@ -375,7 +421,7 @@ function TransactionForm() {
             onSelect={handleSelectCats}
             filterOption={filterOption}
             options={transCats}
-          />
+          /> */}
         </Form.Item>
         <Form.Item
           name="strName"

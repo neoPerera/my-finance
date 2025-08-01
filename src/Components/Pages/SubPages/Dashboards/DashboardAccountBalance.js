@@ -7,7 +7,7 @@ import CountUp from "react-countup";
 const DashboardAccountBalance = () => {
   const [spinning, setSpinning] = React.useState(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [chartData, setChartData] = React.useState([[], 0]);
+  const [chartData, setChartData] = React.useState([]);
 
   const formatter = (value) => <CountUp end={value} separator="," />;
 
@@ -17,7 +17,7 @@ const DashboardAccountBalance = () => {
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/dashboard/getdashboardaccountbalances`
+          `${window.env?.REACT_APP_API_URL}myfinance/dashboard/getdashboardaccountbalances`
         );
 
         console.log("DashboardBalance List Data:", response.data);

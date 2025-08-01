@@ -13,9 +13,9 @@ import {
   message,
 } from "antd";
 import Title from "antd/es/typography/Title";
-import EditableCell from "../../../../Elements/EditableCell";
+import EditableCell from "../../../../../Components/Elements/EditableCell";
 
-function RefMasAccountsList() {
+function PRRequestList() {
   // Refs and state
   const isMounted = useRef(true);
   const navigate = useNavigate();
@@ -31,19 +31,34 @@ function RefMasAccountsList() {
   const columns = [
     {
       title: "ID",
-      dataIndex: "key",
-      key: "key",
+      dataIndex: "id",
+      key: "id",
     },
     {
       title: "Name",
-      dataIndex: "str_name",
-      key: "str_name",
+      dataIndex: "requestId",
+      key: "requestId",
       editable: true,
     },
     {
       title: "Created Date",
-      dataIndex: "dtm_date",
-      key: "dtm_date",
+      dataIndex: "requestDate",
+      key: "requestDate",
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+    },
+    {
+      title: "Item Count",
+      dataIndex: "itemCount",
+      key: "itemCount",
+    },
+    {
+      title: "Requested By",
+      dataIndex: "requestedBy",
+      key: "requestedBy",
     },
     {
       title: "Operation",
@@ -108,7 +123,7 @@ function RefMasAccountsList() {
       const row = { str_id: key, updates };
 
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/update`,
+        `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-accounts/update`,
         row
       );
 
@@ -149,9 +164,9 @@ function RefMasAccountsList() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/getaccounts`
+          `${window.env?.REACT_APP_API_URL}purchase/prrequest/getrequests`
         );
-        console.log("Accounts List:", response.data);
+        console.log("PR List:", response.data);
         setAccountList(response.data);
       } catch (error) {
         console.error("Error fetching accounts list:", error);
@@ -166,7 +181,7 @@ function RefMasAccountsList() {
   return (
     <>
       {contextHolder}
-      <Title level={2}>Accounts Master</Title>
+      <Title level={2}>Purchase Requests</Title>
 
       <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
         Add New
@@ -193,4 +208,4 @@ function RefMasAccountsList() {
   );
 }
 
-export default RefMasAccountsList;
+export default PRRequestList;
