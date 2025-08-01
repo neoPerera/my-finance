@@ -166,6 +166,7 @@ const Home = () => {
         sideBarFormData={sideBarFormData}
         isMobileExpanded={isMobileSidebarExpanded}
         setIsMobileExpanded={setIsMobileSidebarExpanded}
+        isLoading={spinning}
       />
       <div className="main-content">
         <Header
@@ -175,13 +176,9 @@ const Home = () => {
           onToggleSidebar={handleToggleSidebar}
         />
         <main className="content-area">
-          {spinning ? (
-            <Loading />
-          ) : (
-            <Suspense fallback={<Loading />}>
-              <UserRoutes routeList={routeList} />
-            </Suspense>
-          )}
+          <Suspense fallback={<Loading />}>
+            <UserRoutes routeList={routeList} />
+          </Suspense>
         </main>
         <Footer />
       </div>

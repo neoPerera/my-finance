@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import Axios from "axios";
 import { SelectPicker } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
+import Loading from "../../../Elements/Loading";
 import "./TransactionForm.css";
 
 const SubmitButton = ({ form, onClick, disabled }) => {
@@ -329,12 +330,7 @@ function TransactionForm() {
 
   return (
     <div className="transaction-form-container">
-      {spinning && (
-        <div className="loading-overlay">
-          <div className="loading-spinner"></div>
-          <p>Processing...</p>
-        </div>
-      )}
+      <Loading active={spinning} fullscreen={true} />
       
       <div className="form-header">
         <h2>Transaction Form</h2>
