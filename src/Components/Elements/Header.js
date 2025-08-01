@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
 const Header = ({ collapsed, setCollapsed, MenuItemClicked, onToggleSidebar }) => {
@@ -6,6 +7,7 @@ const Header = ({ collapsed, setCollapsed, MenuItemClicked, onToggleSidebar }) =
   const [showNotificationMenu, setShowNotificationMenu] = useState(false);
   const [notificationCount, setNotificationCount] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   // Enhanced mobile detection
   useEffect(() => {
@@ -74,9 +76,22 @@ const Header = ({ collapsed, setCollapsed, MenuItemClicked, onToggleSidebar }) =
   }, [showNotificationMenu]);
 
   const handleLogout = useCallback(() => {
-    MenuItemClicked({ item: { props: { link: "/logout" } } });
+    console.log("Logout button clicked - Direct logout");
+    
+    // Clear all authentication data
+    localStorage.removeItem("jwt_token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("lastLoginTime");
+    sessionStorage.clear();
+    
+    console.log("LocalStorage cleared, navigating to login");
+    
+    // Close the user menu
     setShowUserMenu(false);
-  }, [MenuItemClicked]);
+    
+    // Navigate directly to login
+    navigate("/login", { replace: true });
+  }, [navigate]);
 
   return (
     <header className="header">

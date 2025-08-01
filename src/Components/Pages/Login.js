@@ -15,8 +15,18 @@ const LogIn = () => {
   const [success, setSuccess] = useState("");
 
   const handleLogin = async () => {
+    // Prevent multiple submissions
+    if (spinning) return;
+    
+    // Validate inputs
+    if (!username.trim() || !password.trim()) {
+      setError("Please enter both username and password");
+      return;
+    }
+
     try {
       setSpinning(true); // Start loading
+      setError(""); // Clear previous errors
       // Swal.fire({
       //   title: "Loading",
       //   timerProgressBar: true,
@@ -52,6 +62,13 @@ const LogIn = () => {
     }
   };
 
+  // Handle Enter key press
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  };
+
   return (
     <div className="login-container">
       <Loading active={spinning} fullscreen />
@@ -71,7 +88,9 @@ const LogIn = () => {
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="form-input"
+              disabled={spinning}
             />
           </div>
           
@@ -83,7 +102,9 @@ const LogIn = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyPress={handleKeyPress}
               className="form-input"
+              disabled={spinning}
             />
           </div>
           
