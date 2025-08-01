@@ -145,7 +145,7 @@ const Home = () => {
   }, [responseData]);
 
   const MenuItemClicked = (item) => {
-    if (item.item.props?.link && item.item.props.link !== "/logout") {
+    if (item.props?.link && item.props.link !== "/logout") {
       navigate(item.props.link);
     }
   };
