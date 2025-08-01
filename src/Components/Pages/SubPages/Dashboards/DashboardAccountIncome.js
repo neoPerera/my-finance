@@ -1,6 +1,6 @@
 import React from 'react';
-import { Col, Card, Statistic, message, Skeleton } from 'antd';
-import { useState, useEffect, useRef } from "react";
+import { Card, Statistic, message, Skeleton } from 'antd';
+import { useState, useEffect } from "react";
 import Axios from "axios";
 import CountUp from "react-countup";
 
@@ -41,29 +41,37 @@ const DashboardAccountIncome = () => {
 
     return (
         <>
+            {contextHolder}
             {spinning ? (
-                <Skeleton.Node active />
+                <div className="dashboard-skeleton">
+                    <Skeleton active paragraph={{ rows: 3 }} />
+                </div>
             ) : (
-                <>
-                    <Col xs={20} sm={12} md={8} lg={6} xl={4}>
-                        <Card title="Account Incomes">
-                            {chartData.length > 0 && (
-                                <>
-                                    {chartData.map((item) => (
-                                        <Statistic
-                                            valueStyle={{ color: 'green' }}
-                                            key={item.type}
-                                            title={`${item.type} Incomes (LKR)`}
-                                            value={item.value}
-                                            precision={2}
-                                            formatter={formatter}
-                                        />
-                                    ))}
-                                </>
-                            )}
-                        </Card>
-                    </Col>
-                </>
+                <Card title="Account Incomes" className="dashboard-card">
+                    {chartData.length > 0 ? (
+                        <>
+                            {chartData.map((item) => (
+                                <div key={item.type} className="dashboard-statistic income">
+                                    <Statistic
+                                        title={`${item.type} Incomes (LKR)`}
+                                        value={item.value}
+                                        precision={2}
+                                        formatter={formatter}
+                                    />
+                                </div>
+                            ))}
+                        </>
+                    ) : (
+                        <div className="dashboard-statistic income">
+                            <Statistic
+                                title="No Income Data Available"
+                                value={0}
+                                precision={2}
+                                formatter={formatter}
+                            />
+                        </div>
+                    )}
+                </Card>
             )}
         </>
     );

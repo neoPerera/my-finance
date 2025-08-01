@@ -14,6 +14,7 @@ import { useNavigate, Routes, Route } from "react-router-dom";
 import SideBarAnt from "../Elements/SideBar-ant";
 import HeaderAnt from "../Elements/Header-ant";
 import FooterAnt from "../Elements/Footer-ant";
+import "./Home.css";
 
 const { Content } = Layout;
 
@@ -162,54 +163,55 @@ const Home = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
-      <SideBarAnt
-        collapsed={collapsed}
-        MenuItemClicked={MenuItemClicked}
-        sideBarFormData={sideBarFormData}
-      />
-      <Layout>
-        <HeaderAnt
-          setCollapsed={setCollapsed}
+    <div className="home-container">
+      <Layout className="home-layout" style={{ minHeight: "100vh" }}>
+        <SideBarAnt
           collapsed={collapsed}
           MenuItemClicked={MenuItemClicked}
+          sideBarFormData={sideBarFormData}
         />
-        <Content
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-            minHeight: 280,
-            background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
-            borderRadius: 16,
-            boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-            border: "1px solid rgba(0, 0, 0, 0.06)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "1px",
-              background: "linear-gradient(90deg, transparent, rgba(24, 144, 255, 0.2), transparent)",
-            }}
+        <Layout>
+          <HeaderAnt
+            setCollapsed={setCollapsed}
+            collapsed={collapsed}
+            MenuItemClicked={MenuItemClicked}
           />
-          {spinning ? (
-            <Skeleton active />
-          ) : (
-            <Suspense fallback={<Skeleton active />}>
-              <UserRoutes routeList={routeList} />
-            </Suspense>
-          )}
-        </Content>
-        <FooterAnt />
+          <Content className="home-content">
+            {/* Content Top Border */}
+            <div className="content-top-border" />
+            
+            {/* Content Inner Glow */}
+            <div className="content-inner-glow" />
+            
+            {/* Content Wrapper */}
+            <div className="content-wrapper">
+              {spinning ? (
+                <div className="loading-skeleton">
+                  <Skeleton 
+                    active 
+                    paragraph={{ rows: 6 }}
+                    title={{ width: '60%' }}
+                  />
+                </div>
+              ) : (
+                <Suspense fallback={
+                  <div className="loading-skeleton">
+                    <Skeleton 
+                      active 
+                      paragraph={{ rows: 4 }}
+                      title={{ width: '50%' }}
+                    />
+                  </div>
+                }>
+                  <UserRoutes routeList={routeList} />
+                </Suspense>
+              )}
+            </div>
+          </Content>
+          <FooterAnt />
+        </Layout>
       </Layout>
-    </Layout>
+    </div>
   );
 };
 

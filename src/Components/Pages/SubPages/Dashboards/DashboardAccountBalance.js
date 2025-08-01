@@ -1,6 +1,6 @@
 import React from 'react';
-import { Col, Card, Statistic, message, Skeleton } from 'antd';
-import { useState, useEffect, useRef } from "react";
+import { Card, Statistic, message, Skeleton } from 'antd';
+import { useState, useEffect } from "react";
 import Axios from "axios";
 import CountUp from "react-countup";
 
@@ -39,30 +39,40 @@ const DashboardAccountBalance = () => {
     };
     fetchData();
   }, []);
+
   return (
     <>
+      {contextHolder}
       {spinning ? (
-        <Skeleton.Node active />
+        <div className="dashboard-skeleton">
+          <Skeleton active paragraph={{ rows: 3 }} />
+        </div>
       ) : (
-        <>
-          <Col xs={20} sm={12} md={8} lg={6} xl={4}>
-            <Card title="Account Balance">
-              {chartData.length > 0 && (
-                <>
-                  {chartData.map((item) => (
-                    <Statistic
-                      key={item.account_name}
-                      title={`${item.account_name} Balance (LKR)`}
-                      value={item.account_balance}
-                      precision={2}
-                      formatter={formatter}
-                    />
-                  ))}
-                </>
-              )}
-            </Card>
-          </Col>
-        </>
+        <Card title="Account Balance" className="dashboard-card">
+          {chartData.length > 0 ? (
+            <>
+              {chartData.map((item) => (
+                <div key={item.account_name} className="dashboard-statistic balance">
+                  <Statistic
+                    title={`${item.account_name} Balance (LKR)`}
+                    value={item.account_balance}
+                    precision={2}
+                    formatter={formatter}
+                  />
+                </div>
+              ))}
+            </>
+          ) : (
+            <div className="dashboard-statistic balance">
+              <Statistic
+                title="No Balance Data Available"
+                value={0}
+                precision={2}
+                formatter={formatter}
+              />
+            </div>
+          )}
+        </Card>
       )}
     </>
   );

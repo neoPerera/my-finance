@@ -1,35 +1,33 @@
 import React from 'react';
-import { Col, Card, Table, message, Skeleton } from 'antd';
-import { useState, useEffect, useRef } from "react";
+import { Card, Table, message, Skeleton } from 'antd';
+import { useState, useEffect } from "react";
 import Axios from "axios";
-import CountUp from "react-countup";
 
 const DashboardTransactionsTable = () => {
   const [spinning, setSpinning] = React.useState(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [chartData, setChartData] = React.useState([]);
+  
   const data = {
     transTable: {
       columns: [
-        // {
-        //   title: "Key",
-        //   dataIndex: "key",
-        //   key: "Key",
-        // },
         {
           title: "Account",
           dataIndex: "account",
           key: "account",
+          responsive: ['md'],
         },
         {
           title: "Reason",
           dataIndex: "name",
-          key: "age",
+          key: "reason",
+          responsive: ['sm'],
         },
         {
           title: "Amount",
           dataIndex: "int_amount_char",
           key: "amount",
+          responsive: ['xs'],
         },
       ],
     },
@@ -66,24 +64,37 @@ const DashboardTransactionsTable = () => {
 
   return (
     <>
+      {contextHolder}
       {spinning ? (
-        <Skeleton.Node active />
+        <div className="dashboard-skeleton">
+          <Skeleton active paragraph={{ rows: 4 }} />
+        </div>
       ) : (
-        <>
-          <Col xs={20} sm={12} md={8} lg={6} xl={7}>
-            <Card title="Transactions">
-              {chartData.length > 0 && (
-                <Table
-                  size="small"
-                  scroll={{ x: 500 }}
-                  dataSource={chartData}
-                  columns={data?.transTable?.columns || []}
-                  pagination={{ pageSize: 10 }}
-                />
-              )}
-            </Card>
-          </Col>
-        </>
+        <Card title="Transactions" className="dashboard-card">
+          {chartData.length > 0 ? (
+            <div className="dashboard-table">
+              <Table
+                size="small"
+                scroll={{ x: 500 }}
+                dataSource={chartData}
+                columns={data?.transTable?.columns || []}
+                pagination={{ 
+                  pageSize: 10,
+                  showSizeChanger: false,
+                  showQuickJumper: true,
+                  showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} transactions`,
+                }}
+                rowKey={(record) => record.key || record.id || Math.random()}
+              />
+            </div>
+          ) : (
+            <div className="dashboard-statistic">
+              <div style={{ textAlign: 'center', padding: '20px', color: '#8c8c8c' }}>
+                No transaction data available
+              </div>
+            </div>
+          )}
+        </Card>
       )}
     </>
   );
