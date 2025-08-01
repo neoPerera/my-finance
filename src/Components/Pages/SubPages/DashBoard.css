@@ -162,20 +162,44 @@
   }
 }
 
-/* iPhone 11 and similar devices (375px width) */
+/* iPhone 11 and similar devices (375px width) - FIXED HORIZONTAL OVERFLOW */
 @media (max-width: 414px) {
   .dashboard {
-    padding: 8px 12px;
+    padding: 6px 6px;
+    background: #f8fafc;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    min-height: 100vh;
   }
   
   .dashboard-grid {
     grid-template-columns: 1fr;
     gap: 8px;
     max-width: 100%;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .table-card {
     grid-column: 1;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Ensure proper spacing for iPhone 11 */
+  .dashboard-card {
+    margin-bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  /* Optimize for iPhone 11's 375px width */
+  .dashboard-card:last-child {
+    margin-bottom: 0;
   }
 }
 

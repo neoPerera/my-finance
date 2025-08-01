@@ -236,70 +236,6 @@
   border-bottom: none;
 }
 
-/* Enhanced table responsiveness */
-@media (max-width: 768px) {
-  .table-container {
-    min-height: 300px;
-    max-height: 350px;
-  }
-  
-  .custom-table {
-    min-width: 500px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 8px 12px;
-    font-size: 13px;
-  }
-  
-  .custom-table th {
-    font-size: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .table-container {
-    min-height: 250px;
-    max-height: 300px;
-  }
-  
-  .custom-table {
-    min-width: 400px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 6px 8px;
-    font-size: 12px;
-  }
-  
-  .custom-table th {
-    font-size: 11px;
-  }
-}
-
-@media (max-width: 360px) {
-  .table-container {
-    min-height: 200px;
-    max-height: 250px;
-  }
-  
-  .custom-table {
-    min-width: 350px;
-  }
-  
-  .custom-table th,
-  .custom-table td {
-    padding: 4px 6px;
-    font-size: 11px;
-  }
-  
-  .custom-table th {
-    font-size: 10px;
-  }
-}
-
 /* Pagination Styles */
 .pagination {
   display: flex;
@@ -475,52 +411,169 @@
   }
 }
 
-/* iPhone 11 and similar devices (375px width) */
+/* iPhone 11 and similar devices (375px width) - FIXED HORIZONTAL OVERFLOW */
 @media (max-width: 414px) {
   .dashboard-card {
-    min-height: 120px;
-    max-height: 250px;
+    min-height: 140px;
+    max-height: 280px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  
+  .dashboard-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
   }
   
   .card-header {
-    padding: 10px;
+    padding: 10px 8px;
+    border-radius: 10px 10px 0 0;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .card-header h3 {
     font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    margin: 0;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
   .card-content {
-    padding: 10px;
-    max-height: calc(100% - 60px);
+    padding: 8px 6px;
+    max-height: calc(100% - 52px);
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   .statistic-item {
-    padding: 8px;
-    margin-bottom: 10px;
+    padding: 8px 6px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    border-left: 3px solid #3b82f6;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .statistic-item:hover {
+    transform: translateX(2px);
   }
   
   .statistic-title {
     font-size: 11px;
+    margin-bottom: 3px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
   .statistic-value {
-    font-size: 16px;
+    font-size: 14px;
+    line-height: 1.2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   
   .pagination {
-    padding: 8px;
-    gap: 6px;
+    padding: 8px 6px;
+    gap: 4px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .pagination-btn {
     padding: 4px 8px;
     font-size: 11px;
-    min-width: 50px;
+    min-width: 40px;
+    min-height: 28px;
+    border-radius: 4px;
   }
   
   .pagination-info {
+    font-size: 10px;
+    width: 100%;
+    text-align: center;
+    margin-top: 2px;
+  }
+  
+  /* Table optimizations for iPhone 11 */
+  .table-container {
+    min-height: 180px;
+    max-height: 220px;
+    border-radius: 6px;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+  
+  .custom-table {
+    min-width: 280px;
+    font-size: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .custom-table th {
+    padding: 4px 3px;
+    font-size: 9px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  
+  .custom-table td {
+    padding: 4px 3px;
+    font-size: 10px;
+    max-width: 80px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Enhanced scrollbar for iPhone 11 */
+  .card-content::-webkit-scrollbar {
+    width: 2px;
+  }
+  
+  .table-container::-webkit-scrollbar {
+    height: 3px;
+    width: 3px;
+  }
+  
+  /* No data message optimization */
+  .no-data-message {
+    padding: 12px 6px;
+    min-height: 80px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .no-data-icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+  }
+  
+  .no-data-text {
+    font-size: 12px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  
+  /* Error message optimization */
+  .error-message {
+    padding: 6px 8px;
     font-size: 11px;
+    margin: 6px 0;
+    border-radius: 4px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 }
 
