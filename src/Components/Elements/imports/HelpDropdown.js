@@ -14,8 +14,26 @@ const HelpDropdown = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [isMobile, setIsMobile] = useState(false);
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+
+  // Detect mobile devices
+  useEffect(() => {
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      const isSmallScreen = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice || isSmallScreen);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
 
   // Find selected option based on value
   useEffect(() => {
@@ -76,10 +94,10 @@ const HelpDropdown = ({
     };
   }, [isOpen]);
 
-  // Handle keyboard navigation
+  // Handle keyboard navigation (only on desktop)
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (!isOpen) return;
+      if (!isOpen || isMobile) return;
 
       switch (event.key) {
         case 'ArrowDown':
@@ -115,14 +133,14 @@ const HelpDropdown = ({
       }
     };
 
-    if (isOpen) {
+    if (isOpen && !isMobile) {
       document.addEventListener('keydown', handleKeyDown);
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, filteredOptions, selectedIndex]);
+  }, [isOpen, filteredOptions, selectedIndex, isMobile]);
 
   const handleToggle = () => {
     if (!disabled) {
@@ -130,12 +148,14 @@ const HelpDropdown = ({
       if (!isOpen) {
         setSearchTerm('');
         setSelectedIndex(-1);
-        // Focus search input after modal opens
-        setTimeout(() => {
-          if (searchInputRef.current) {
-            searchInputRef.current.focus();
-          }
-        }, 100);
+        // Focus search input after modal opens (only on desktop)
+        if (!isMobile) {
+          setTimeout(() => {
+            if (searchInputRef.current) {
+              searchInputRef.current.focus();
+            }
+          }, 100);
+        }
       }
     }
   };
@@ -202,7 +222,7 @@ const HelpDropdown = ({
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="search-input"
-                autoFocus
+                autoFocus={!isMobile}
               />
             </div>
             
