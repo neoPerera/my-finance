@@ -13,7 +13,9 @@ const HelpDropdown = ({
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedOption, setSelectedOption] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const dropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   // Find selected option based on value
   useEffect(() => {
@@ -34,30 +36,34 @@ const HelpDropdown = ({
     );
   });
 
-  // Handle click outside to close dropdown
+  // Handle click outside to close modal
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
         setSearchTerm('');
+        setSelectedIndex(-1);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside, { passive: true });
+    }
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
-  }, []);
+  }, [isOpen]);
 
-  // Handle escape key to close dropdown
+  // Handle escape key to close modal
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
         setIsOpen(false);
         setSearchTerm('');
+        setSelectedIndex(-1);
       }
     };
 
@@ -70,11 +76,66 @@ const HelpDropdown = ({
     };
   }, [isOpen]);
 
+  // Handle keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!isOpen) return;
+
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault();
+          setSelectedIndex(prev => 
+            prev < filteredOptions.length - 1 ? prev + 1 : 0
+          );
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          setSelectedIndex(prev => 
+            prev > 0 ? prev - 1 : filteredOptions.length - 1
+          );
+          break;
+        case 'Enter':
+          event.preventDefault();
+          if (selectedIndex >= 0 && filteredOptions[selectedIndex]) {
+            handleOptionSelect(filteredOptions[selectedIndex]);
+          } else if (filteredOptions.length > 0) {
+            handleOptionSelect(filteredOptions[0]);
+          }
+          break;
+        case 'Tab':
+          if (event.shiftKey) {
+            // Allow normal tab behavior
+            return;
+          }
+          event.preventDefault();
+          if (filteredOptions.length > 0) {
+            handleOptionSelect(filteredOptions[selectedIndex >= 0 ? selectedIndex : 0]);
+          }
+          break;
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, filteredOptions, selectedIndex]);
+
   const handleToggle = () => {
     if (!disabled) {
       setIsOpen(!isOpen);
       if (!isOpen) {
         setSearchTerm('');
+        setSelectedIndex(-1);
+        // Focus search input after modal opens
+        setTimeout(() => {
+          if (searchInputRef.current) {
+            searchInputRef.current.focus();
+          }
+        }, 100);
       }
     }
   };
@@ -84,104 +145,106 @@ const HelpDropdown = ({
     onChange(option.value);
     setIsOpen(false);
     setSearchTerm('');
+    setSelectedIndex(-1);
   };
 
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && filteredOptions.length > 0) {
-      handleOptionSelect(filteredOptions[0]);
-    }
+    setSelectedIndex(-1); // Reset selection when searching
   };
 
   return (
-    <div 
-      ref={dropdownRef}
-      className={`help-dropdown ${className} ${disabled ? 'disabled' : ''} ${isOpen ? 'open' : ''}`}
-    >
+    <>
       <div 
-        className="dropdown-trigger"
-        onClick={handleToggle}
-        tabIndex={disabled ? -1 : 0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            handleToggle();
-          }
-        }}
-        role="combobox"
-        aria-expanded={isOpen}
-        aria-haspopup="listbox"
-        aria-label={placeholder}
+        className={`help-dropdown ${className} ${disabled ? 'disabled' : ''}`}
       >
-        <span className="selected-text">
-          {selectedOption ? selectedOption.label : placeholder}
-        </span>
-        <svg 
-          className="dropdown-arrow" 
-          width="12" 
-          height="12" 
-          viewBox="0 0 24 24" 
-          fill="currentColor"
+        <div 
+          className="dropdown-trigger"
+          onClick={handleToggle}
+          tabIndex={disabled ? -1 : 0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleToggle();
+            }
+          }}
+          role="combobox"
+          aria-expanded={isOpen}
+          aria-haspopup="listbox"
+          aria-label={placeholder}
         >
-          <path d="M7 10l5 5 5-5z"/>
-        </svg>
+          <span className="selected-text">
+            {selectedOption ? selectedOption.label : placeholder}
+          </span>
+          <svg 
+            className="dropdown-arrow" 
+            width="12" 
+            height="12" 
+            viewBox="0 0 24 24" 
+            fill="currentColor"
+          >
+            <path d="M7 10l5 5 5-5z"/>
+          </svg>
+        </div>
       </div>
 
       {isOpen && (
-        <div className="dropdown-menu">
-          <div className="search-container">
-            <input
-              type="text"
-              placeholder={searchPlaceholder}
-              value={searchTerm}
-              onChange={handleSearchChange}
-              onKeyDown={handleKeyDown}
-              className="search-input"
-              autoFocus
-            />
-          </div>
-          
-          <div className="options-container">
-            {filteredOptions.length > 0 ? (
-              <div className="options-table">
-                <div className="table-header">
-                  <div className="header-cell">Value</div>
-                  <div className="header-cell">Description</div>
+        <div className="modal-overlay">
+          <div 
+            ref={dropdownRef}
+            className="modal-content"
+          >
+            <div className="search-container">
+              <input
+                ref={searchInputRef}
+                type="text"
+                placeholder={searchPlaceholder}
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-input"
+                autoFocus
+              />
+            </div>
+            
+            <div className="options-container">
+              {filteredOptions.length > 0 ? (
+                <div className="options-table">
+                  <div className="table-header">
+                    <div className="header-cell">Value</div>
+                    <div className="header-cell">Description</div>
+                  </div>
+                  <div className="table-body">
+                    {filteredOptions.map((option, index) => (
+                      <div
+                        key={option.value || index}
+                        className={`table-row ${selectedIndex === index ? 'selected' : ''} ${selectedOption?.value === option.value ? 'current-selection' : ''}`}
+                        onClick={() => handleOptionSelect(option)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleOptionSelect(option);
+                          }
+                        }}
+                        tabIndex={0}
+                        role="option"
+                        aria-selected={selectedIndex === index}
+                      >
+                        <div className="table-cell value-cell">{option.value}</div>
+                        <div className="table-cell label-cell">{option.label}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className="table-body">
-                  {filteredOptions.map((option, index) => (
-                    <div
-                      key={option.value || index}
-                      className={`table-row ${selectedOption?.value === option.value ? 'selected' : ''}`}
-                      onClick={() => handleOptionSelect(option)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' || e.key === ' ') {
-                          e.preventDefault();
-                          handleOptionSelect(option);
-                        }
-                      }}
-                      tabIndex={0}
-                      role="option"
-                      aria-selected={selectedOption?.value === option.value}
-                    >
-                      <div className="table-cell value-cell">{option.value}</div>
-                      <div className="table-cell label-cell">{option.label}</div>
-                    </div>
-                  ))}
+              ) : (
+                <div className="no-options">
+                  {searchTerm ? 'No options found' : 'No options available'}
                 </div>
-              </div>
-            ) : (
-              <div className="no-options">
-                {searchTerm ? 'No options found' : 'No options available'}
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
