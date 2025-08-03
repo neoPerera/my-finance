@@ -72,7 +72,7 @@ function RefMasExpenseForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/reference/ref-expense/add`,
+        `${window.env?.REACT_APP_API_URL}main/reference/ref-expense/add`,
         formData
       );
       // if (swalInstance) {
@@ -114,7 +114,7 @@ function RefMasExpenseForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/reference/ref-expense/getSequence`
+          `${window.env?.REACT_APP_API_URL}main/reference/ref-expense/getSequence`
         );
         console.log(response);
         // if (swalInstance) {

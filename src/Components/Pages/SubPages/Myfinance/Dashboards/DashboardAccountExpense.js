@@ -19,7 +19,7 @@ const DashboardAccountExpense = () => {
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/dashboard/getdashboardaccountexpenses`
+          `${window.env?.REACT_APP_API_URL}main/dashboard/getdashboardaccountexpenses`
         );
 
         console.log("expense List Data:", response.data);

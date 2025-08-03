@@ -245,7 +245,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/transaction/add`,
+        `${window.env?.REACT_APP_API_URL}main/transaction/add`,
         filteredFormData
       );
       console.log("Response:", response.data);
@@ -294,7 +294,7 @@ function TransactionForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/transaction/getsequence?type=id`
+          `${window.env?.REACT_APP_API_URL}main/transaction/getsequence?type=id`
         );
         console.log(response);
         setSpinning(false);
