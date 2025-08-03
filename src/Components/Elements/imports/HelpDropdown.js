@@ -196,15 +196,19 @@ const HelpDropdown = ({
           <span className="selected-text">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          <svg 
-            className="dropdown-arrow" 
-            width="12" 
-            height="12" 
-            viewBox="0 0 24 24" 
-            fill="currentColor"
-          >
-            <path d="M7 10l5 5 5-5z"/>
-          </svg>
+          {disabled ? (
+            <div className="loading-spinner"></div>
+          ) : (
+            <svg 
+              className="dropdown-arrow" 
+              width="12" 
+              height="12" 
+              viewBox="0 0 24 24" 
+              fill="currentColor"
+            >
+              <path d="M7 10l5 5 5-5z"/>
+            </svg>
+          )}
         </div>
       </div>
 

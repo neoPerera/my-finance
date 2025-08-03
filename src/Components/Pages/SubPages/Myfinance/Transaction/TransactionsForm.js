@@ -157,7 +157,9 @@ function TransactionForm() {
       strTransCatURL = "main/reference/ref-expense/getexpense";
     }
     setFormData({ ...formData, strTransType: value });
-    setSpinning(true);
+    setTransCatDisabled(true); // Disable category dropdown while loading
+    setTransCats([]); // Clear previous categories
+    
     try {
       const response = await Axios.get(
         `${window.env?.REACT_APP_API_URL}${strTransCatURL}`
@@ -169,11 +171,9 @@ function TransactionForm() {
           value: item.key,
         }))
       );
-      setSpinning(false);
       setTransCatDisabled(false);
     } catch (error) {
       console.error("Error:", error);
-      setSpinning(false);
       setErrorMessage("Failed to load transaction categories. Please try again.");
     }
     
@@ -468,22 +468,22 @@ function TransactionForm() {
               {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
             </div>
 
-            {/* Transaction Category */}
-            <div className="form-group">
-              <label htmlFor="strTransCat" className="form-label">
-                Category <span className="required">*</span>
-              </label>
-              <HelpDropdown
-                options={transCats}
-                value={formData.strTransCat}
-                onChange={handleSelectCats}
-                placeholder="Select a category"
-                searchPlaceholder="Search categories..."
-                className={errors.strTransCat ? 'error' : ''}
-                disabled={isTransCatDisabled}
-              />
-              {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
-            </div>
+                         {/* Transaction Category */}
+             <div className="form-group">
+               <label htmlFor="strTransCat" className="form-label">
+                 Category <span className="required">*</span>
+               </label>
+               <HelpDropdown
+                 options={transCats}
+                 value={formData.strTransCat}
+                 onChange={handleSelectCats}
+                 placeholder={isTransCatDisabled ? "Loading categories..." : "Select a category"}
+                 searchPlaceholder="Search categories..."
+                 className={errors.strTransCat ? 'error' : ''}
+                 disabled={isTransCatDisabled}
+               />
+               {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
+             </div>
 
             {/* Reason Field */}
             <div className="form-group full-width">
