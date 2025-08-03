@@ -6,7 +6,7 @@ const HelpDropdown = ({
   value, 
   onChange, 
   placeholder = "Select an option...",
-  disabled = false,
+  isLoading = false,
   className = "",
   searchPlaceholder = "Search..."
 }) => {
@@ -143,7 +143,7 @@ const HelpDropdown = ({
   }, [isOpen, filteredOptions, selectedIndex, isMobile]);
 
   const handleToggle = () => {
-    if (!disabled) {
+    if (!isLoading) {
       setIsOpen(!isOpen);
       if (!isOpen) {
         setSearchTerm('');
@@ -176,12 +176,12 @@ const HelpDropdown = ({
   return (
     <>
       <div 
-        className={`help-dropdown ${className} ${disabled ? 'disabled' : ''}`}
+        className={`help-dropdown ${className} ${isLoading ? 'disabled' : ''}`}
       >
         <div 
           className="dropdown-trigger"
           onClick={handleToggle}
-          tabIndex={disabled ? -1 : 0}
+          tabIndex={isLoading ? -1 : 0}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
@@ -196,7 +196,7 @@ const HelpDropdown = ({
           <span className="selected-text">
             {selectedOption ? selectedOption.label : placeholder}
           </span>
-          {disabled ? (
+          {isLoading ? (
             <div className="loading-spinner"></div>
           ) : (
             <svg 

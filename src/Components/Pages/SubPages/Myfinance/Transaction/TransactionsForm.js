@@ -31,7 +31,7 @@ function TransactionForm() {
     strAccount2: "",
   });
   const [transTypes, setTransTypes] = useState([]);
-  const [isTransCatDisabled, setTransCatDisabled] = useState(true);
+  const [isTransCatLoading, setTransCatLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [accounts2, setAccounts2] = useState([]);
   const [transCats, setTransCats] = useState([]);
@@ -152,13 +152,23 @@ function TransactionForm() {
     console.log(value);
     var strTransCatURL = "";
     if (value == "INC") {
-      strTransCatURL = "main/reference/ref-income/getincome";
+      strTransCatURL = "myfinance/reference/ref-income/getincome";
     } else if (value == "EXP") {
-      strTransCatURL = "main/reference/ref-expense/getexpense";
+      strTransCatURL = "myfinance/reference/ref-expense/getexpense";
     }
-    setFormData({ ...formData, strTransType: value });
-    setTransCatDisabled(true); // Disable category dropdown while loading
+    
+    // First, update the form data and clear categories
+    setFormData({ 
+      ...formData, 
+      strTransType: value,
+      strTransCat: "" // Clear the selected category
+    });
     setTransCats([]); // Clear previous categories
+    
+    // Use setTimeout to ensure form state updates before setting loading
+    setTimeout(() => {
+      setTransCatLoading(true); // Show loading state for category dropdown
+    }, 0);
     
     try {
       const response = await Axios.get(
@@ -171,10 +181,11 @@ function TransactionForm() {
           value: item.key,
         }))
       );
-      setTransCatDisabled(false);
+      setTransCatLoading(false);
     } catch (error) {
       console.error("Error:", error);
       setErrorMessage("Failed to load transaction categories. Please try again.");
+      setTransCatLoading(false); // Re-enable dropdown on error
     }
     
     if (errors.strTransType) {
@@ -258,7 +269,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}main/transaction/add`,
+        `${window.env?.REACT_APP_API_URL}myfinance/transaction/add`,
         filteredFormData
       );
       console.log("Response:", response.data);
@@ -307,7 +318,7 @@ function TransactionForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}main/transaction/getsequence?type=id`
+          `${window.env?.REACT_APP_API_URL}myfinance/transaction/getsequence?type=id`
         );
         console.log(response);
         setSpinning(false);
@@ -473,15 +484,21 @@ function TransactionForm() {
                <label htmlFor="strTransCat" className="form-label">
                  Category <span className="required">*</span>
                </label>
-               <HelpDropdown
-                 options={transCats}
-                 value={formData.strTransCat}
-                 onChange={handleSelectCats}
-                 placeholder={isTransCatDisabled ? "Loading categories..." : "Select a category"}
-                 searchPlaceholder="Search categories..."
-                 className={errors.strTransCat ? 'error' : ''}
-                 disabled={isTransCatDisabled}
-               />
+                               <HelpDropdown
+                  options={transCats}
+                  value={formData.strTransCat}
+                  onChange={handleSelectCats}
+                                     placeholder={
+                     !formData.strTransType 
+                       ? "Select transaction type first" 
+                       : isTransCatLoading 
+                         ? "Loading categories..." 
+                         : "Select a category"
+                   }
+                   searchPlaceholder="Search categories..."
+                   className={errors.strTransCat ? 'error' : ''}
+                   isLoading={isTransCatLoading}
+                />
                {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
              </div>
 

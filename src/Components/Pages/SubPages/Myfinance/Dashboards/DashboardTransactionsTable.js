@@ -36,7 +36,7 @@ const DashboardTransactionsTable = () => {
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}main/dashboard/getdashboardtransactions`
+          `${window.env?.REACT_APP_API_URL}myfinance/dashboard/getdashboardtransactions`
         );
 
         console.log("transactions List Data:", response.data);
