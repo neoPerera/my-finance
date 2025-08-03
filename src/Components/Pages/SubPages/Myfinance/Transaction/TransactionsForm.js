@@ -64,15 +64,28 @@ function TransactionForm() {
   };
 
   const Amount_handleInputChange = (e) => {
-    const numericValue =
-      parseFloat(e.target.value.replace(/[^0-9.]/g, "")) || 0;
-    console.log(numericValue.toLocaleString("en"));
-    const formattedCurrency = numericValue.toLocaleString("en");
-
-    setFormData({
-      ...formData,
-      floatAmount: formattedCurrency,
-    });
+    const inputValue = e.target.value;
+    
+    // Allow only numbers, decimal point, and commas
+    const cleanValue = inputValue.replace(/[^0-9.,]/g, "");
+    
+    // Handle multiple decimal points - keep only the first one
+    const parts = cleanValue.split('.');
+    if (parts.length > 2) {
+      const firstPart = parts[0];
+      const remainingParts = parts.slice(1).join('');
+      const processedValue = firstPart + '.' + remainingParts;
+      
+      setFormData({
+        ...formData,
+        floatAmount: processedValue,
+      });
+    } else {
+      setFormData({
+        ...formData,
+        floatAmount: cleanValue,
+      });
+    }
     
     if (errors.floatAmount) {
       setErrors({
@@ -139,9 +152,9 @@ function TransactionForm() {
     console.log(value);
     var strTransCatURL = "";
     if (value == "INC") {
-      strTransCatURL = "api/reference/ref-income/getincome";
+      strTransCatURL = "main/reference/ref-income/getincome";
     } else if (value == "EXP") {
-      strTransCatURL = "api/reference/ref-expense/getexpense";
+      strTransCatURL = "main/reference/ref-expense/getexpense";
     }
     setFormData({ ...formData, strTransType: value });
     setSpinning(true);
@@ -382,7 +395,7 @@ function TransactionForm() {
                 className={`form-input ${errors.floatAmount ? 'error' : ''}`}
                 value={formData.floatAmount}
                 onChange={Amount_handleInputChange}
-                placeholder="Enter amount"
+                placeholder="Enter amount (e.g., 1539.92)"
               />
               {errors.floatAmount && <span className="error-message">{errors.floatAmount}</span>}
             </div>
