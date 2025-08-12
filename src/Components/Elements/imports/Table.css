@@ -464,7 +464,8 @@
 
 @media (max-width: 768px) {
   .table-wrapper {
-    height: calc(100vh - 120px);
+    height: auto;
+    min-height: calc(100vh - 120px);
   }
   
   .controls-section {
@@ -498,15 +499,18 @@
   .table-container {
     overflow-x: auto;
     border-radius: 6px;
+    height: auto;
   }
   
   .table-scroll-container {
     overflow-x: auto;
-    overflow-y: auto;
+    overflow-y: visible;
+    height: auto;
   }
   
   .table-scroll-container.scrollable {
-    max-height: 250px;
+    max-height: none;
+    height: auto;
   }
   
   .table-scroll-container.no-scroll {
@@ -554,7 +558,8 @@
 
 @media (max-width: 480px) {
   .table-wrapper {
-    height: calc(100vh - 100px);
+    height: auto;
+    min-height: calc(100vh - 100px);
   }
   
   .controls-section {
@@ -583,6 +588,25 @@
   .results-summary {
     padding: 10px 16px;
     font-size: 13px;
+  }
+  
+  .table-container {
+    height: auto;
+  }
+  
+  .table-scroll-container {
+    overflow-x: auto;
+    overflow-y: visible;
+    height: auto;
+  }
+  
+  .table-scroll-container.scrollable {
+    max-height: none;
+    height: auto;
+  }
+  
+  .table-scroll-container.no-scroll {
+    overflow: visible;
   }
   
   .data-table th,
