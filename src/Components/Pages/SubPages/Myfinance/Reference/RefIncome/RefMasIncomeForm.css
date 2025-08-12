@@ -1,17 +1,17 @@
-.income-form-wrapper .form-header {
+.income-form-container .form-header {
   border-left: 6px solid #52c41a;
 }
 
-.income-form-wrapper .form-header h2::before {
+.income-form-container .form-header h2::before {
   content: "💰";
 }
 
-.income-form-wrapper .btn-primary {
+.income-form-container .btn-primary {
   background: linear-gradient(135deg, #52c41a, #73d13d);
   box-shadow: 0 4px 12px rgba(82, 196, 26, 0.3);
 }
 
-.income-form-wrapper .btn-primary:hover:not(:disabled) {
+.income-form-container .btn-primary:hover:not(:disabled) {
   background: linear-gradient(135deg, #73d13d, #95de64);
   box-shadow: 0 6px 16px rgba(82, 196, 26, 0.4);
 }

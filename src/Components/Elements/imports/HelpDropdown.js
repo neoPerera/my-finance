@@ -8,7 +8,8 @@ const HelpDropdown = ({
   placeholder = "Select an option...",
   isLoading = false,
   className = "",
-  searchPlaceholder = "Search..."
+  searchPlaceholder = "Search...",
+  error = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -176,7 +177,7 @@ const HelpDropdown = ({
   return (
     <>
       <div 
-        className={`help-dropdown ${className} ${isLoading ? 'disabled' : ''}`}
+        className={`help-dropdown ${className} ${isLoading ? 'disabled' : ''} ${error ? 'error' : ''}`}
       >
         <div 
           className="dropdown-trigger"

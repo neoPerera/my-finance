@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import Form from "../../../../Elements/imports/Form";
+import Form, { FormItem, Input, Select } from "../../../../Elements/imports/Form";
+import HelpDropdown from "../../../../Elements/imports/HelpDropdown";
 import "./TransactionForm.css";
 
 function TransactionForm() {
@@ -14,54 +15,7 @@ function TransactionForm() {
   const [transCats, setTransCats] = useState([]);
   const [isTransCatLoading, setIsTransCatLoading] = useState(false);
   const [isDoubleEntry, setIsDoubleEntry] = useState(false);
-  const [fields, setFields] = useState([
-    {
-      name: "strId",
-      label: "ID",
-      type: "text",
-      disabled: true,
-      rules: { required: true }
-    },
-    {
-      name: "floatAmount",
-      label: "Amount",
-      type: "text",
-      rules: { required: true },
-      placeholder: "Enter amount (e.g., 1539.92)"
-    },
-    {
-      name: "strAccount",
-      label: "Account",
-      type: "select",
-      rules: { required: true },
-      options: [],
-      placeholder: "Select an Account"
-    },
-    {
-      name: "strTransType",
-      label: "Transaction Type",
-      type: "select",
-      rules: { required: true },
-      options: [],
-      placeholder: "Select a type"
-    },
-    {
-      name: "strTransCat",
-      label: "Category",
-      type: "select",
-      rules: { required: true },
-      options: [],
-      placeholder: "Select transaction type first",
-      disabled: true
-    },
-    {
-      name: "strName",
-      label: "Reason",
-      type: "text",
-      rules: { required: true, minLength: 2, maxLength: 200 },
-      placeholder: "Enter transaction reason"
-    }
-  ]);
+  const [formData, setFormData] = useState({});
 
   const showMessage = (type, text) => {
     setMessage({ type, text });
@@ -96,6 +50,7 @@ function TransactionForm() {
         getSequence();
         setIsDoubleEntry(false);
         setTransCats([]);
+        setFormData({});
         showMessage("", "");
       }, 2000);
       
@@ -118,14 +73,11 @@ function TransactionForm() {
   };
 
   const handleFieldChange = (fieldName, value) => {
-    // Update the field value in the fields array
-    setFields(prevFields => 
-      prevFields.map(field => 
-        field.name === fieldName 
-          ? { ...field, defaultValue: value }
-          : field
-      )
-    );
+    // Update form data
+    setFormData(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
 
     // Handle special field changes
     if (fieldName === "strTransType") {
@@ -138,14 +90,10 @@ function TransactionForm() {
   };
 
   const handleTransactionTypeChange = async (value) => {
+    console.log("Transaction type changed to:", value);
+    
     // Clear categories first
-    setFields(prevFields => 
-      prevFields.map(field => 
-        field.name === "strTransCat" 
-          ? { ...field, options: [], defaultValue: "", disabled: true }
-          : field
-      )
-    );
+    setTransCats([]);
 
     if (!value) return;
 
@@ -156,6 +104,7 @@ function TransactionForm() {
       strTransCatURL = "myfinance/reference/ref-expense/getexpense";
     }
 
+    console.log("Fetching categories from:", strTransCatURL);
     setIsTransCatLoading(true);
     
     try {
@@ -163,23 +112,15 @@ function TransactionForm() {
         `${window.env?.REACT_APP_API_URL}${strTransCatURL}`
       );
       
+      console.log("Categories API Response:", response.data);
+      
       const categoryOptions = response.data.map((item) => ({
         label: item.str_name,
         value: item.key,
       }));
 
-      setFields(prevFields => 
-        prevFields.map(field => 
-          field.name === "strTransCat" 
-            ? { 
-                ...field, 
-                options: categoryOptions, 
-                disabled: false,
-                placeholder: "Select a category"
-              }
-            : field
-        )
-      );
+      console.log("Setting transCats:", categoryOptions);
+      setTransCats(categoryOptions);
     } catch (error) {
       console.error("Error:", error);
       showMessage("error", "Failed to load transaction categories. Please try again.");
@@ -192,19 +133,6 @@ function TransactionForm() {
     if (isDoubleEntry) {
       const filteredAccounts = accounts.filter(acc => acc.value !== value);
       setAccounts2(filteredAccounts);
-      
-      // Update the second account field if it exists
-      setFields(prevFields => {
-        const hasAccount2 = prevFields.some(field => field.name === "strAccount2");
-        if (hasAccount2) {
-          return prevFields.map(field => 
-            field.name === "strAccount2" 
-              ? { ...field, options: filteredAccounts, defaultValue: "" }
-              : field
-          );
-        }
-        return prevFields;
-      });
     }
   };
 
@@ -213,31 +141,9 @@ function TransactionForm() {
     
     if (value) {
       // Add second account field
-      const currentAccount = fields.find(f => f.name === "strAccount")?.defaultValue;
+      const currentAccount = formData.strAccount;
       const filteredAccounts = accounts.filter(acc => acc.value !== currentAccount);
-      
-      setFields(prevFields => {
-        const hasAccount2 = prevFields.some(field => field.name === "strAccount2");
-        if (!hasAccount2) {
-          return [
-            ...prevFields,
-            {
-              name: "strAccount2",
-              label: "Second Account",
-              type: "select",
-              rules: { required: true },
-              options: filteredAccounts,
-              placeholder: "Select 2nd Account"
-            }
-          ];
-        }
-        return prevFields;
-      });
-    } else {
-      // Remove second account field
-      setFields(prevFields => 
-        prevFields.filter(field => field.name !== "strAccount2")
-      );
+      setAccounts2(filteredAccounts);
     }
   };
 
@@ -248,24 +154,40 @@ function TransactionForm() {
         `${window.env?.REACT_APP_API_URL}myfinance/transaction/getsequence?type=id`
       );
       
-      console.log(response);
+      console.log("API Response:", response.data);
       
-      // Update fields with sequence data
-      setFields(prevFields => 
-        prevFields.map(field => {
-          if (field.name === "strId") {
-            return { ...field, defaultValue: response.data.sequence_id.toString() };
-          } else if (field.name === "strTransType") {
-            return { ...field, options: response.data.trans_types[0] };
-          } else if (field.name === "strAccount") {
-            return { ...field, options: response.data.accounts[0] };
-          }
-          return field;
-        })
-      );
+      // Check the actual response structure and handle it safely
+      let sequenceId = null;
+      if (response.data && response.data.sequence_id) {
+        sequenceId = response.data.sequence_id;
+      } else if (response.data && response.data.output_value) {
+        sequenceId = response.data.output_value;
+      } else if (response.data && typeof response.data === 'string') {
+        sequenceId = response.data;
+      } else if (response.data && typeof response.data === 'number') {
+        sequenceId = response.data;
+      }
       
-      setTransTypes(response.data.trans_types[0]);
-      setAccounts(response.data.accounts[0]);
+      // Update form data with sequence ID
+      if (sequenceId !== null) {
+        setFormData(prev => ({
+          ...prev,
+          strId: sequenceId.toString()
+        }));
+      } else {
+        console.warn("No sequence ID found in response:", response.data);
+        showMessage("error", "Failed to get sequence number");
+      }
+      
+      // Update state variables with the fetched data
+      const transTypesData = response.data.trans_types?.[0] || [];
+      const accountsData = response.data.accounts?.[0] || [];
+      
+      console.log("Setting transTypes:", transTypesData);
+      console.log("Setting accounts:", accountsData);
+      
+      setTransTypes(transTypesData);
+      setAccounts(accountsData);
       
     } catch (error) {
       console.error("Error:", error);
@@ -279,25 +201,18 @@ function TransactionForm() {
     getSequence();
   }, []);
 
+  // Debug useEffect to track state changes
+  useEffect(() => {
+    console.log("State updated - transTypes:", transTypes);
+    console.log("State updated - accounts:", accounts);
+    console.log("State updated - transCats:", transCats);
+    console.log("State updated - formData:", formData);
+  }, [transTypes, accounts, transCats, formData]);
+
   return (
     <div className="transaction-form-wrapper">
-      {/* Double Entry Toggle */}
-      <div className="double-entry-toggle">
-        <label className="toggle-label">
-          <input
-            type="checkbox"
-            checked={isDoubleEntry}
-            onChange={(e) => handleDoubleEntryChange(e.target.checked)}
-            className="toggle-input"
-          />
-          <span className="toggle-slider"></span>
-          <span className="toggle-text">Double Entry</span>
-        </label>
-      </div>
-
       <Form
         title="Transaction Form"
-        fields={fields}
         onSubmit={handleSubmit}
         loading={loading}
         message={message}
@@ -306,7 +221,111 @@ function TransactionForm() {
         showGoBack={true}
         className="transaction-form-container"
         onFieldChange={handleFieldChange}
-      />
+        initialValues={formData}
+      >
+        <FormItem
+          label="ID"
+          name="strId"
+          rules={[{ required: true }]}
+        >
+          <Input disabled />
+        </FormItem>
+
+        <FormItem
+          label="Amount"
+          name="floatAmount"
+          rules={[{ required: true }]}
+        >
+          <Input 
+            type="text"
+            placeholder="Enter amount (e.g., 1539.92)"
+          />
+        </FormItem>
+
+        <FormItem
+          label="Account"
+          name="strAccount"
+          rules={[{ required: true }]}
+        >
+          <HelpDropdown
+            options={accounts}
+            placeholder="Select an Account"
+            searchPlaceholder="Search accounts..."
+            isLoading={loading}
+          />
+        </FormItem>
+
+        {/* Double Entry Toggle - moved here after first account */}
+        <div className="double-entry-toggle">
+          <label className="toggle-label">
+            <input
+              type="checkbox"
+              checked={isDoubleEntry}
+              onChange={(e) => handleDoubleEntryChange(e.target.checked)}
+              className="toggle-input"
+            />
+            <span className="toggle-slider"></span>
+            <span className="toggle-text">Double Entry</span>
+          </label>
+        </div>
+
+        {isDoubleEntry && (
+          <FormItem
+            label="Second Account"
+            name="strAccount2"
+            rules={[{ required: true }]}
+          >
+            <HelpDropdown
+              options={accounts2}
+              placeholder="Select 2nd Account"
+              searchPlaceholder="Search accounts..."
+              isLoading={loading}
+            />
+          </FormItem>
+        )}
+
+        <FormItem
+          label="Transaction Type"
+          name="strTransType"
+          rules={[{ required: true }]}
+        >
+          <HelpDropdown
+            options={transTypes}
+            placeholder="Select a type"
+            searchPlaceholder="Search transaction types..."
+            isLoading={loading}
+          />
+        </FormItem>
+
+        <FormItem
+          label="Category"
+          name="strTransCat"
+          rules={[{ required: true }]}
+        >
+          <HelpDropdown
+            options={transCats}
+            placeholder={
+              !formData.strTransType 
+                ? "Select transaction type first" 
+                : isTransCatLoading 
+                  ? "Loading categories..." 
+                  : "Select a category"
+            }
+            searchPlaceholder="Search categories..."
+            isLoading={isTransCatLoading}
+          />
+        </FormItem>
+
+        <FormItem
+          label="Reason"
+          name="strName"
+          rules={[{ required: true }, { minLength: 2 }, { maxLength: 200 }]}
+        >
+          <Input 
+            placeholder="Enter transaction reason"
+          />
+        </FormItem>
+      </Form>
     </div>
   );
 }

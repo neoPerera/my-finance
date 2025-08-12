@@ -27,15 +27,20 @@
 
 /* Double Entry Toggle Styles */
 .double-entry-toggle {
-  background: white;
-  padding: 20px 24px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-bottom: 24px;
-  border-left: 6px solid #52c41a;
+  background: #f8f9fa;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: 1px solid #e1e5e9;
+  margin: 8px 0 24px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  transition: all 0.3s ease;
+}
+
+.double-entry-toggle:hover {
+  background: #f0f2f5;
+  border-color: #d0d7de;
 }
 
 .toggle-label {
@@ -43,53 +48,57 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  font-weight: 600;
-  color: #262626;
-  font-size: 16px;
+  font-weight: 500;
+  color: #495057;
+  font-size: 14px;
+  width: 100%;
 }
 
 .toggle-input {
   position: relative;
-  width: 50px;
-  height: 24px;
+  width: 44px;
+  height: 22px;
   appearance: none;
-  background: #d1d5db;
-  border-radius: 24px;
+  background: #dee2e6;
+  border-radius: 22px;
   cursor: pointer;
   transition: all 0.3s ease;
   outline: none;
+  border: none;
 }
 
 .toggle-input:checked {
-  background: #52c41a;
+  background: #1890ff;
 }
 
 .toggle-input::before {
   content: '';
   position: absolute;
-  top: 3px;
-  left: 3px;
+  top: 2px;
+  left: 2px;
   width: 18px;
   height: 18px;
   background: white;
   border-radius: 50%;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .toggle-input:checked::before {
-  transform: translateX(26px);
+  transform: translateX(22px);
 }
 
 .toggle-text {
-  font-weight: 600;
-  color: #262626;
+  font-weight: 500;
+  color: #495057;
+  margin-left: 4px;
 }
 
 .toggle-text::before {
   content: "🔄";
   margin-right: 8px;
-  font-size: 18px;
+  font-size: 16px;
+  opacity: 0.8;
 }
 
 /* Responsive Design */
@@ -99,28 +108,28 @@
   }
   
   .double-entry-toggle {
-    padding: 16px 20px;
-    margin-bottom: 20px;
+    padding: 14px 16px;
+    margin: 6px 0 20px 0;
   }
   
   .toggle-label {
-    font-size: 14px;
+    font-size: 13px;
   }
   
   .toggle-input {
-    width: 44px;
-    height: 22px;
+    width: 40px;
+    height: 20px;
   }
   
   .toggle-input::before {
     width: 16px;
     height: 16px;
-    top: 3px;
-    left: 3px;
+    top: 2px;
+    left: 2px;
   }
   
   .toggle-input:checked::before {
-    transform: translateX(22px);
+    transform: translateX(20px);
   }
 }
 
@@ -130,28 +139,28 @@
   }
   
   .double-entry-toggle {
-    padding: 12px 16px;
-    margin-bottom: 16px;
+    padding: 12px 14px;
+    margin: 4px 0 16px 0;
   }
   
   .toggle-label {
-    font-size: 13px;
+    font-size: 12px;
     gap: 8px;
   }
   
   .toggle-input {
-    width: 40px;
-    height: 20px;
+    width: 36px;
+    height: 18px;
   }
   
   .toggle-input::before {
     width: 14px;
     height: 14px;
-    top: 3px;
-    left: 3px;
+    top: 2px;
+    left: 2px;
   }
   
   .toggle-input:checked::before {
-    transform: translateX(20px);
+    transform: translateX(18px);
   }
 } 
