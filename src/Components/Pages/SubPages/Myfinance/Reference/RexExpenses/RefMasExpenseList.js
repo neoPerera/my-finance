@@ -1,29 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import {
-  Button,
-  Form,
-  Skeleton,
-  Table,
-  Typography,
-  Popconfirm,
-  message,
-} from "antd";
-import Title from "antd/es/typography/Title";
-import EditableCell from "../../../../../Elements/EditableCell";
+import Table from "../../../../../Elements/imports/Table";
+import "./RefMasExpenseList.css";
 
 function RefMasExpenseList() {
   const navigate = useNavigate();
   const isMounted = useRef(true);
 
-  const [form] = Form.useForm();
   const [data, setData] = useState([]);
-  const [editingKey, setEditingKey] = useState("");
   const [spinning, setSpinning] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
-
-  const isEditing = (record) => record.key === editingKey;
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   const fetchData = async () => {
     setSpinning(true);
@@ -34,6 +21,7 @@ function RefMasExpenseList() {
       setData(response.data);
     } catch (error) {
       console.error("Error fetching expense list:", error);
+      showMessage("error", "Failed to fetch expense data");
     } finally {
       setSpinning(false);
     }
@@ -46,29 +34,28 @@ function RefMasExpenseList() {
     }
   }, []);
 
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
+  };
+
   const handleAdd = () => {
     navigate("/home/ref-expense/add");
   };
 
-  const edit = (record) => {
-    form.setFieldsValue({
-      str_name: record.str_name,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
-  };
-
-  const save = async (key) => {
+  const handleSave = async (key, updatedData) => {
     try {
       setSpinning(true);
-      const updatedFields = await form.validateFields();
+      
+      // Validate required fields
+      if (!updatedData.str_name || updatedData.str_name.trim() === "") {
+        showMessage("error", "Name is required");
+        return;
+      }
 
       const payload = {
         str_id: key,
-        updates: updatedFields,
+        updates: updatedData,
       };
 
       await Axios.post(
@@ -76,111 +63,78 @@ function RefMasExpenseList() {
         payload
       );
 
-      messageApi.success("Successfully saved");
+      showMessage("success", "Successfully saved");
 
-      const updatedData = [...data];
-      const index = updatedData.findIndex((item) => item.key === key);
+      // Update local data
+      const updatedDataArray = [...data];
+      const index = updatedDataArray.findIndex((item) => item.key === key);
       if (index > -1) {
-        updatedData[index] = { ...updatedData[index], ...updatedFields };
-        setData(updatedData);
+        updatedDataArray[index] = { ...updatedDataArray[index], ...updatedData };
+        setData(updatedDataArray);
       }
-
-      setEditingKey("");
     } catch (error) {
-      messageApi.error(
-        error?.response?.data?.error?.detail || "Failed to save changes"
-      );
+      showMessage("error", error?.response?.data?.error?.detail || "Failed to save changes");
     } finally {
       setSpinning(false);
     }
   };
 
+  // Define table columns
   const columns = [
     {
       title: "ID",
       dataIndex: "key",
       key: "key",
+      className: "id-cell",
+      width: "80px",
     },
     {
       title: "Name",
       dataIndex: "str_name",
       key: "str_name",
+      className: "name-cell",
       editable: true,
+      render: (value) => <span className="expense-name">{value}</span>,
     },
     {
-      title: "Created date",
+      title: "Created Date",
       dataIndex: "dtm_date",
       key: "dtm_date",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span>
-            <Typography.Link
-              onClick={() => save(record.key)}
-              style={{ marginRight: 8 }}
-            >
-              Save
-            </Typography.Link>
-            <Popconfirm title="Cancel changes?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </span>
-        ) : (
-          <Typography.Link
-            disabled={editingKey !== ""}
-            onClick={() => edit(record)}
-          >
-            Edit
-          </Typography.Link>
-        );
-      },
+      className: "date-cell",
+      sortable: true,
     },
   ];
 
-  const mergedColumns = columns.map((col) =>
-    col.editable
-      ? {
-          ...col,
-          onCell: (record) => ({
-            record,
-            inputType: "text",
-            dataIndex: col.dataIndex,
-            title: col.title,
-            editing: isEditing(record),
-          }),
-        }
-      : col
-  );
-
   return (
-    <>
-      {contextHolder}
-      <Title level={2}>Expense Master</Title>
-      <Button type="primary" onClick={handleAdd} style={{ marginBottom: 16 }}>
-        Add new
-      </Button>
-      {spinning ? (
-        <Skeleton active />
-      ) : (
-        <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            columns={mergedColumns}
-            dataSource={data}
-            size="small"
-            scroll={{ x: 1000 }}
-          />
-        </Form>
+    <div className="expense-list-container">
+      {message.text && (
+        <div className={`message ${message.type}`}>
+          {message.text}
+        </div>
       )}
-    </>
+      
+      <div className="expense-list-header">
+        <h2>Expense Master</h2>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          <span className="btn-icon">+</span>
+          Add new
+        </button>
+      </div>
+
+      <Table
+        data={data}
+        columns={columns}
+        pageSize={10}
+        searchable={true}
+        sortable={true}
+        editable={true}
+        onSave={handleSave}
+        loading={spinning}
+        emptyMessage="No expense data available"
+        searchPlaceholder="Search expenses..."
+        className="expense-table-wrapper"
+      />
+    </div>
   );
 }
 

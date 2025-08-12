@@ -6,149 +6,103 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import {
-  Button,
-  Skeleton,
-  Spin,
-  Table,
-  Form,
-  Typography,
-  Popconfirm,
-  message,
-} from "antd";
-import Title from "antd/es/typography/Title";
-import EditableCell from "../../../../../Elements/EditableCell";
+import Table from "../../../../../Elements/imports/Table";
+import "./RefMasIncomeList.css";
 
 function RefMasIncomeList() {
   // Hooks
   const navigate = useNavigate();
-  const [form] = Form.useForm();
-  const [incomeList, setIncomeList] = useState([]);
+  const [data, setData] = useState([]);
   const [spinning, setSpinning] = useState(false);
-  const [dataLoading, setDataLoading] = useState(false);
-  const [editingKey, setEditingKey] = useState("");
-  const [messageApi, contextHolder] = message.useMessage();
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  // Helpers
-  const isEditing = (record) => record.key === editingKey;
-
-  const edit = (record) => {
-    form.setFieldsValue({ str_name: record.str_name });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
-  };
-
-  const save = async (key) => {
-    try {
-      setSpinning(true);
-
-      const updates = await form.validateFields();
-      const row = {
-        str_id: key,
-        updates,
-      };
-
-      const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-income/update`,
-        row
-      );
-
-      messageApi.success("Successfully saved");
-
-      const updatedList = [...incomeList];
-      const index = updatedList.findIndex((item) => key === item.key);
-      if (index > -1) {
-        updatedList.splice(index, 1, { ...updatedList[index], ...updates });
-        setIncomeList(updatedList);
-      }
-
-      console.log("Update response:", response.data);
-    } catch (error) {
-      messageApi.error(error?.response?.data?.error?.detail || "Update failed");
-      console.error("Update error:", error);
-    } finally {
-      setEditingKey("");
-      setSpinning(false);
-    }
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
 
   const handleAdd = () => {
     navigate("/home/ref-income/add");
   };
 
-  // Table Columns
+  const handleSave = async (key, updatedData) => {
+    try {
+      setSpinning(true);
+      
+      // Validate required fields
+      if (!updatedData.str_name || updatedData.str_name.trim() === "") {
+        showMessage("error", "Name is required");
+        return;
+      }
+
+      const payload = {
+        str_id: key,
+        updates: updatedData,
+      };
+
+      await Axios.post(
+        `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-income/update`,
+        payload
+      );
+
+      showMessage("success", "Successfully saved");
+
+      // Update local data
+      const updatedDataArray = [...data];
+      const index = updatedDataArray.findIndex((item) => item.key === key);
+      if (index > -1) {
+        updatedDataArray[index] = { ...updatedDataArray[index], ...updatedData };
+        setData(updatedDataArray);
+      }
+    } catch (error) {
+      showMessage("error", error?.response?.data?.error?.detail || "Update failed");
+      console.error("Update error:", error);
+    } finally {
+      setSpinning(false);
+    }
+  };
+
+  // Define table columns
   const columns = [
     {
       title: "ID",
       dataIndex: "key",
       key: "key",
+      className: "id-cell",
+      width: "80px",
     },
     {
       title: "Name",
       dataIndex: "str_name",
       key: "str_name",
+      className: "name-cell",
       editable: true,
+      render: (value) => <span className="income-name">{value}</span>,
     },
     {
-      title: "Created date",
+      title: "Created Date",
       dataIndex: "dtm_date",
       key: "dtm_date",
-    },
-    {
-      title: "Operation",
-      dataIndex: "operation",
-      render: (_, record) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <>
-            <Typography.Link onClick={() => save(record.key)} style={{ marginRight: 8 }}>
-              Save
-            </Typography.Link>
-            <Popconfirm title="Sure to cancel?" onConfirm={cancel}>
-              <a>Cancel</a>
-            </Popconfirm>
-          </>
-        ) : (
-          <Typography.Link disabled={editingKey !== ""} onClick={() => edit(record)}>
-            Edit
-          </Typography.Link>
-        );
-      },
+      className: "date-cell",
+      sortable: true,
     },
   ];
-
-  const mergedColumns = columns.map((col) =>
-    !col.editable
-      ? col
-      : {
-        ...col,
-        onCell: (record) => ({
-          record,
-          inputType: "text",
-          dataIndex: col.dataIndex,
-          title: col.title,
-          editing: isEditing(record),
-        }),
-      }
-  );
 
   // Load Data
   useEffect(() => {
     const fetchData = async () => {
-      setDataLoading(true);
+      setSpinning(true);
       try {
         const response = await Axios.get(
           `${window.env?.REACT_APP_API_URL}myfinance/reference/ref-income/getincome`
         );
-        setIncomeList(response.data);
+        setData(response.data);
         console.log("Income list:", response.data);
       } catch (error) {
         console.error("Failed to fetch income list:", error);
+        showMessage("error", "Failed to fetch income data");
       } finally {
-        setDataLoading(false);
+        setSpinning(false);
       }
     };
 
@@ -156,28 +110,35 @@ function RefMasIncomeList() {
   }, []);
 
   return (
-    <>
-      {contextHolder}
-      <Spin spinning={spinning} fullscreen />
-      <Title level={2}>Income Master</Title>
-      <Button onClick={handleAdd} type="primary" style={{ marginBottom: 16 }}>
-        Add new
-      </Button>
-
-      {dataLoading ? (
-        <Skeleton active />
-      ) : (
-        <Form form={form} component={false}>
-          <Table
-            components={{ body: { cell: EditableCell } }}
-            scroll={{ x: 1000 }}
-            size="small"
-            columns={mergedColumns}
-            dataSource={incomeList}
-          />
-        </Form>
+    <div className="income-list-container">
+      {message.text && (
+        <div className={`message ${message.type}`}>
+          {message.text}
+        </div>
       )}
-    </>
+      
+      <div className="income-list-header">
+        <h2>Income Master</h2>
+        <button className="btn btn-primary" onClick={handleAdd}>
+          <span className="btn-icon">+</span>
+          Add new
+        </button>
+      </div>
+
+      <Table
+        data={data}
+        columns={columns}
+        pageSize={10}
+        searchable={true}
+        sortable={true}
+        editable={true}
+        onSave={handleSave}
+        loading={spinning}
+        emptyMessage="No income data available"
+        searchPlaceholder="Search income..."
+        className="income-table-wrapper"
+      />
+    </div>
   );
 }
 

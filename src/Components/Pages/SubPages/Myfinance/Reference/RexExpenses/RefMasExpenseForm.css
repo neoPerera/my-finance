@@ -1,0 +1,17 @@
+.expense-form-wrapper .form-header {
+  border-left: 6px solid #ff4d4f;
+}
+
+.expense-form-wrapper .form-header h2::before {
+  content: "💸";
+}
+
+.expense-form-wrapper .btn-primary {
+  background: linear-gradient(135deg, #ff4d4f, #ff7875);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
+}
+
+.expense-form-wrapper .btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ff7875, #ffa39e);
+  box-shadow: 0 6px 16px rgba(255, 77, 79, 0.4);
+}

@@ -1,0 +1,17 @@
+.account-form-wrapper .form-header {
+  border-left: 6px solid #722ed1;
+}
+
+.account-form-wrapper .form-header h2::before {
+  content: "🏦";
+}
+
+.account-form-wrapper .btn-primary {
+  background: linear-gradient(135deg, #722ed1, #9254de);
+  box-shadow: 0 4px 12px rgba(114, 46, 209, 0.3);
+}
+
+.account-form-wrapper .btn-primary:hover:not(:disabled) {
+  background: linear-gradient(135deg, #9254de, #b37feb);
+  box-shadow: 0 6px 16px rgba(114, 46, 209, 0.4);
+}
