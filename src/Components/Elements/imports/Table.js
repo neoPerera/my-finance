@@ -8,6 +8,8 @@ const Table = ({
   searchable = true,
   sortable = true,
   editable = false,
+  scrollable = false,
+  itemsPerPage = 10,
   onEdit,
   onSave,
   onCancel,
@@ -231,10 +233,26 @@ const Table = ({
 
   if (loading) {
     return (
-      <div className={`table-container ${className}`}>
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Loading...</p>
+      <div className={`table-wrapper ${className}`} {...props}>
+        <div className="table-container">
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (data.length === 0) {
+    return (
+      <div className={`table-wrapper ${className}`} {...props}>
+        <div className="table-container">
+          <div className="no-data-container">
+            <div className="no-data-icon">📊</div>
+            <div className="no-data-text">No data available</div>
+            <div className="no-data-subtext">Try adjusting your search or filters</div>
+          </div>
         </div>
       </div>
     );
@@ -281,55 +299,59 @@ const Table = ({
       )}
 
       <div className="table-container">
-        <table className="data-table">
-          <thead>
-            <tr>
-              {columns.map((column, index) => (
-                <th
-                  key={column.key || column.dataIndex || index}
-                  className={`${sortable && column.sortable !== false ? 'sortable' : ''} ${sortField === column.dataIndex ? sortDirection : ''}`}
-                  onClick={() => sortable && column.sortable !== false ? handleSort(column.dataIndex) : null}
-                  style={column.width ? { width: column.width } : {}}
-                >
-                  {column.title}
-                  {sortable && column.sortable !== false && (
-                    <span className="sort-icon">▼</span>
-                  )}
-                </th>
-              ))}
-              {editable && (
-                <th className="action-header">Actions</th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {currentData.map((record, index) => (
-              <tr key={record.key || index} className={isEditing(record) ? 'editing-row' : ''}>
-                {columns.map((column, colIndex) => (
-                  <td
-                    key={column.key || column.dataIndex || colIndex}
-                    className={`${column.className || ''} ${column.dataIndex ? `${column.dataIndex}-cell` : ''}`}
+        <div className={`table-scroll-container ${scrollable ? 'scrollable' : 'no-scroll'}`}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                {columns.map((column, index) => (
+                  <th
+                    key={column.key || column.dataIndex || index}
+                    className={`${sortable && column.sortable !== false ? 'sortable' : ''} ${sortField === column.dataIndex ? sortDirection : ''}`}
+                    onClick={() => sortable && column.sortable !== false ? handleSort(column.dataIndex) : null}
+                    style={column.width ? { width: column.width } : {}}
                   >
-                    {renderCell(column, record, colIndex)}
-                  </td>
+                    {column.title}
+                    {sortable && column.sortable !== false && (
+                      <span className="sort-icon">▼</span>
+                    )}
+                  </th>
                 ))}
                 {editable && (
-                  <td className="action-cell">
-                    {renderActions(record)}
-                  </td>
+                  <th className="action-header">Actions</th>
                 )}
               </tr>
-            ))}
-          </tbody>
-        </table>
-        
-        {currentData.length === 0 && (
-          <div className="no-data">
-            <div className="no-data-icon">📊</div>
-            <p>{emptyMessage}</p>
-            {searchTerm && <p className="no-data-hint">Try adjusting your search criteria</p>}
-          </div>
-        )}
+            </thead>
+            <tbody>
+              {currentData.map((record, rowIndex) => (
+                <tr key={record.key || rowIndex} className={isEditing(record) ? 'editing-row' : ''}>
+                  {columns.map((column, colIndex) => (
+                    <td
+                      key={column.key || column.dataIndex || colIndex}
+                      className={`${column.className || ''} ${column.dataIndex ? `${column.dataIndex}-cell` : ''}`}
+                    >
+                      {editingKey === record.key && column.editable ? (
+                        <input
+                          type="text"
+                          value={editingData[column.dataIndex] || ''}
+                          onChange={(e) => handleInputChange(column.dataIndex, e.target.value)}
+                          className="edit-input"
+                          autoFocus={colIndex === 0}
+                        />
+                      ) : (
+                        column.render ? column.render(record[column.dataIndex], record, rowIndex) : record[column.dataIndex]
+                      )}
+                    </td>
+                  ))}
+                  {editable && (
+                    <td className="action-cell">
+                      {renderActions(record)}
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Pagination */}
@@ -338,13 +360,21 @@ const Table = ({
           <div className="pagination-info">
             Page {currentPage} of {totalPages}
           </div>
-          
           <div className="pagination-controls">
             <button
-              className="btn btn-outline btn-sm"
-              onClick={goToPreviousPage}
+              className="btn btn-secondary btn-sm"
+              onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
             >
+              <span className="btn-icon">⟪</span>
+              First
+            </button>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => setCurrentPage(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <span className="btn-icon">‹</span>
               Previous
             </button>
             
@@ -374,11 +404,18 @@ const Table = ({
             </div>
             
             <button
-              className="btn btn-outline btn-sm"
-              onClick={goToNextPage}
+              className="btn btn-secondary btn-sm"
+              onClick={() => setCurrentPage(currentPage + 1)}
               disabled={currentPage === totalPages}
             >
               Next
+            </button>
+            <button
+              className="btn btn-secondary btn-sm"
+              onClick={() => setCurrentPage(totalPages)}
+              disabled={currentPage === totalPages}
+            >
+              Last
             </button>
           </div>
         </div>

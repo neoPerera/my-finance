@@ -10,6 +10,7 @@ const Form = ({
   onMessageClose,
   onGoBack,
   showGoBack = false,
+  onFieldChange,
   className = "",
   ...props
 }) => {
@@ -31,6 +32,11 @@ const Form = ({
       ...prev,
       [name]: value
     }));
+
+    // Call onFieldChange if provided
+    if (onFieldChange) {
+      onFieldChange(name, value);
+    }
 
     // Clear error when user starts typing
     if (errors[name]) {

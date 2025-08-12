@@ -1,533 +1,312 @@
-import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Axios from "axios";
-import HelpDropdown from "../../../../Elements/imports/HelpDropdown";
+import Form from "../../../../Elements/imports/Form";
 import "./TransactionForm.css";
 
-const SubmitButton = ({ form, onClick, disabled }) => {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      className="submit-btn"
-    >
-      Submit
-    </button>
-  );
-};
-
-
-
 function TransactionForm() {
-  const [formData, setFormData] = useState({
-    strId: "",
-    floatAmount: "",
-    strName: "",
-    strTransType: "",
-    strTransCat: "",
-    strAccount: "",
-    isDoubleEntry: false,
-    strAccount2: "",
-  });
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [transTypes, setTransTypes] = useState([]);
-  const [isTransCatLoading, setTransCatLoading] = useState(false);
   const [accounts, setAccounts] = useState([]);
   const [accounts2, setAccounts2] = useState([]);
   const [transCats, setTransCats] = useState([]);
-  const [spinning, setSpinning] = React.useState(false);
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
-  const [reloeadCompoenet, setReloadCompoenet] = useState(0);
-  const navigate = useNavigate();
-
-  const clearMessages = () => {
-    setSuccessMessage("");
-    setErrorMessage("");
-  };
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormData({
-      ...formData,
-      [id]: value,
-    });
-    // Clear error when user starts typing
-    if (errors[id]) {
-      setErrors({
-        ...errors,
-        [id]: "",
-      });
+  const [isTransCatLoading, setIsTransCatLoading] = useState(false);
+  const [isDoubleEntry, setIsDoubleEntry] = useState(false);
+  const [fields, setFields] = useState([
+    {
+      name: "strId",
+      label: "ID",
+      type: "text",
+      disabled: true,
+      rules: { required: true }
+    },
+    {
+      name: "floatAmount",
+      label: "Amount",
+      type: "text",
+      rules: { required: true },
+      placeholder: "Enter amount (e.g., 1539.92)"
+    },
+    {
+      name: "strAccount",
+      label: "Account",
+      type: "select",
+      rules: { required: true },
+      options: [],
+      placeholder: "Select an Account"
+    },
+    {
+      name: "strTransType",
+      label: "Transaction Type",
+      type: "select",
+      rules: { required: true },
+      options: [],
+      placeholder: "Select a type"
+    },
+    {
+      name: "strTransCat",
+      label: "Category",
+      type: "select",
+      rules: { required: true },
+      options: [],
+      placeholder: "Select transaction type first",
+      disabled: true
+    },
+    {
+      name: "strName",
+      label: "Reason",
+      type: "text",
+      rules: { required: true, minLength: 2, maxLength: 200 },
+      placeholder: "Enter transaction reason"
     }
-    clearMessages();
+  ]);
+
+  const showMessage = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
   };
 
-  const Amount_handleInputChange = (e) => {
-    const inputValue = e.target.value;
-    
-    // Allow only numbers, decimal point, and commas
-    const cleanValue = inputValue.replace(/[^0-9.,]/g, "");
-    
-    // Handle multiple decimal points - keep only the first one
-    const parts = cleanValue.split('.');
-    if (parts.length > 2) {
-      const firstPart = parts[0];
-      const remainingParts = parts.slice(1).join('');
-      const processedValue = firstPart + '.' + remainingParts;
+  const handleGoBack = () => {
+    navigate("/home");
+  };
+
+  const handleSubmit = async (formData) => {
+    setLoading(true);
+    try {
+      // Prepare the data for submission
+      const submitData = { ...formData };
       
-      setFormData({
-        ...formData,
-        floatAmount: processedValue,
-      });
-    } else {
-      setFormData({
-        ...formData,
-        floatAmount: cleanValue,
-      });
-    }
-    
-    if (errors.floatAmount) {
-      setErrors({
-        ...errors,
-        floatAmount: "",
-      });
-    }
-    clearMessages();
-  };
+      // If double entry is enabled, add the second account
+      if (isDoubleEntry) {
+        submitData.strAccount2 = formData.strAccount2;
+      }
 
-  const handleSelectCats = (value) => {
-    setFormData({ ...formData, strTransCat: value });
-    if (errors.strTransCat) {
-      setErrors({
-        ...errors,
-        strTransCat: "",
-      });
-    }
-    clearMessages();
-  };
-
-  const handleSelectAccount = (value) => {
-    setFormData({ ...formData, strAccount: value });
-    generateAccount2(formData.isDoubleEntry, value);
-    
-    if (errors.strAccount) {
-      setErrors({
-        ...errors,
-        strAccount: "",
-      });
-    }
-    clearMessages();
-  };
-
-  const handleSelectAccount2 = (value) => {
-    setFormData({ ...formData, strAccount2: value });
-    if (errors.strAccount2) {
-      setErrors({
-        ...errors,
-        strAccount2: "",
-      });
-    }
-    clearMessages();
-  };
-
-  const isDouleEntryChange = (value) => {
-    setFormData({ ...formData, isDoubleEntry: value });
-    generateAccount2(value, formData.strAccount);
-    clearMessages();
-  };
-
-  const generateAccount2 = (value, strAccount) => {
-    if (value) {
-      const filteredAccounts = accounts.filter(
-        (acc) => acc.value !== strAccount
+      const response = await Axios.post(
+        `${window.env?.REACT_APP_API_URL}myfinance/transaction/add`,
+        submitData
       );
-      setAccounts2(filteredAccounts);
-    } else {
-      setAccounts2([]); // Empty the list when double entry is off
+      
+      console.log("Response:", response.data);
+      showMessage("success", "Transaction saved successfully!");
+      
+      // Reset form and reload data
+      setTimeout(() => {
+        getSequence();
+        setIsDoubleEntry(false);
+        setTransCats([]);
+        showMessage("", "");
+      }, 2000);
+      
+    } catch (error) {
+      console.error("Error:", error.response);
+      if (error.response?.data?.error?.detail) {
+        showMessage("error", error.response.data.error.detail);
+      } else if (error.response?.status === 500) {
+        showMessage("error", "Server error. Please try again later.");
+      } else if (error.response?.status === 400) {
+        showMessage("error", "Invalid data. Please check your input.");
+      } else if (error.code === 'NETWORK_ERROR') {
+        showMessage("error", "Network error. Please check your connection.");
+      } else {
+        showMessage("error", "An unexpected error occurred. Please try again.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSelectTrans = async (value) => {
-    console.log(value);
-    var strTransCatURL = "";
-    if (value == "INC") {
+  const handleFieldChange = (fieldName, value) => {
+    // Update the field value in the fields array
+    setFields(prevFields => 
+      prevFields.map(field => 
+        field.name === fieldName 
+          ? { ...field, defaultValue: value }
+          : field
+      )
+    );
+
+    // Handle special field changes
+    if (fieldName === "strTransType") {
+      handleTransactionTypeChange(value);
+    } else if (fieldName === "strAccount") {
+      handleAccountChange(value);
+    } else if (fieldName === "isDoubleEntry") {
+      handleDoubleEntryChange(value);
+    }
+  };
+
+  const handleTransactionTypeChange = async (value) => {
+    // Clear categories first
+    setFields(prevFields => 
+      prevFields.map(field => 
+        field.name === "strTransCat" 
+          ? { ...field, options: [], defaultValue: "", disabled: true }
+          : field
+      )
+    );
+
+    if (!value) return;
+
+    let strTransCatURL = "";
+    if (value === "INC") {
       strTransCatURL = "myfinance/reference/ref-income/getincome";
-    } else if (value == "EXP") {
+    } else if (value === "EXP") {
       strTransCatURL = "myfinance/reference/ref-expense/getexpense";
     }
-    
-    // First, update the form data and clear categories
-    setFormData({ 
-      ...formData, 
-      strTransType: value,
-      strTransCat: "" // Clear the selected category
-    });
-    setTransCats([]); // Clear previous categories
-    
-    // Use setTimeout to ensure form state updates before setting loading
-    setTimeout(() => {
-      setTransCatLoading(true); // Show loading state for category dropdown
-    }, 0);
+
+    setIsTransCatLoading(true);
     
     try {
       const response = await Axios.get(
         `${window.env?.REACT_APP_API_URL}${strTransCatURL}`
       );
-      console.log(response);
-      setTransCats(
-        response.data.map((item) => ({
-          label: item.str_name,
-          value: item.key,
-        }))
+      
+      const categoryOptions = response.data.map((item) => ({
+        label: item.str_name,
+        value: item.key,
+      }));
+
+      setFields(prevFields => 
+        prevFields.map(field => 
+          field.name === "strTransCat" 
+            ? { 
+                ...field, 
+                options: categoryOptions, 
+                disabled: false,
+                placeholder: "Select a category"
+              }
+            : field
+        )
       );
-      setTransCatLoading(false);
     } catch (error) {
       console.error("Error:", error);
-      setErrorMessage("Failed to load transaction categories. Please try again.");
-      setTransCatLoading(false); // Re-enable dropdown on error
+      showMessage("error", "Failed to load transaction categories. Please try again.");
+    } finally {
+      setIsTransCatLoading(false);
     }
-    
-    if (errors.strTransType) {
-      setErrors({
-        ...errors,
-        strTransType: "",
+  };
+
+  const handleAccountChange = (value) => {
+    if (isDoubleEntry) {
+      const filteredAccounts = accounts.filter(acc => acc.value !== value);
+      setAccounts2(filteredAccounts);
+      
+      // Update the second account field if it exists
+      setFields(prevFields => {
+        const hasAccount2 = prevFields.some(field => field.name === "strAccount2");
+        if (hasAccount2) {
+          return prevFields.map(field => 
+            field.name === "strAccount2" 
+              ? { ...field, options: filteredAccounts, defaultValue: "" }
+              : field
+          );
+        }
+        return prevFields;
       });
     }
-    clearMessages();
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-    const filteredFormData = { ...formData };
-
-    // If isDouble is false, remove account2 from the check
-    if (!filteredFormData.isDoubleEntry) {
-      delete filteredFormData.strAccount2;
-    }
-
-    // Validate required fields
-    if (!filteredFormData.strId || filteredFormData.strId.trim() === "") {
-      newErrors.strId = "ID is required";
-    }
-
-    if (!filteredFormData.floatAmount || filteredFormData.floatAmount.trim() === "") {
-      newErrors.floatAmount = "Amount is required";
-    } else {
-      // Validate amount format
-      const amountValue = parseFloat(filteredFormData.floatAmount.replace(/[^0-9.]/g, ""));
-      if (isNaN(amountValue) || amountValue <= 0) {
-        newErrors.floatAmount = "Please enter a valid amount greater than 0";
-      }
-    }
-
-    if (!filteredFormData.strAccount || filteredFormData.strAccount.trim() === "") {
-      newErrors.strAccount = "Account selection is required";
-    }
-
-    if (!filteredFormData.strTransType || filteredFormData.strTransType.trim() === "") {
-      newErrors.strTransType = "Transaction type is required";
-    }
-
-    if (!filteredFormData.strTransCat || filteredFormData.strTransCat.trim() === "") {
-      newErrors.strTransCat = "Category is required";
-    }
-
-    if (!filteredFormData.strName || filteredFormData.strName.trim() === "") {
-      newErrors.strName = "Reason is required";
-    }
-
-    // Validate second account if double entry is enabled
-    if (filteredFormData.isDoubleEntry) {
-      if (!filteredFormData.strAccount2 || filteredFormData.strAccount2.trim() === "") {
-        newErrors.strAccount2 = "Second account is required for double entry";
-      } else if (filteredFormData.strAccount2 === filteredFormData.strAccount) {
-        newErrors.strAccount2 = "Second account must be different from the first account";
-      }
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmitBtn = async (e) => {
-    e.preventDefault();
-    clearMessages();
+  const handleDoubleEntryChange = (value) => {
+    setIsDoubleEntry(value);
     
-    if (!validateForm()) {
-      setErrorMessage("Please correct the errors below before submitting.");
-      return;
-    }
-
-    const filteredFormData = { ...formData };
-
-    // If isDouble is false, remove account2 from the check
-    if (!filteredFormData.isDoubleEntry) {
-      delete filteredFormData.strAccount2;
-    }
-
-    setSpinning(true);
-    try {
-      const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}myfinance/transaction/add`,
-        filteredFormData
+    if (value) {
+      // Add second account field
+      const currentAccount = fields.find(f => f.name === "strAccount")?.defaultValue;
+      const filteredAccounts = accounts.filter(acc => acc.value !== currentAccount);
+      
+      setFields(prevFields => {
+        const hasAccount2 = prevFields.some(field => field.name === "strAccount2");
+        if (!hasAccount2) {
+          return [
+            ...prevFields,
+            {
+              name: "strAccount2",
+              label: "Second Account",
+              type: "select",
+              rules: { required: true },
+              options: filteredAccounts,
+              placeholder: "Select 2nd Account"
+            }
+          ];
+        }
+        return prevFields;
+      });
+    } else {
+      // Remove second account field
+      setFields(prevFields => 
+        prevFields.filter(field => field.name !== "strAccount2")
       );
-      console.log("Response:", response.data);
+    }
+  };
+
+  const getSequence = async () => {
+    setLoading(true);
+    try {
+      const response = await Axios.get(
+        `${window.env?.REACT_APP_API_URL}myfinance/transaction/getsequence?type=id`
+      );
       
-      setSuccessMessage("Transaction saved successfully!");
-      setSpinning(false);
+      console.log(response);
       
-      // Reset form after successful submission
-      setTimeout(() => {
-        setFormData({
-          strId: "",
-          floatAmount: "",
-          strName: "",
-          strTransType: "",
-          strTransCat: "",
-          strAccount: "",
-          isDoubleEntry: false,
-          strAccount2: "",
-        });
-        setErrors({});
-        setSuccessMessage("");
-        setReloadCompoenet(reloeadCompoenet + 1);
-      }, 2000);
+      // Update fields with sequence data
+      setFields(prevFields => 
+        prevFields.map(field => {
+          if (field.name === "strId") {
+            return { ...field, defaultValue: response.data.sequence_id.toString() };
+          } else if (field.name === "strTransType") {
+            return { ...field, options: response.data.trans_types[0] };
+          } else if (field.name === "strAccount") {
+            return { ...field, options: response.data.accounts[0] };
+          }
+          return field;
+        })
+      );
+      
+      setTransTypes(response.data.trans_types[0]);
+      setAccounts(response.data.accounts[0]);
       
     } catch (error) {
-      console.error("Error:", error.response);
-      setSpinning(false);
-      
-      if (error.response?.data?.error?.detail) {
-        setErrorMessage(error.response.data.error.detail);
-      } else if (error.response?.status === 500) {
-        setErrorMessage("Server error. Please try again later.");
-      } else if (error.response?.status === 400) {
-        setErrorMessage("Invalid data. Please check your input.");
-      } else if (error.code === 'NETWORK_ERROR') {
-        setErrorMessage("Network error. Please check your connection.");
-      } else {
-        setErrorMessage("An unexpected error occurred. Please try again.");
-      }
+      console.error("Error:", error);
+      showMessage("error", "Failed to load initial data. Please refresh the page.");
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    const getSequence = async () => {
-      console.log("Getting Inc Seq");
-      setSpinning(true);
-      try {
-        const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}myfinance/transaction/getsequence?type=id`
-        );
-        console.log(response);
-        setSpinning(false);
-        setFormData({
-          ...formData,
-          strId: response.data.sequence_id.toString(),
-        });
-
-        setTransTypes(response.data.trans_types[0]);
-        setAccounts(response.data.accounts[0]);
-      } catch (error) {
-        console.error("Error:", error);
-        setSpinning(false);
-        setErrorMessage("Failed to load initial data. Please refresh the page.");
-      }
-    };
-
     getSequence();
-  }, [reloeadCompoenet]);
-
-  const isFormValid = () => {
-    const requiredFields = ['strId', 'floatAmount', 'strName', 'strTransType', 'strTransCat', 'strAccount'];
-    if (formData.isDoubleEntry) {
-      requiredFields.push('strAccount2');
-    }
-    
-    return requiredFields.every(field => formData[field] && formData[field] !== "");
-  };
+  }, []);
 
   return (
-    <div className="transaction-form-container">
-      <div className="form-header">
-        <h2>Transaction Form</h2>
-        <p>Add a new transaction to your financial records</p>
+    <div className="transaction-form-wrapper">
+      {/* Double Entry Toggle */}
+      <div className="double-entry-toggle">
+        <label className="toggle-label">
+          <input
+            type="checkbox"
+            checked={isDoubleEntry}
+            onChange={(e) => handleDoubleEntryChange(e.target.checked)}
+            className="toggle-input"
+          />
+          <span className="toggle-slider"></span>
+          <span className="toggle-text">Double Entry</span>
+        </label>
       </div>
 
-      {/* Success Message */}
-      {successMessage && (
-        <div className="success-message">
-          <span className="success-icon">✓</span>
-          {successMessage}
-        </div>
-      )}
-
-      {/* Error Message */}
-      {errorMessage && (
-        <div className="error-message-global">
-          <span className="error-icon">✕</span>
-          {errorMessage}
-        </div>
-      )}
-
-      {spinning ? (
-        <div className="form-loading">
-          <div className="form-loading-spinner"></div>
-        </div>
-      ) : (
-        <form className="transaction-form" onSubmit={handleSubmitBtn}>
-          <div className="form-grid">
-            {/* ID Field */}
-            <div className="form-group">
-              <label htmlFor="strId" className="form-label">
-                ID <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="strId"
-                className={`form-input ${errors.strId ? 'error' : ''}`}
-                value={formData.strId}
-                onChange={handleInputChange}
-                disabled={true}
-                placeholder="Auto-generated ID"
-              />
-              {errors.strId && <span className="error-message">{errors.strId}</span>}
-            </div>
-
-            {/* Amount Field */}
-            <div className="form-group">
-              <label htmlFor="floatAmount" className="form-label">
-                Amount <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="floatAmount"
-                className={`form-input ${errors.floatAmount ? 'error' : ''}`}
-                value={formData.floatAmount}
-                onChange={Amount_handleInputChange}
-                placeholder="Enter amount (e.g., 1539.92)"
-              />
-              {errors.floatAmount && <span className="error-message">{errors.floatAmount}</span>}
-            </div>
-
-            {/* Account Selection */}
-            <div className="form-group">
-              <label htmlFor="strAccount" className="form-label">
-                Account <span className="required">*</span>
-              </label>
-              <HelpDropdown
-                options={accounts}
-                value={formData.strAccount}
-                onChange={handleSelectAccount}
-                placeholder="Select an Account"
-                searchPlaceholder="Search accounts..."
-                className={errors.strAccount ? 'error' : ''}
-              />
-              {errors.strAccount && <span className="error-message">{errors.strAccount}</span>}
-            </div>
-
-            {/* Double Entry Toggle */}
-            <div className="form-group">
-              <label className="form-label">Double Entry</label>
-              <div className="toggle-container">
-                <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={formData.isDoubleEntry}
-                    onChange={(e) => isDouleEntryChange(e.target.checked)}
-                  />
-                  <span className="toggle-slider"></span>
-                </label>
-                <span className="toggle-label">
-                  {formData.isDoubleEntry ? 'Enabled' : 'Disabled'}
-                </span>
-              </div>
-            </div>
-
-            {/* Second Account (Conditional) */}
-            {formData.isDoubleEntry && (
-              <div className="form-group">
-                <label htmlFor="strAccount2" className="form-label">
-                  Second Account <span className="required">*</span>
-                </label>
-                <HelpDropdown
-                  options={accounts2}
-                  value={formData.strAccount2}
-                  onChange={handleSelectAccount2}
-                  placeholder="Select 2nd Account"
-                  searchPlaceholder="Search accounts..."
-                  className={errors.strAccount2 ? 'error' : ''}
-                />
-                {errors.strAccount2 && <span className="error-message">{errors.strAccount2}</span>}
-              </div>
-            )}
-
-            {/* Transaction Type */}
-            <div className="form-group">
-              <label htmlFor="strTransType" className="form-label">
-                Transaction Type <span className="required">*</span>
-              </label>
-              <HelpDropdown
-                options={transTypes}
-                value={formData.strTransType}
-                onChange={handleSelectTrans}
-                placeholder="Select a type"
-                searchPlaceholder="Search transaction types..."
-                className={errors.strTransType ? 'error' : ''}
-              />
-              {errors.strTransType && <span className="error-message">{errors.strTransType}</span>}
-            </div>
-
-                         {/* Transaction Category */}
-             <div className="form-group">
-               <label htmlFor="strTransCat" className="form-label">
-                 Category <span className="required">*</span>
-               </label>
-                               <HelpDropdown
-                  options={transCats}
-                  value={formData.strTransCat}
-                  onChange={handleSelectCats}
-                                     placeholder={
-                     !formData.strTransType 
-                       ? "Select transaction type first" 
-                       : isTransCatLoading 
-                         ? "Loading categories..." 
-                         : "Select a category"
-                   }
-                   searchPlaceholder="Search categories..."
-                   className={errors.strTransCat ? 'error' : ''}
-                   isLoading={isTransCatLoading}
-                />
-               {errors.strTransCat && <span className="error-message">{errors.strTransCat}</span>}
-             </div>
-
-            {/* Reason Field */}
-            <div className="form-group full-width">
-              <label htmlFor="strName" className="form-label">
-                Reason <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                id="strName"
-                className={`form-input ${errors.strName ? 'error' : ''}`}
-                value={formData.strName}
-                onChange={handleInputChange}
-                placeholder="Enter transaction reason"
-              />
-              {errors.strName && <span className="error-message">{errors.strName}</span>}
-            </div>
-          </div>
-
-          {/* Submit Button */}
-          <div className="form-actions">
-            <SubmitButton 
-              onClick={handleSubmitBtn} 
-              disabled={!isFormValid() || spinning}
-            />
-          </div>
-        </form>
-      )}
+      <Form
+        title="Transaction Form"
+        fields={fields}
+        onSubmit={handleSubmit}
+        loading={loading}
+        message={message}
+        onMessageClose={() => setMessage({ type: "", text: "" })}
+        onGoBack={handleGoBack}
+        showGoBack={true}
+        className="transaction-form-container"
+        onFieldChange={handleFieldChange}
+      />
     </div>
   );
 }
