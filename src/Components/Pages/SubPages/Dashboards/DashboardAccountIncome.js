@@ -16,7 +16,7 @@ const DashboardAccountIncome = () => {
             try {
                 console.log(window.env?.REACT_APP_API_URL);
                 const response = await Axios.get(
-                    `${window.env?.REACT_APP_API_URL}api/myfinance/myfinance/dashboard/getdashboardaccountincomes`
+                    `${window.env?.REACT_APP_API_URL}api/myfinance/dashboard/getdashboardaccountincomes`
                 );
 
                 console.log("income List Data:", response.data);

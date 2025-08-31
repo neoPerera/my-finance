@@ -17,7 +17,7 @@ const DashboardAccountBalance = () => {
       try {
         console.log(window.env?.REACT_APP_API_URL);
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/myfinance/myfinance/dashboard/getdashboardaccountbalances`
+          `${window.env?.REACT_APP_API_URL}api/myfinance/dashboard/getdashboardaccountbalances`
         );
 
         console.log("DashboardBalance List Data:", response.data);
