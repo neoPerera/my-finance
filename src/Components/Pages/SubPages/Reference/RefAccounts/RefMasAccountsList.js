@@ -108,7 +108,7 @@ function RefMasAccountsList() {
       const row = { str_id: key, updates };
 
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/update`,
+        `${window.env?.REACT_APP_API_URL}api/myfinance/reference/ref-accounts/update`,
         row
       );
 
@@ -149,7 +149,7 @@ function RefMasAccountsList() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/reference/ref-accounts/getaccounts`
+          `${window.env?.REACT_APP_API_URL}api/myfinance/reference/ref-accounts/getaccounts`
         );
         console.log("Accounts List:", response.data);
         setAccountList(response.data);

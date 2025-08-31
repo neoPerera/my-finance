@@ -65,7 +65,7 @@ const Home = () => {
     const getForms = async () => {
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/home/getForms`
+          `${window.env?.REACT_APP_API_URL}api/main/home/getForms`
         );
         setResponseData(response.data);
       } catch (error) {

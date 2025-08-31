@@ -124,9 +124,9 @@ function TransactionForm() {
     console.log(value);
     var strTransCatURL = "";
     if (value == "INC") {
-      strTransCatURL = "api/reference/ref-income/getincome";
+      strTransCatURL = "api/myfinance/reference/ref-income/getincome";
     } else if (value == "EXP") {
-      strTransCatURL = "api/reference/ref-expense/getexpense";
+      strTransCatURL = "api/myfinance/reference/ref-expense/getexpense";
     }
     setFormData({ ...formData, strTransType: value });
     setSpinning(true);
@@ -210,7 +210,7 @@ function TransactionForm() {
       setSpinning(true);
       try {
         const response = await Axios.get(
-          `${window.env?.REACT_APP_API_URL}api/transaction/getsequence?type=id`
+          `${window.env?.REACT_APP_API_URL}api/myfinance/transaction/getsequence?type=id`
         );
         form.setFieldsValue({
           strId: response.data.sequence_id.toString(),
