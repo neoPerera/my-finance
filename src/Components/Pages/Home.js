@@ -39,6 +39,7 @@ const arrComponents = {
   //ReportApp: LazyWithFallback(() => import("reports/ReportApp")),
   NotFound: LazyWithFallback(() => import("./404")),
 };
+
 const iconComponents = {
   BookOutlined,
   DashboardOutlined,
@@ -79,38 +80,58 @@ const Home = () => {
   useEffect(() => {
     if (!responseData) return;
 
+    // recursive insert function
+    const insertIntoTree = (tree, pathParts, fullItem) => {
+      if (pathParts.length === 0) return;
+
+      const currentPart = pathParts[0];
+      let node = tree.find((t) => t.label === currentPart);
+
+      if (!node) {
+        node = {
+          key: currentPart,
+          label: currentPart,
+          children: [],
+        };
+        tree.push(node);
+      }
+
+      if (pathParts.length === 1) {
+        // leaf → add actual menu item
+        node.children.push({
+          key: fullItem.str_form_id,
+          icon:
+            fullItem.str_icon && iconComponents[fullItem.str_icon]
+              ? React.createElement(iconComponents[fullItem.str_icon])
+              : null,
+          label: fullItem.str_form_name,
+          link: fullItem.str_link,
+        });
+      } else {
+        insertIntoTree(node.children, pathParts.slice(1), fullItem);
+      }
+    };
+
     const formattedData = [];
     const formattedRoutes = [];
 
-    responseData.forEach((item, index) => {
+    responseData.forEach((item) => {
       if (item.str_isMenu !== "Y") return;
 
-      const icon = item.str_icon && iconComponents[item.str_icon]
-        ? React.createElement(iconComponents[item.str_icon])
-        : null;
-
-      const formattedItem = {
-        key: item.str_form_id,
-        icon,
-        label: item.str_form_name,
-        link: item.str_link,
-      };
-
       if (item.str_menu_id) {
-        const parent = formattedData.find(
-          (parentItem) => parentItem.label === item.str_menu_id
-        );
-        if (parent) {
-          parent.children.push(formattedItem);
-        } else {
-          formattedData.push({
-            key: index.toString(),
-            label: item.str_menu_id,
-            children: [formattedItem],
-          });
-        }
+        const parts = item.str_menu_id.split("/"); // split by "/"
+        insertIntoTree(formattedData, parts, item);
       } else {
-        formattedData.push(formattedItem);
+        // root-level item
+        formattedData.push({
+          key: item.str_form_id,
+          icon:
+            item.str_icon && iconComponents[item.str_icon]
+              ? React.createElement(iconComponents[item.str_icon])
+              : null,
+          label: item.str_form_name,
+          link: item.str_link,
+        });
       }
     });
 
@@ -169,19 +190,10 @@ const Home = () => {
 
 const UserRoutes = ({ routeList }) => (
   <Routes>
-    <Route
-      path="/"
-      element={<arrComponents.DashBoard />}
-    />
+    <Route path="/" element={<arrComponents.DashBoard />} />
     {routeList.map((route, index) => {
       const LazyComponent = arrComponents[route.element] || arrComponents.NotFound;
-      return (
-        <Route
-          key={index}
-          path={route.path}
-          element={<LazyComponent />}
-        />
-      );
+      return <Route key={index} path={route.path} element={<LazyComponent />} />;
     })}
     <Route path="*" element={<arrComponents.NotFound />} />
   </Routes>
