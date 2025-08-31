@@ -174,7 +174,7 @@ function TransactionForm() {
     setSpinning(true);
     try {
       const response = await Axios.post(
-        `${window.env?.REACT_APP_API_URL}api/transaction/add`,
+        `${window.env?.REACT_APP_API_URL}api/myfinance/transaction/add`,
         filteredFormData
       );
       //setSpinning(false);
