@@ -1,160 +1,98 @@
-import React, { useState } from "react";
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Layout,
-  Row,
-  Col,
-  Typography,
-  Spin,
-  message,
-} from "antd";
-import FooterAnt from "../Elements/Footer-ant";
-import Swal from "sweetalert2";
+import React, { useEffect, useState } from "react";
+import { Layout, Row, Col, Spin, Typography, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import FooterAnt from "../Elements/Footer-ant";
 
 const { Content } = Layout;
 
 const LogIn = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  // const [loading, setLoading] = useState(false); // State for loading spinner
-  const [spinning, setSpinning] = React.useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
-  const onFinish = (values) => {
-    console.log("Received values of form: ", values);
-  };
+  const [popupBlocked, setPopupBlocked] = useState(false);
+  const [waiting, setWaiting] = useState(true);
 
-  const handleLogin = async () => {
-    try {
-      setSpinning(true); // Start loading
-      // Swal.fire({
-      //   title: "Loading",
-      //   timerProgressBar: true,
-      //   didOpen: () => {
-      //     Swal.showLoading();
-      //   },
-      // });
+  useEffect(() => {
+    const externalLoginUrl = "http://localhost:4001";
+    const allowedOrigin = new URL(externalLoginUrl).origin;
+    let popup = null;
+    let received = false;
 
-      const response = await axios.post(
-        `${window.env?.REACT_APP_API_URL}api/main/login`,
-        {
-          username: username,
-          password: password,
-        }
+    const openPopup = () => {
+      const w = 500;
+      const h = 700;
+      const left = window.screenX + (window.outerWidth - w) / 2;
+      const top = window.screenY + (window.outerHeight - h) / 2;
+      popup = window.open(
+        externalLoginUrl,
+        "ExternalLogin",
+        `width=${w},height=${h},left=${left},top=${top}`
       );
-
-      // Handle the response as needed, e.g., redirect to another page on success
-      console.log(response.data);
-      if (response.data.message === "Login successful") {
-        // Set a value in local storage
-        messageApi.open({
-          type: "success",
-          content: "Login successful",
-          onClose: () => {
-            // setSpinning(false);
-
-            localStorage.setItem("jwt_token", response.data.token);
-            localStorage.setItem("username", username);
-            const currentTime = new Date().getTime();
-            localStorage.setItem("lastLoginTime", currentTime.toString());
-
-            navigate("/home");
-          },
-        });
+      if (!popup) {
+        setPopupBlocked(true);
+        setWaiting(false);
       }
-    } catch (error) {
-      setSpinning(false);
-      messageApi.open({
-        type: "error",
-        content: "Something went wrong !",
-      });
-    } finally {
-      // setSpinning(false); // Stop loading, whether successful or not
-    }
-  };
+    };
+
+    openPopup();
+
+    const onMessage = (e) => {
+      if (e.origin !== allowedOrigin) return;
+      const data = e.data || {};
+      if (data.type === "auth-success" && data.token) {
+        received = true;
+        localStorage.setItem("jwt_token", data.token);
+        if (data.username) localStorage.setItem("username", data.username);
+        localStorage.setItem("lastLoginTime", Date.now().toString());
+        message.success("Login successful");
+        try {
+          if (popup && !popup.closed) popup.close();
+        } catch (err) {}
+        navigate("/");
+      } else if (data.type === "auth-failure") {
+        received = true;
+        message.error(data.message || "Authentication failed");
+        try {
+          if (popup && !popup.closed) popup.close();
+        } catch (err) {}
+      }
+    };
+
+    window.addEventListener("message", onMessage);
+
+    const timer = setInterval(() => {
+      if (popup && popup.closed && !received) {
+        clearInterval(timer);
+        setWaiting(false);
+        message.error("Login window closed before completing authentication.");
+      }
+    }, 500);
+
+    return () => {
+      window.removeEventListener("message", onMessage);
+      clearInterval(timer);
+      try {
+        if (popup && !popup.closed) popup.close();
+      } catch (err) {}
+    };
+  }, [navigate]);
 
   return (
     <div>
-      {contextHolder}
-      <Spin spinning={spinning} fullscreen />
       <Layout style={{ height: "90vh" }}>
         <Row justify="center" align="middle" style={{ minHeight: "100vh" }}>
-          <Col xs={20} sm={12} md={8} lg={6} xl={4}>
+          <Col>
             <Content
               style={{
                 padding: 24,
                 minHeight: 280,
                 background: "#fff",
                 borderRadius: "8px",
+                textAlign: "center",
               }}
             >
-              <Typography.Title
-                level={3}
-                style={{ textAlign: "center", marginBottom: 24 }}
-              >
-                My Finance
-              </Typography.Title>
-
-              <Form
-                name="normal_login"
-                className="login-form"
-                initialValues={{
-                  remember: true,
-                }}
-                onFinish={onFinish}
-              >
-                <Form.Item
-                  name="username"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your Username!",
-                    },
-                  ]}
-                >
-                  <Input
-                    prefix={<UserOutlined className="site-form-item-icon" />}
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your Password!",
-                    },
-                  ]}
-                >
-                  <Input
-                    prefix={<LockOutlined className="site-form-item-icon" />}
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                </Form.Item>
-
-                <Form.Item>
-                  <Button
-                    type="primary"
-                    htmlType="submit"
-                    className="login-form-button"
-                    onClick={handleLogin}
-                    disabled={spinning}
-                  >
-                    Log in
-                  </Button>
-                </Form.Item>
-              </Form>
+              <Spin />
+              <Typography.Paragraph style={{ marginTop: 16 }}>
+                Redirecting to external login...
+              </Typography.Paragraph>
             </Content>
           </Col>
         </Row>
