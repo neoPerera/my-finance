@@ -11,7 +11,7 @@ const LogIn = () => {
   const [waiting, setWaiting] = useState(true);
 
   useEffect(() => {
-    const externalLoginUrl = "http://localhost:4001";
+    const externalLoginUrl = "https://login.chanuthperera.com/";
     const allowedOrigin = new URL(externalLoginUrl).origin;
     let popup = null;
     let received = false;
