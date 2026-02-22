@@ -7,32 +7,36 @@ const { Content } = Layout;
 
 const LogIn = () => {
   const navigate = useNavigate();
-  const [popupBlocked, setPopupBlocked] = useState(false);
-  const [waiting, setWaiting] = useState(true);
+  const [waiting, setWaiting] = useState(false);
+  const [popup, setPopup] = useState(null);
+
+  const handleOpenLogin = () => {
+    const externalLoginUrl = "https://login.chanuthperera.com/";
+    const w = 500;
+    const h = 700;
+    const left = window.screenX + (window.outerWidth - w) / 2;
+    const top = window.screenY + (window.outerHeight - h) / 2;
+    
+    const newPopup = window.open(
+      externalLoginUrl,
+      "ExternalLogin",
+      `width=${w},height=${h},left=${left},top=${top}`
+    );
+    
+    if (newPopup) {
+      setPopup(newPopup);
+      setWaiting(true);
+    } else {
+      message.error("Popup blocked. Please allow popups and try again.");
+    }
+  };
 
   useEffect(() => {
+    if (!popup || !waiting) return;
+
     const externalLoginUrl = "https://login.chanuthperera.com/";
     const allowedOrigin = new URL(externalLoginUrl).origin;
-    let popup = null;
     let received = false;
-
-    const openPopup = () => {
-      const w = 500;
-      const h = 700;
-      const left = window.screenX + (window.outerWidth - w) / 2;
-      const top = window.screenY + (window.outerHeight - h) / 2;
-      popup = window.open(
-        externalLoginUrl,
-        "ExternalLogin",
-        `width=${w},height=${h},left=${left},top=${top}`
-      );
-      if (!popup) {
-        setPopupBlocked(true);
-        setWaiting(false);
-      }
-    };
-
-    openPopup();
 
     const onMessage = (e) => {
       if (e.origin !== allowedOrigin) return;
@@ -46,6 +50,7 @@ const LogIn = () => {
         try {
           if (popup && !popup.closed) popup.close();
         } catch (err) {}
+        setWaiting(false);
         navigate("/");
       } else if (data.type === "auth-failure") {
         received = true;
@@ -53,6 +58,7 @@ const LogIn = () => {
         try {
           if (popup && !popup.closed) popup.close();
         } catch (err) {}
+        setWaiting(false);
       }
     };
 
@@ -69,11 +75,8 @@ const LogIn = () => {
     return () => {
       window.removeEventListener("message", onMessage);
       clearInterval(timer);
-      try {
-        if (popup && !popup.closed) popup.close();
-      } catch (err) {}
     };
-  }, [navigate]);
+  }, [popup, waiting, navigate]);
 
   return (
     <div>
@@ -89,10 +92,28 @@ const LogIn = () => {
                 textAlign: "center",
               }}
             >
-              <Spin />
-              <Typography.Paragraph style={{ marginTop: 16 }}>
-                Redirecting to external login...
-              </Typography.Paragraph>
+              {waiting ? (
+                <>
+                  <Spin />
+                  <Typography.Paragraph style={{ marginTop: 16 }}>
+                    Waiting for login to complete...
+                  </Typography.Paragraph>
+                </>
+              ) : (
+                <>
+                  <Typography.Title level={3} style={{ marginBottom: 24 }}>
+                    My Finance
+                  </Typography.Title>
+                  <Button
+                    type="primary"
+                    size="large"
+                    onClick={handleOpenLogin}
+                    style={{ minWidth: 200 }}
+                  >
+                    Login
+                  </Button>
+                </>
+              )}
             </Content>
           </Col>
         </Row>
